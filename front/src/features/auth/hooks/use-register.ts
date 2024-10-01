@@ -9,6 +9,7 @@ import {
 } from '../model/response.schema';
 
 import $api from '@/shared/config/api';
+import { isAxiosError } from 'axios';
 
 export const useRegister = (
   form: UseFormReturn<RegisterFields>,
@@ -24,15 +25,23 @@ export const useRegister = (
       return message;
     },
     onSuccess: () => {
+      form.reset();
       setSuccessMessage(
         'Письмо с кодом подтверждения было отправлено на вашу почту',
       );
     },
-    onError: () => {
-      form.setError('root', {
-        message: 'Что то пошло не так, попробуйте еще раз',
-        type: 'custom',
-      });
+    onError: (error) => {
+      if (isAxiosError(error) && error.response?.status === 409) {
+        form.setError('root', {
+          message: 'Такой пользователь уже существует',
+          type: 'custom',
+        });
+      } else {
+        form.setError('root', {
+          message: 'Что то пошло не так, попробуйте еще раз',
+          type: 'custom',
+        });
+      }
     },
   });
 };

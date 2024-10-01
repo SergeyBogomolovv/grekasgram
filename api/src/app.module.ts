@@ -15,9 +15,11 @@ import { UserEntity } from './users/entities/user.entity';
 import { MessageEntity } from './messages/entities/message.entity';
 import { ChatEntity } from './chats/entities/chat.entity';
 import { AuthModule } from './auth/auth.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot({ global: true }),
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
