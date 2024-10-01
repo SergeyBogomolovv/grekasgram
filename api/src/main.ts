@@ -18,10 +18,17 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
 
-  app.use(cors({ credentials: true, origin: config.get('CORS_ORIGIN') }));
+  app.use(
+    cors({
+      credentials: true,
+      origin: config.get('CORS_ORIGIN'),
+    }),
+  );
   app.use(cookieParser());
 
   app.useGlobalPipes(new ValidationPipe());
+
+  app.setGlobalPrefix('api');
 
   const document = SwaggerModule.createDocument(app, openApiConfig);
   SwaggerModule.setup('docs', app, document);

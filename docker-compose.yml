@@ -47,6 +47,16 @@ services:
     volumes:
       - chat_redis_data:/var/lib/data
 
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - front
+      - api
+
 volumes:
   chat_postgres_data:
   chat_redis_data:
