@@ -17,7 +17,7 @@ export default function ConfirmEmail({ token }: Props) {
   }, [mutate, token]);
 
   return (
-    <main className="flex flex-col items-center justify-center gap-y-6 flex-1">
+    <main className="flex flex-col items-center justify-center gap-y-6 col-span-2">
       <h1 className="font-bold text-3xl">Проверяем вашу почту</h1>
       <div className="animate-pulse flex items-center gap-2 duration-250">
         <div className="dark:bg-white bg-black rounded-full size-6" />

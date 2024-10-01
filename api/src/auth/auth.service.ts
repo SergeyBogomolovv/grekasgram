@@ -40,6 +40,8 @@ export class AuthService {
 
   async register(dto: RegisterDto) {
     const hashedPassword = await hash(dto.password, genSaltSync());
+
+    // already checks if user exists
     const user = await this.usersService.create({
       ...dto,
       password: hashedPassword,
@@ -47,7 +49,7 @@ export class AuthService {
 
     const verifyLink = await this.linksService.generateLink(user.id);
 
-    await this.mailService.sendVerifyEmail(verifyLink, user.email);
+    this.mailService.sendVerifyEmail(verifyLink, user.email);
 
     return new MessageResponse('Confirmation email sent');
   }
