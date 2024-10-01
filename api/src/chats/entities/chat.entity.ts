@@ -1,5 +1,5 @@
-import { MessageEntity } from 'src/messages/entities/message.entity';
-import { UserEntity } from 'src/users/entities/user.entity';
+import { MessageEntity } from '../../messages/entities/message.entity';
+import { UserEntity } from '../../users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,

@@ -1,5 +1,5 @@
-import { ChatEntity } from 'src/chats/entities/chat.entity';
-import { UserEntity } from 'src/users/entities/user.entity';
+import { ChatEntity } from '../../chats/entities/chat.entity';
+import { UserEntity } from '../../users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,

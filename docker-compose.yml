@@ -1,6 +1,6 @@
 version: "3.8"
+name: online-chat
 services:
-
   front:
     depends_on:
       - api
@@ -20,7 +20,11 @@ services:
     depends_on:
       - postgres
       - redis
-    build: ./api
+      - migrations
+    build: 
+      context: ./api
+      target: production
+      dockerfile: Dockerfile
     env_file: .env
     ports:
       - 4000:4000
@@ -31,7 +35,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - chat_postgres_data:/var/lib/data
+      - chat_postgres_data:/var/lib/postgresql/data
     env_file:
       - .env
     environment:
@@ -47,6 +51,17 @@ services:
     volumes:
       - chat_redis_data:/var/lib/data
 
+  migrations:
+    build: 
+      context: ./api
+      target: production
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    env_file: .env
+    command: >
+      sh -c "npm run migration:run"
+
   nginx:
     image: nginx:latest
     ports:
@@ -60,4 +75,3 @@ services:
 volumes:
   chat_postgres_data:
   chat_redis_data:
-    

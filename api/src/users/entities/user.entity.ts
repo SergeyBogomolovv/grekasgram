@@ -1,5 +1,5 @@
-import { ChatEntity } from 'src/chats/entities/chat.entity';
-import { MessageEntity } from 'src/messages/entities/message.entity';
+import { ChatEntity } from '../../chats/entities/chat.entity';
+import { MessageEntity } from '../../messages/entities/message.entity';
 import {
   Column,
   CreateDateColumn,
