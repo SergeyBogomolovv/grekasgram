@@ -29,7 +29,7 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log('connected', userId);
   }
 
-  handleDisconnect(client: Socket) {
+  handleDisconnect() {
     console.log('user disconnected');
   }
 
