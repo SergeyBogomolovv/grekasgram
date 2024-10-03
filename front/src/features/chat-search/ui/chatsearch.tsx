@@ -39,7 +39,10 @@ export default function ChatSearch() {
     } else {
       newParams.set('query', data.query);
     }
-    router.push(`${pathname}?${newParams.toString()}`);
+    const paramsString = newParams.toString();
+    const url = paramsString ? `${pathname}?${paramsString}` : pathname;
+
+    router.push(url);
   };
 
   useEffect(() => {
@@ -49,6 +52,7 @@ export default function ChatSearch() {
   return (
     <Form {...form}>
       <form
+        data-testid="search-form"
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-full flex flex-col items-center gap-2 p-4 border-b-2"
       >
@@ -73,7 +77,11 @@ export default function ChatSearch() {
                 </NavButton>
               </div>
               <FormControl>
-                <Input {...field} placeholder="Поиск..." />
+                <Input
+                  data-testid="search-input"
+                  {...field}
+                  placeholder="Поиск..."
+                />
               </FormControl>
             </FormItem>
           )}

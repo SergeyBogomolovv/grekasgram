@@ -2,7 +2,7 @@ import { act } from '@testing-library/react';
 import { Mock } from 'vitest';
 import { useRouter } from 'next/navigation';
 import $api from '@/shared/config/api';
-import { renderHookWithQueryClient } from '@test/render-with-query';
+import { renderHookWithQueryClient } from '@test/render-hook-with-query';
 import { useLogout } from '../hooks/use-logout';
 
 vi.mock('next/navigation', () => ({

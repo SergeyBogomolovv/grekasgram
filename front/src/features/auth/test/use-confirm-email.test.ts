@@ -3,7 +3,7 @@ import { Mock } from 'vitest';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import $api from '@/shared/config/api';
-import { renderHookWithQueryClient } from '@test/render-with-query';
+import { renderHookWithQueryClient } from '@test/render-hook-with-query';
 import { useConfirmEmail } from '../hooks/use-confirm-email';
 
 vi.mock('next/navigation', () => ({

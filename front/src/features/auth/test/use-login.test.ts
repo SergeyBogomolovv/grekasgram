@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { UseFormReturn } from 'react-hook-form';
 import $api from '@/shared/config/api';
 import { useLogin } from '../hooks/use-login';
-import { renderHookWithQueryClient } from '@test/render-with-query';
+import { renderHookWithQueryClient } from '@test/render-hook-with-query';
 
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
