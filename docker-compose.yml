@@ -55,12 +55,10 @@ services:
     build: 
       context: ./api
       target: production
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.migrations
     depends_on:
       - postgres
     env_file: .env
-    command: >
-      sh -c "npm run migration:run"
 
   nginx:
     image: nginx:latest
