@@ -54,8 +54,8 @@ services:
   migrations:
     build: 
       context: ./api
-      target: production
-      dockerfile: Dockerfile.migrations
+      target: migration
+      dockerfile: Dockerfile
     depends_on:
       - postgres
     env_file: .env
