@@ -4,7 +4,7 @@ import { UseFormReturn } from 'react-hook-form';
 import $api from '@/shared/config/api';
 import { isAxiosError } from 'axios';
 import { useRegister } from '../hooks/use-register';
-import { renderHookWithQueryClient } from '@test/render-with-query';
+import { renderHookWithQueryClient } from '@test/render-hook-with-query';
 
 vi.mock('@/shared/config/api', async (importOriginal) => {
   const original = (await importOriginal()) as any;
