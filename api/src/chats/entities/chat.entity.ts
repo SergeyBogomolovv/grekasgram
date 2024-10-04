@@ -15,8 +15,8 @@ export class ChatEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  title: string;
+  @Column({ nullable: true })
+  title?: string;
 
   @ManyToMany(() => UserEntity, (user) => user.chats)
   @JoinTable({ name: 'Users_Chats' })

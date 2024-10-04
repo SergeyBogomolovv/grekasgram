@@ -20,18 +20,30 @@ export class UserEntity {
   @Column({ unique: true })
   email: string;
 
+  @Column({ nullable: true })
+  avatarUrl?: string;
+
   @Column()
   password: string;
 
+  @Column({ nullable: true })
+  about?: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @Column({ default: false })
+  online: boolean;
+
+  @Column({ default: new Date(), type: 'timestamp' })
+  lastOnlineAt: Date;
+
   @Column({ nullable: true, type: 'timestamp' })
-  emailConfirmed: Date;
+  emailConfirmed?: Date;
 
   @ManyToMany(() => ChatEntity, (chat) => chat.users)
   chats: ChatEntity[];
 
   @OneToMany(() => MessageEntity, (message) => message.from)
   messages: MessageEntity[];
-
-  @CreateDateColumn()
-  createdAt: Date;
 }
