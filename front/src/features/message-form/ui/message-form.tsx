@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem } from '@/shared/ui/form';
 import { IoSend } from 'react-icons/io5';
 import { Button } from '@/shared/ui/button';
-import { Input } from '@/shared/ui/input';
+import { Textarea } from '@/shared/ui/textarea';
 
 export default function MessageForm() {
   const form = useForm<MessageFormFields>({
@@ -25,7 +25,11 @@ export default function MessageForm() {
           render={({ field }) => (
             <FormItem className="w-full">
               <FormControl>
-                <Input placeholder="Введите сообщение" {...field} />
+                <Textarea
+                  className="min-h-12"
+                  placeholder="Введите сообщение"
+                  {...field}
+                />
               </FormControl>
             </FormItem>
           )}
@@ -33,10 +37,10 @@ export default function MessageForm() {
         <Button
           aria-label="Отправить сообщение"
           type="submit"
-          className="aspect-square"
+          className="aspect-square size-12 rounded-2xl"
           size="icon"
         >
-          <IoSend className="size-5" />
+          <IoSend className="size-6" />
         </Button>
       </form>
     </Form>
