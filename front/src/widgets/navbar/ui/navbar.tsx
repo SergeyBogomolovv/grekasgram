@@ -23,7 +23,7 @@ export default function Navbar() {
           <FaUsers className="size-6" />
         </NavButton>
       </div>
-      {/* <Chatbar mobile /> */}
+      {/* TODO: <Chatbar mobile /> */}
       <div className="flex flex-col gap-y-2">
         <ThemeSwitch />
         <ProfileButton />

@@ -8,12 +8,20 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="flex min-h-screen">
-      <Suspense>
+    <div className="flex h-screen">
+      <Suspense
+        fallback={
+          <main className="flex-grow flex flex-col items-center justify-center">
+            <h1 className="text-3xl font-bold">Загружаем приложение...</h1>
+          </main>
+        }
+      >
         <Navbar />
         <Chatbar />
-        {children}
+        <main className="flex-grow overflow-y-scroll flex flex-col">
+          {children}
+        </main>
       </Suspense>
-    </main>
+    </div>
   );
 }
