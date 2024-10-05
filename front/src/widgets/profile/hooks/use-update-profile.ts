@@ -19,4 +19,7 @@ export const useUpdateProfile = () =>
       queryClient.setQueryData(['profile'], data);
       toast.success('Профиль обновлен');
     },
+    onError() {
+      toast.error('Произошла ошибка при обновлении профиля');
+    },
   });

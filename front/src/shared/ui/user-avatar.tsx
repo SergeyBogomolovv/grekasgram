@@ -17,7 +17,7 @@ export default function UserAvatar({ className, src, imageClassName }: Props) {
         alt="Аватар пользователя"
       />
       <AvatarFallback>
-        <FaUserCircle className="size-full" />
+        <FaUserCircle aria-label="Аватар пользователя" className="size-full" />
       </AvatarFallback>
     </Avatar>
   );

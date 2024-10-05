@@ -58,7 +58,11 @@ export default function PublicInfo({ user }: { user: User }) {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder="Имя пользователя" {...field} />
+                      <Input
+                        data-testid="username-input"
+                        placeholder="Имя пользователя"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -71,6 +75,7 @@ export default function PublicInfo({ user }: { user: User }) {
                   <FormItem>
                     <FormControl>
                       <Textarea
+                        data-testid="about-info-input"
                         className="h-fit"
                         placeholder="Обо мне"
                         {...field}
@@ -83,7 +88,11 @@ export default function PublicInfo({ user }: { user: User }) {
             </div>
           </CardContent>
           <CardFooter>
-            <Button type="submit" disabled={isPending}>
+            <Button
+              data-testid="save-profile-button"
+              type="submit"
+              disabled={isPending}
+            >
               Сохранить
             </Button>
           </CardFooter>
