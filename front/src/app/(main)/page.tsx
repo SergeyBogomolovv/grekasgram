@@ -1,12 +1,3 @@
-import TestComponents from '@/features/testcomponent';
-import ThemeSwitch from '@/shared/ui/theme-switch';
+import { default as HomePage } from '@/_pages/home';
 
-export default function Home() {
-  return (
-    <main className="flex-1 flex flex-col items-center justify-between">
-      hello world
-      <TestComponents />
-      <ThemeSwitch />
-    </main>
-  );
-}
+export default HomePage;

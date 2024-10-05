@@ -1,8 +1,13 @@
 'use server';
 import { userSchema } from '@/entities/user';
-import $ssrApi from '@/shared/config/ssr-api';
+import $api from '@/shared/config/api';
+import { cookies } from 'next/headers';
 
 export const getUser = async () => {
-  const { data } = await $ssrApi.get('/users/me');
+  const { data } = await $api.get('/users/me', {
+    headers: {
+      Cookie: cookies().toString(),
+    },
+  });
   return userSchema.parse(data);
 };

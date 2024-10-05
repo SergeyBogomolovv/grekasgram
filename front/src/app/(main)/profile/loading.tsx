@@ -1,3 +1,3 @@
-export default function LoadingProfilePage() {
-  return <div>LoadingProfilePage</div>;
-}
+import { LoadingProfilePage } from '@/_pages/profile';
+
+export default LoadingProfilePage;
