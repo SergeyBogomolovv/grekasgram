@@ -2,8 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 
 import './globals.css';
-import { QueryProvider } from '@/shared/providers';
-import { ThemeProvider } from '@/shared/providers';
+import { QueryProvider, ThemeProvider } from '@/shared/providers';
 import { Toaster } from '@/shared/ui/sonner';
 
 const font = Inter({
@@ -13,6 +12,7 @@ const font = Inter({
 
 export const metadata: Metadata = {
   title: 'WebChat',
+  description: 'WebChat app',
 };
 
 export default function RootLayout({
@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ru" suppressHydrationWarning>
       <body className={font.className}>
         <ThemeProvider
           attribute="class"

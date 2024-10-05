@@ -6,6 +6,7 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -22,9 +23,18 @@ export class MessageEntity {
   @ManyToOne(() => UserEntity, (user) => user.messages)
   from: UserEntity;
 
-  @ManyToOne(() => ChatEntity, (chat) => chat.messages)
+  @Column()
+  fromId: string;
+
+  @ManyToOne(() => ChatEntity, (chat) => chat.messages, { onDelete: 'CASCADE' })
   chat: ChatEntity;
+
+  @Column()
+  chatId: string;
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

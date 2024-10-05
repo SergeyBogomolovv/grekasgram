@@ -1,3 +1,3 @@
-export default function ProfilePage() {
-  return <div>ProfilePage</div>;
-}
+import { ProfilePage } from '@/_pages/profile';
+
+export default ProfilePage;

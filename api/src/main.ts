@@ -13,9 +13,10 @@ async function bootstrap() {
   app.use(helmet());
 
   const openApiConfig = new DocumentBuilder()
-    .setTitle('Unihub Api')
-    .setDescription('This is the api for Unihub')
+    .setTitle('Online Chat Api')
+    .setDescription('This is the api for online chat')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   app.use(
@@ -31,7 +32,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   const document = SwaggerModule.createDocument(app, openApiConfig);
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('api/docs', app, document);
 
   app.enableShutdownHooks();
 
