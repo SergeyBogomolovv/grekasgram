@@ -1,5 +1,4 @@
-'use client';
-import { useGetProfile } from '@/entities/user';
+import { User } from '@/entities/user';
 import {
   Card,
   CardContent,
@@ -12,9 +11,7 @@ import InformationBlock from './information-block';
 import { format } from 'date-fns';
 import { LogoutButton } from '@/features/auth';
 
-export default function PersonalInfo() {
-  const { data, isLoading } = useGetProfile();
-
+export default function PersonalInfo({ user }: { user: User }) {
   return (
     <Card className="w-full">
       <CardHeader>
@@ -24,20 +21,11 @@ export default function PersonalInfo() {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-y-4">
+        <InformationBlock label="ID:" content={user.id} />
+        <InformationBlock label="Email:" content={user.email} />
         <InformationBlock
-          isLoading={isLoading}
-          label="ID:"
-          content={data?.id}
-        />
-        <InformationBlock
-          label="Email:"
-          content={data?.email}
-          isLoading={isLoading}
-        />
-        <InformationBlock
-          isLoading={isLoading}
           label="Зарегистрирован:"
-          content={format(data?.createdAt || 0, 'dd.MM.yyyy')}
+          content={format(user.createdAt || 0, 'dd.MM.yyyy')}
         />
       </CardContent>
       <CardFooter>
