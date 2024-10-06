@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-export const chatSearchSchema = z.object({
+export const SearchInputSchema = z.object({
   query: z.string(),
 });
 
-export type ChatSearchFields = z.infer<typeof chatSearchSchema>;
+export type SearchInputFields = z.infer<typeof SearchInputSchema>;

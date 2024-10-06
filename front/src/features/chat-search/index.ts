@@ -1,1 +1,1 @@
-export { default as ChatSearch } from './ui/chatsearch';
+export { default as SearchInput } from './ui/search-input';
