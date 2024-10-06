@@ -1,4 +1,4 @@
-# Online Chat with nest and next
+# Grekasgram - Online Chat with nest and next
 
 ## How to start project
 
