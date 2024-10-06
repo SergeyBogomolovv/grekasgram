@@ -31,6 +31,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 
         REDIS_HOST: Joi.string().required(),
         REDIS_PORT: Joi.number().integer().required(),
+        REDIS_TTL: Joi.number().integer().required(),
 
         JWT_SECRET: Joi.string().required(),
 
@@ -56,7 +57,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => {
         const store = await redisStore({
-          ttl: 0,
+          ttl: config.get('REDIS_TTL'),
           socket: {
             host: config.get('REDIS_HOST'),
             port: config.get('REDIS_PORT'),
