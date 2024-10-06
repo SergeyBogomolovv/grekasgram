@@ -9,7 +9,7 @@ export class LinksService {
 
   async generateLink(userId: string) {
     const link = v4();
-    await this.cache.set(link, { userId });
+    await this.cache.set(link, { userId }, 0);
     return link;
   }
 
