@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -15,12 +16,14 @@ import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserDto } from './dto/user.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { HttpAuthGuard } from 'src/auth/guards/http-auth.guard';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @ApiTags('users')
 @Controller('users')
@@ -49,5 +52,14 @@ export class UsersController {
     @Body() dto: UpdateProfileDto,
   ) {
     return this.usersService.updateProfile(userId, dto, avatar);
+  }
+
+  @ApiOperation({ summary: 'Поиск пользователей' })
+  @ApiOkResponse({ type: [UserDto] })
+  @ApiQuery({ name: 'query', type: String, required: true })
+  @UseInterceptors(CacheInterceptor)
+  @Get('search')
+  searchUsers(@Query('query') query: string) {
+    return this.usersService.searchUsers(query);
   }
 }

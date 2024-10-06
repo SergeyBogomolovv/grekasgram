@@ -137,6 +137,15 @@ export class UsersService {
     });
   }
 
+  async searchUsers(query: string): Promise<UserDto[]> {
+    const users = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.username LIKE :query', { query: `%${query}%` })
+      .orWhere('user.email LIKE :query', { query: `%${query}%` })
+      .getMany();
+    return users.map((user) => new UserDto(user));
+  }
+
   private async setUserToCache(user: UserEntity) {
     await this.cache.set(user.id, user);
     await this.cache.set(user.email, user);
