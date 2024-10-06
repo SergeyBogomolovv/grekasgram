@@ -66,7 +66,7 @@ export class UsersService {
   }
 
   async getProfile(id: string): Promise<UserDto> {
-    const user = await this.userRepository.findOne({ where: { id } });
+    const user = await this.findOneByIdOrFail(id);
     return new UserDto(user);
   }
 
