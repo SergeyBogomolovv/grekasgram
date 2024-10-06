@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { Mock } from 'vitest';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-import ChatSearch from '../ui/chatsearch';
+import SearchInput from '../ui/search-input';
 
 vi.mock('next/navigation', () => ({
   useSearchParams: vi.fn(),
@@ -9,7 +9,7 @@ vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
 }));
 
-describe('ChatSearch', () => {
+describe('SearchInput', () => {
   const mockRouter = {
     push: vi.fn(),
   };
@@ -31,7 +31,7 @@ describe('ChatSearch', () => {
   it('should render with default query value from searchParams', () => {
     mockSearchParams.set('query', 'test-query');
 
-    render(<ChatSearch />);
+    render(<SearchInput />);
 
     const input = screen.getByTestId('search-input');
     expect(input).toHaveValue('test-query');
@@ -40,7 +40,7 @@ describe('ChatSearch', () => {
   it('should update searchParams and call router.push on form submit', async () => {
     mockSearchParams.delete('query');
 
-    render(<ChatSearch />);
+    render(<SearchInput />);
 
     const input = screen.getByTestId('search-input');
     const form = screen.getByTestId('search-form');
@@ -57,7 +57,7 @@ describe('ChatSearch', () => {
   it('should remove query param if input is cleared and form is submitted', async () => {
     mockSearchParams.set('query', 'existing-query');
 
-    render(<ChatSearch />);
+    render(<SearchInput />);
 
     const input = screen.getByTestId('search-input');
     const form = screen.getByTestId('search-form');

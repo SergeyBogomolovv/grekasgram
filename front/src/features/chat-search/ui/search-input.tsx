@@ -3,7 +3,7 @@ import { FaPlus } from 'react-icons/fa6';
 import { NavButton } from '@/features/nav-button';
 import { Input } from '@/shared/ui/input';
 import { useForm } from 'react-hook-form';
-import { ChatSearchFields, chatSearchSchema } from '../model/schema';
+import { SearchInputSchema, SearchInputFields } from '../model/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
@@ -15,16 +15,18 @@ import {
 import { useCurrentTab } from '@/entities/tabs';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
+import { Button } from '@/shared/ui/button';
+import { BsSearch } from 'react-icons/bs';
 
-export default function ChatSearch() {
+export default function SearchInput() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
 
   const query = searchParams.get('query');
 
-  const form = useForm<ChatSearchFields>({
-    resolver: zodResolver(chatSearchSchema),
+  const form = useForm<SearchInputFields>({
+    resolver: zodResolver(SearchInputSchema),
     defaultValues: {
       query: query || '',
     },
@@ -32,7 +34,7 @@ export default function ChatSearch() {
 
   const currentTab = useCurrentTab();
 
-  const onSubmit = (data: ChatSearchFields) => {
+  const onSubmit = (data: SearchInputFields) => {
     const newParams = new URLSearchParams(searchParams);
     if (!data.query) {
       newParams.delete('query');
@@ -76,13 +78,24 @@ export default function ChatSearch() {
                   <FaPlus className="size-4" />
                 </NavButton>
               </div>
-              <FormControl>
-                <Input
-                  data-testid="search-input"
-                  {...field}
-                  placeholder="Поиск..."
-                />
-              </FormControl>
+              <div className="flex items-center gap-2">
+                <Button
+                  type="submit"
+                  aria-label="Поиск"
+                  size="icon"
+                  variant="outline"
+                  className="aspect-square"
+                >
+                  <BsSearch className="size-4" />
+                </Button>
+                <FormControl>
+                  <Input
+                    data-testid="search-input"
+                    {...field}
+                    placeholder="Поиск..."
+                  />
+                </FormControl>
+              </div>
             </FormItem>
           )}
         />
