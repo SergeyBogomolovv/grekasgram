@@ -19,7 +19,7 @@ export class ChatEntity {
   title?: string;
 
   @ManyToMany(() => UserEntity, (user) => user.chats)
-  @JoinTable({ name: 'Users_Chats' })
+  @JoinTable({ name: 'Chat_Members' })
   users: UserEntity[];
 
   @OneToMany(() => MessageEntity, (message) => message.chat)
@@ -27,4 +27,7 @@ export class ChatEntity {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @Column({ type: 'boolean', default: false })
+  isGroup: boolean;
 }
