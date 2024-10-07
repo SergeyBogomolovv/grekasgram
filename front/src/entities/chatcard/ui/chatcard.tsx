@@ -19,7 +19,7 @@ const ChatCard = ({ chat }: Props) => {
     <Link
       href={{ pathname: `/${chat.id}`, query: searchParams.toString() }}
       className={cn(
-        'flex justify-between px-6 py-3 cursor-pointer group hover:bg-primary/5 transition-all',
+        'flex justify-between px-6 py-3 cursor-pointer group hover:bg-primary/5 transition-all gap-4',
         {
           'bg-primary/10': Number(params.id) === chat.id,
         },

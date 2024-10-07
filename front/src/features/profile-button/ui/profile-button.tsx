@@ -12,8 +12,12 @@ import { useLogout } from '@/features/auth';
 import { useSearchParams } from 'next/navigation';
 import UserAvatar from '@/shared/ui/user-avatar';
 import { useGetProfile } from '@/entities/user';
+import { cn } from '@/shared/lib/utils';
 
-export default function ProfileButton() {
+interface Props {
+  className?: string;
+}
+export default function ProfileButton({ className }: Props) {
   const { mutate } = useLogout();
   const { data, isLoading } = useGetProfile();
   const params = useSearchParams();
@@ -22,7 +26,7 @@ export default function ProfileButton() {
     <DropdownMenu>
       <DropdownMenuTrigger
         disabled={isLoading}
-        className="size-12"
+        className={cn('size-12', className)}
         aria-label="Открыть меню профиля"
       >
         <UserAvatar className="size-full" src={data?.avatarUrl} />

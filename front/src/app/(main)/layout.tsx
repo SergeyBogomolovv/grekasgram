@@ -8,7 +8,7 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen flex-col-reverse md:flex-row">
       <Suspense
         fallback={
           <main className="flex-grow flex flex-col items-center justify-center">

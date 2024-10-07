@@ -11,7 +11,7 @@ export default function UsersList() {
   const { data, isLoading } = useSearchUsers(query);
 
   return (
-    <div className="w-full flex flex-col divide-y-2">
+    <div className="w-full flex flex-col divide-y-2 overflow-y-auto">
       {isLoading && (
         <p className="text-center text-muted-foreground font-mono p-3">
           Загрузка...

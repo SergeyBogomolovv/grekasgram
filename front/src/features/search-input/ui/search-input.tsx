@@ -66,10 +66,11 @@ export default function SearchInput() {
               <div className="flex items-center justify-between w-full">
                 <FormLabel className="text-xl font-bold">
                   Поиск {currentTab === 'chats' && 'чатов'}
-                  {currentTab === 'favorites' && 'избранных'}
+                  {currentTab === 'groups' && 'групп'}
                   {currentTab === 'users' && 'пользователей'}
                 </FormLabel>
                 <NavButton
+                  toolipSide="bottom"
                   className="size-8"
                   tab="users"
                   label="Добавить чат"

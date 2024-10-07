@@ -15,6 +15,7 @@ interface Props extends ButtonProps {
   label?: string;
   tab: Tabs;
   buttonSize?: 'base' | 'sm';
+  toolipSide: 'right' | 'bottom';
 }
 
 export default function NavButton({
@@ -22,6 +23,7 @@ export default function NavButton({
   children,
   tab,
   buttonSize = 'base',
+  toolipSide,
   ...props
 }: Props) {
   const currentTab = useCurrentTab();
@@ -47,7 +49,7 @@ export default function NavButton({
             <Link href={{ pathname, query: { tab } }}>{children}</Link>
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="right">
+        <TooltipContent side={toolipSide}>
           <p>{label}</p>
         </TooltipContent>
       </Tooltip>
