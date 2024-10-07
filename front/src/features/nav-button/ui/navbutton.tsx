@@ -31,7 +31,7 @@ export default function NavButton({
 
   return (
     <TooltipProvider>
-      <Tooltip>
+      <Tooltip delayDuration={200}>
         <TooltipTrigger asChild>
           <Button
             asChild
