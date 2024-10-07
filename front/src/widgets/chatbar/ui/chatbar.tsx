@@ -1,7 +1,7 @@
 'use client';
 import { useCurrentTab } from '@/entities/tabs';
 import { ChatList } from '@/features/chat-list';
-import { SearchInput } from '@/features/chat-search';
+import { SearchInput } from '@/features/search-input';
 import { UsersList } from '@/features/users-list';
 
 export default function Chatbar() {
