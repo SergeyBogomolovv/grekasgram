@@ -2,13 +2,13 @@
 import { useEffect } from 'react';
 
 import { useConfirmEmail } from '../hooks/use-confirm-email';
+import { useSearchParams } from 'next/navigation';
 
-interface Props {
-  token?: string | null;
-}
+export default function ConfirmEmail() {
+  const params = useSearchParams();
+  const token = params.get('token');
 
-export default function ConfirmEmail({ token }: Props) {
-  const { mutate } = useConfirmEmail();
+  const { mutate, isSuccess, isPending, isError } = useConfirmEmail();
 
   useEffect(() => {
     if (token) {
@@ -17,13 +17,10 @@ export default function ConfirmEmail({ token }: Props) {
   }, [mutate, token]);
 
   return (
-    <main className="flex flex-col items-center justify-center gap-y-6 col-span-2">
-      <h1 className="font-bold text-3xl">Проверяем вашу почту</h1>
-      <div className="animate-pulse flex items-center gap-2 duration-250">
-        <div className="dark:bg-white bg-black rounded-full size-6" />
-        <div className="dark:bg-white bg-black rounded-full size-6" />
-        <div className="dark:bg-white bg-black rounded-full size-6" />
-      </div>
-    </main>
+    <h1 className="font-bold text-3xl">
+      {isPending && 'Проверяем вашу почту'}
+      {isSuccess && 'Почта подтверждена'}
+      {isError && 'Произошла ошибка'}
+    </h1>
   );
 }
