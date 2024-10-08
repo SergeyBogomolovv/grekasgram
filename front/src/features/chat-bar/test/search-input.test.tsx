@@ -31,7 +31,7 @@ describe('SearchInput', () => {
   it('should render with default query value from searchParams', () => {
     mockSearchParams.set('query', 'test-query');
 
-    render(<SearchInput />);
+    render(<SearchInput currentTab="chats" />);
 
     const input = screen.getByTestId('search-input');
     expect(input).toHaveValue('test-query');
@@ -40,7 +40,7 @@ describe('SearchInput', () => {
   it('should update searchParams and call router.push on form submit', async () => {
     mockSearchParams.delete('query');
 
-    render(<SearchInput />);
+    render(<SearchInput currentTab="chats" />);
 
     const input = screen.getByTestId('search-input');
     const form = screen.getByTestId('search-form');
@@ -57,7 +57,7 @@ describe('SearchInput', () => {
   it('should remove query param if input is cleared and form is submitted', async () => {
     mockSearchParams.set('query', 'existing-query');
 
-    render(<SearchInput />);
+    render(<SearchInput currentTab="chats" />);
 
     const input = screen.getByTestId('search-input');
     const form = screen.getByTestId('search-form');

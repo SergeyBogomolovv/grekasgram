@@ -4,7 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { render, screen } from '@testing-library/react';
 import ConfirmEmail from '../ui/confirm-email';
 
-vi.mock('../hooks/use-confirm-email', () => ({
+vi.mock('../api/use-confirm-email', () => ({
   useConfirmEmail: vi.fn(),
 }));
 

@@ -16,13 +16,9 @@ vi.mock('sonner', () => ({
   },
 }));
 
-vi.mock('@/shared/api', () => {
-  return {
-    default: {
-      post: vi.fn(),
-    },
-  };
-});
+vi.mock('@/shared/api', () => ({
+  $api: { post: vi.fn() },
+}));
 
 describe('useConfirmEmail', () => {
   const mockRouter = {

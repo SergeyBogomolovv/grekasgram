@@ -2,7 +2,7 @@ import { renderComponentWithQueryClient } from '@test/render-component-with-quer
 import PublicInfo from '../ui/profile-form';
 import { User } from '@/entities/user';
 import { fireEvent, screen, waitFor } from '@testing-library/dom';
-import { useUpdateProfile } from '../../../entities/user/api/use-update-profile';
+import { useUpdateProfile } from '@/entities/user';
 import { Mock } from 'vitest';
 
 const mockUser: User = {
@@ -16,7 +16,7 @@ const mockUser: User = {
   avatarUrl: 'test-avatar-url',
 };
 
-vi.mock('../hooks/use-update-profile', () => ({
+vi.mock('@/entities/user', () => ({
   useUpdateProfile: vi.fn(),
 }));
 

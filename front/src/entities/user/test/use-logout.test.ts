@@ -9,15 +9,9 @@ vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
 }));
 
-vi.mock('@/shared/api', async (importOriginal) => {
-  const original = (await importOriginal()) as any;
-  return {
-    ...original,
-    default: {
-      post: vi.fn(),
-    },
-  };
-});
+vi.mock('@/shared/api', () => ({
+  $api: { post: vi.fn() },
+}));
 
 describe('useLogout', () => {
   const mockRouter = {

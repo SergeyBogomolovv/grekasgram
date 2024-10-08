@@ -1,11 +1,12 @@
-import { renderComponentWithQueryClient } from '@test/render-component-with-query';
 import { screen } from '@testing-library/dom';
 import { Mock } from 'vitest';
 import { useSearchParams } from 'next/navigation';
 import { useSearchUsers } from '@/entities/user';
 import UsersList from '../ui/users-list';
+import { render } from '@testing-library/react';
 
-vi.mock('../hooks/use-search-users', () => ({
+vi.mock('@/entities/user', async (importOriginal) => ({
+  ...(await importOriginal()),
   useSearchUsers: vi.fn(),
 }));
 
@@ -23,7 +24,7 @@ describe('UsersList', () => {
       isLoading: true,
     });
 
-    renderComponentWithQueryClient(<UsersList />);
+    render(<UsersList />);
 
     expect(screen.getByText('Загрузка...')).toBeInTheDocument();
   });
@@ -37,7 +38,7 @@ describe('UsersList', () => {
       isLoading: false,
     });
 
-    renderComponentWithQueryClient(<UsersList />);
+    render(<UsersList />);
 
     expect(screen.getByText('Пользователи не найдены')).toBeInTheDocument();
   });
@@ -51,7 +52,7 @@ describe('UsersList', () => {
       isLoading: false,
     });
 
-    renderComponentWithQueryClient(<UsersList />);
+    render(<UsersList />);
 
     expect(
       screen.getByText('Ищите пользователей, с которыми хотели бы пообщаться'),
@@ -72,7 +73,7 @@ describe('UsersList', () => {
       isLoading: false,
     });
 
-    renderComponentWithQueryClient(<UsersList />);
+    render(<UsersList />);
 
     expect(screen.getByText('user1')).toBeInTheDocument();
     expect(screen.getByText('user2')).toBeInTheDocument();
