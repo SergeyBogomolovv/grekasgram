@@ -2,27 +2,18 @@ import { act } from '@testing-library/react';
 import { Mock } from 'vitest';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { UseFormReturn } from 'react-hook-form';
 import { $api } from '@/shared/api';
 import { useLogin } from '../api/use-login';
 import { renderHookWithQueryClient } from '@test/render-hook-with-query';
 
-vi.mock('next/navigation', () => ({
-  useRouter: vi.fn(),
-}));
+vi.mock('next/navigation');
 
-vi.mock('sonner', () => ({
-  toast: {
-    success: vi.fn(),
-  },
-}));
+vi.mock('sonner');
 
-vi.mock('@/shared/api', () => ({
-  $api: { post: vi.fn() },
-}));
+vi.mock('@/shared/api');
 
 describe('useLogin', () => {
-  const mockForm: UseFormReturn<any> = {
+  const mockForm = {
     setError: vi.fn(),
   } as any;
 

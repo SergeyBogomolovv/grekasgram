@@ -3,11 +3,7 @@ import { Mock } from 'vitest';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import SearchInput from '../ui/search-input';
 
-vi.mock('next/navigation', () => ({
-  useSearchParams: vi.fn(),
-  usePathname: vi.fn(),
-  useRouter: vi.fn(),
-}));
+vi.mock('next/navigation');
 
 describe('SearchInput', () => {
   const mockRouter = {

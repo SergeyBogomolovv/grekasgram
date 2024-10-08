@@ -3,9 +3,7 @@ import { Mock } from 'vitest';
 import LoginForm from '../ui/login-form';
 import { useLogin } from '../api/use-login';
 
-vi.mock('../api/use-login', () => ({
-  useLogin: vi.fn(),
-}));
+vi.mock('../api/use-login');
 
 describe('LoginForm', () => {
   it('should render correctly', () => {

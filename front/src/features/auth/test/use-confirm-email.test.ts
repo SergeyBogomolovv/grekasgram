@@ -6,19 +6,11 @@ import { renderHookWithQueryClient } from '@test/render-hook-with-query';
 import { useConfirmEmail } from '../api/use-confirm-email';
 import { $api } from '@/shared/api';
 
-vi.mock('next/navigation', () => ({
-  useRouter: vi.fn(),
-}));
+vi.mock('next/navigation');
 
-vi.mock('sonner', () => ({
-  toast: {
-    error: vi.fn(),
-  },
-}));
+vi.mock('sonner');
 
-vi.mock('@/shared/api', () => ({
-  $api: { post: vi.fn() },
-}));
+vi.mock('@/shared/api');
 
 describe('useConfirmEmail', () => {
   const mockRouter = {

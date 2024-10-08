@@ -16,17 +16,7 @@ const mockUser: User = {
   avatarUrl: 'test-avatar-url',
 };
 
-vi.mock('@/entities/user', () => ({
-  useUpdateProfile: vi.fn(),
-}));
-
-vi.mock('@/shared/config/api', async (importOriginal) => {
-  const actual = (await importOriginal()) as any;
-  return {
-    ...actual,
-    post: vi.fn(),
-  };
-});
+vi.mock('@/entities/user');
 
 describe('PublicInfo', () => {
   it('should render correctly', () => {

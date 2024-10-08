@@ -3,11 +3,7 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { renderHook } from '@testing-library/react';
 import { useCheckTab } from '../model/use-check-tab';
 
-vi.mock('next/navigation', () => ({
-  useRouter: vi.fn(),
-  usePathname: vi.fn(),
-  useSearchParams: vi.fn(),
-}));
+vi.mock('next/navigation');
 
 describe('useCheckTab', () => {
   const mockRouter = {

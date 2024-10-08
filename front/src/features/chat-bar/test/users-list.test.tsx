@@ -10,9 +10,7 @@ vi.mock('@/entities/user', async (importOriginal) => ({
   useSearchUsers: vi.fn(),
 }));
 
-vi.mock('next/navigation', () => ({
-  useSearchParams: vi.fn(),
-}));
+vi.mock('next/navigation');
 
 describe('UsersList', () => {
   it('should render loading state', () => {

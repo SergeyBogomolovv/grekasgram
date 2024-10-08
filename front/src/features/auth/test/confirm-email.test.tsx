@@ -4,13 +4,9 @@ import { useSearchParams } from 'next/navigation';
 import { render, screen } from '@testing-library/react';
 import ConfirmEmail from '../ui/confirm-email';
 
-vi.mock('../api/use-confirm-email', () => ({
-  useConfirmEmail: vi.fn(),
-}));
+vi.mock('../api/use-confirm-email');
 
-vi.mock('next/navigation', () => ({
-  useSearchParams: vi.fn(),
-}));
+vi.mock('next/navigation');
 
 describe('ConfirmEmail', () => {
   it('should call mutate with correct token', () => {
