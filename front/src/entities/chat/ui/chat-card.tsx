@@ -6,6 +6,7 @@ import { Chat } from '@/assets/mocks/cards';
 import { format } from 'date-fns';
 import { useParams, useSearchParams } from 'next/navigation';
 import UserAvatar from '@/shared/ui/user-avatar';
+import ChatOptions from './chat-options';
 
 interface Props {
   chat: Chat;
@@ -35,12 +36,14 @@ const ChatCard = ({ chat }: Props) => {
         </div>
       </div>
       <div className="flex flex-col gap-2 items-end">
-        <button
-          aria-label="Настройки чата"
-          className="group-hover:block hidden hover:text-primary py-2"
-        >
-          <HiOutlineDotsHorizontal className="w-6 h-6" />
-        </button>
+        <ChatOptions>
+          <button
+            aria-label="Опции чата"
+            className="group-hover:block hidden hover:text-primary py-2"
+          >
+            <HiOutlineDotsHorizontal className="w-6 h-6" />
+          </button>
+        </ChatOptions>
         <p className="text-xs group-hover:hidden">
           {format(chat.lastMessageAt, 'HH:mm')}
         </p>

@@ -1,4 +1,3 @@
-import { Button } from '@/shared/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,16 +6,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu';
-import { SlOptions } from 'react-icons/sl';
 
-export default function ChatOptions() {
+export default function ChatOptions({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild aria-label="Опции чата">
-        <Button variant="outline" size="icon">
-          <SlOptions className="size-5" />
-        </Button>
-      </DropdownMenuTrigger>
+      {/* TODO: fix dropdown place */}
+      <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>John Doe</DropdownMenuLabel>
         <DropdownMenuSeparator />

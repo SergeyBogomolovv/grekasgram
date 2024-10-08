@@ -1,5 +1,7 @@
+import { ChatOptions } from '@/entities/chat';
+import { Button } from '@/shared/ui/button';
 import UserAvatar from '@/shared/ui/user-avatar';
-import ChatOptions from './chat-options';
+import { SlOptions } from 'react-icons/sl';
 
 export default function ChatHeader() {
   return (
@@ -11,7 +13,11 @@ export default function ChatHeader() {
           <p className="text-sm">Last online yesterday</p>
         </div>
       </div>
-      <ChatOptions />
+      <ChatOptions>
+        <Button aria-label="Опции чата" variant="outline" size="icon">
+          <SlOptions className="size-5" />
+        </Button>
+      </ChatOptions>
     </header>
   );
 }
