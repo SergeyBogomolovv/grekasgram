@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 
-import { useLogin } from '../hooks/use-login';
+import { useLogin } from '../api/use-login';
 import { LoginFields, loginFieldsSchema } from '../model/response.schema';
 
 import { Button } from '@/shared/ui/button';

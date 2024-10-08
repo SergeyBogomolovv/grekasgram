@@ -1,5 +1,4 @@
-import { Chatbar } from '@/widgets/chatbar';
-import { Navbar } from '@/widgets/navbar';
+import { CurrentNavigationBar } from '@/features/navigation';
 import { Suspense } from 'react';
 
 export default function MainLayout({
@@ -16,8 +15,7 @@ export default function MainLayout({
           </main>
         }
       >
-        <Navbar />
-        <Chatbar />
+        <CurrentNavigationBar />
         <main className="flex-grow overflow-y-scroll flex flex-col">
           {children}
         </main>

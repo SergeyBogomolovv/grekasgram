@@ -1,10 +1,10 @@
 import { Mock, it, describe, vi } from 'vitest';
-import { useConfirmEmail } from '../hooks/use-confirm-email';
+import { useConfirmEmail } from '../api/use-confirm-email';
 import { useSearchParams } from 'next/navigation';
 import { render, screen } from '@testing-library/react';
 import ConfirmEmail from '../ui/confirm-email';
 
-vi.mock('../hooks/use-confirm-email', () => ({
+vi.mock('../api/use-confirm-email', () => ({
   useConfirmEmail: vi.fn(),
 }));
 

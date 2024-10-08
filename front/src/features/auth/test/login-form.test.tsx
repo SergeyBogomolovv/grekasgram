@@ -1,9 +1,9 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Mock } from 'vitest';
 import LoginForm from '../ui/login-form';
-import { useLogin } from '../hooks/use-login';
+import { useLogin } from '../api/use-login';
 
-vi.mock('../hooks/use-login', () => ({
+vi.mock('../api/use-login', () => ({
   useLogin: vi.fn(),
 }));
 

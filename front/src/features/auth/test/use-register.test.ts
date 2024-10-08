@@ -1,37 +1,30 @@
 import { act } from '@testing-library/react';
-import { Mock } from 'vitest';
-import { UseFormReturn } from 'react-hook-form';
-import $api from '@/shared/config/api';
+import { Mock, vi, expect, describe, it, beforeEach } from 'vitest';
+import { useForm } from 'react-hook-form';
+import { $api } from '@/shared/api';
 import { isAxiosError } from 'axios';
-import { useRegister } from '../hooks/use-register';
+import { useRegister } from '../api/use-register';
 import { renderHookWithQueryClient } from '@test/render-hook-with-query';
 
-vi.mock('@/shared/config/api', async (importOriginal) => {
-  const original = (await importOriginal()) as any;
-  return {
-    ...original,
-    default: {
-      post: vi.fn(),
-    },
-  };
-});
+vi.mock('axios', { spy: true });
 
-vi.mock('axios', async (importOriginal) => {
-  const original = (await importOriginal()) as any;
+vi.mock('@/shared/api');
+
+const mockReset = vi.fn();
+const mockSetError = vi.fn();
+const setSuccessMessage = vi.fn();
+
+vi.mock('react-hook-form', async (importOriginal) => {
   return {
-    ...original,
-    isAxiosError: vi.fn(),
+    ...(await importOriginal()),
+    useForm: vi.fn(() => ({
+      reset: mockReset,
+      setError: mockSetError,
+    })),
   };
 });
 
 describe('useRegister', () => {
-  const mockForm: UseFormReturn<any> = {
-    reset: vi.fn(),
-    setError: vi.fn(),
-  } as any;
-
-  const setSuccessMessage = vi.fn();
-
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -41,7 +34,7 @@ describe('useRegister', () => {
     ($api.post as Mock).mockResolvedValue({ data: mockResponse });
 
     const { result } = renderHookWithQueryClient(() =>
-      useRegister(mockForm, setSuccessMessage),
+      useRegister(useForm(), setSuccessMessage),
     );
 
     await act(async () => {
@@ -56,7 +49,7 @@ describe('useRegister', () => {
       password: 'password',
     });
 
-    expect(mockForm.reset).toHaveBeenCalled();
+    expect(mockReset).toHaveBeenCalled();
     expect(setSuccessMessage).toHaveBeenCalledWith(
       'Письмо с кодом подтверждения было отправлено на вашу почту',
     );
@@ -69,7 +62,7 @@ describe('useRegister', () => {
     (isAxiosError as unknown as Mock).mockReturnValue(true);
 
     const { result } = renderHookWithQueryClient(() =>
-      useRegister(mockForm, setSuccessMessage),
+      useRegister(useForm(), setSuccessMessage),
     );
 
     await act(async () => {
@@ -81,7 +74,7 @@ describe('useRegister', () => {
       } catch (e) {}
     });
 
-    expect(mockForm.setError).toHaveBeenCalledWith('root', {
+    expect(mockSetError).toHaveBeenCalledWith('root', {
       message: 'Такой пользователь уже существует',
       type: 'custom',
     });
@@ -92,7 +85,7 @@ describe('useRegister', () => {
     (isAxiosError as unknown as Mock).mockReturnValue(true);
 
     const { result } = renderHookWithQueryClient(() =>
-      useRegister(mockForm, setSuccessMessage),
+      useRegister(useForm(), setSuccessMessage),
     );
 
     await act(async () => {
@@ -104,7 +97,7 @@ describe('useRegister', () => {
       } catch (e) {}
     });
 
-    expect(mockForm.setError).toHaveBeenCalledWith('root', {
+    expect(mockSetError).toHaveBeenCalledWith('root', {
       message: 'Что то пошло не так, попробуйте еще раз',
       type: 'custom',
     });

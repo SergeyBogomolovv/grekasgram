@@ -1,7 +1,7 @@
 'use client';
 import { useEffect } from 'react';
 
-import { useConfirmEmail } from '../hooks/use-confirm-email';
+import { useConfirmEmail } from '../api/use-confirm-email';
 import { useSearchParams } from 'next/navigation';
 
 export default function ConfirmEmail() {

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { useRegister } from '../hooks/use-register';
+import { useRegister } from '../api/use-register';
 import { RegisterFields, registerFieldsSchema } from '../model/response.schema';
 
 import { Button } from '@/shared/ui/button';

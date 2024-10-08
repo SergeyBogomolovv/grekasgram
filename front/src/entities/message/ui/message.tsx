@@ -1,5 +1,5 @@
 import { IMessage } from '@/assets/mocks/messages';
-import MessageUI from './message-ui';
+import MessageUI from './message-card';
 import {
   ContextMenu,
   ContextMenuContent,

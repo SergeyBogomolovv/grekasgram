@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 
 import './globals.css';
-import { QueryProvider, ThemeProvider } from '@/shared/providers';
+import { QueryProvider, ThemeProvider } from './providers';
 import { Toaster } from '@/shared/ui/sonner';
 
 const font = Inter({
