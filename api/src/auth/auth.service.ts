@@ -10,7 +10,6 @@ import { RegisterDto } from './dto/register.dto';
 import { MessageResponse } from 'src/common/message-response';
 import { LinksService } from './links.service';
 import { MailService } from 'src/mail/mail.service';
-import { SessionPayload } from './entities/session';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -67,8 +66,8 @@ export class AuthService {
     return { session, message: new MessageResponse('Email confirmed') };
   }
 
-  private generateSession(userId: string) {
-    const session = new SessionPayload({ userId });
-    return this.jwtService.sign({ ...session });
+  private generateSession(sessionId: string) {
+    //TODO: use redis
+    return this.jwtService.sign({ sessionId });
   }
 }
