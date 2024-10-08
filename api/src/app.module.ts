@@ -39,7 +39,6 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
         MAIL_PORT: Joi.number().integer().required(),
         MAIL_USER: Joi.string().required(),
         MAIL_PASS: Joi.string().required(),
-        MAIL_FROM: Joi.string().required(),
 
         OBJECT_STORAGE_REGION: Joi.string().required(),
         OBJECT_STORAGE_ENDPOINT: Joi.string().required(),

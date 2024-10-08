@@ -4,8 +4,45 @@
 
 - Клонируем репозиторий
 - Создаем .env файл с необходимыми параметрами
-- Запускаем через docker-compose ```docker compose up -d```
+- Параметры для .env
 
+```env
+POSTGRES_DB=Имя базы данных
+POSTGRES_USER=Пользователь базы данных
+POSTGRES_PASSWORD=Пароль базы данных
+POSTGRES_PORT=Порт базы данных
+POSTGRES_HOST=Хост базы данных
+
+REDIS_HOST=Хост редиса
+REDIS_PORT=Порт редиса
+REDIS_TTL=Время жизни кэша
+
+JWT_SECRET=секретный jwt токен
+
+MAIL_HOST=Хост почтового провайдера
+MAIL_PORT=Порт почтового провайдера
+MAIL_USER=Пользователь почтового провайдера
+MAIL_PASS=Пароль от почтового провайдера
+
+CORS_ORIGIN=Домен сайта
+CONFIRM_EMAIL_URL=Url, на который будет произведен редирект с токеном из письма
+
+OBJECT_STORAGE_ACCESS=access токен обьектного хранилища
+OBJECT_STORAGE_SECRET=секретный токен обьектного хранилища
+OBJECT_STORAGE_ENDPOINT=ендпоинт обьектного хранилища
+OBJECT_STORAGE_REGION=регион обьектного хранилища
+OBJECT_STORAGE_BUCKET=бакет обьектного хранилища
+NODE_ENV=production
+
+PORT=порт бэкенда
+
+NEXT_PUBLIC_API_URL=url бэкенда
+API_URL=url бэкенда(для ssr)
+NEXT_PUBLIC_WS_URL=url ws бэкенда
+```
+
+- Запускаем через docker-compose ```docker compose up -d```
+  
 ## Описание архитектуры проекта (Frontend)
 
 ### Entities
