@@ -2,9 +2,9 @@ import { act } from '@testing-library/react';
 import { Mock } from 'vitest';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import $api from '@/shared/config/api';
 import { renderHookWithQueryClient } from '@test/render-hook-with-query';
-import { useConfirmEmail } from '../hooks/use-confirm-email';
+import { useConfirmEmail } from '../api/use-confirm-email';
+import { $api } from '@/shared/api';
 
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
@@ -16,10 +16,8 @@ vi.mock('sonner', () => ({
   },
 }));
 
-vi.mock('@/shared/config/api', async (importOriginal) => {
-  const original = (await importOriginal()) as any;
+vi.mock('@/shared/api', () => {
   return {
-    ...original,
     default: {
       post: vi.fn(),
     },

@@ -2,8 +2,6 @@
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
-import { LogoutButton } from './auth';
-
 import { Button } from '@/shared/ui/button';
 import {
   Card,
@@ -12,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/shared/ui/card';
-import { socket } from '@/shared/config/socket';
+import { socket } from '@/shared/api';
 
 export default function TestComponents() {
   useEffect(() => {
@@ -47,7 +45,6 @@ export default function TestComponents() {
         >
           Send message to server
         </Button>
-        <LogoutButton variant="destructive">Logout</LogoutButton>
       </CardFooter>
     </Card>
   );

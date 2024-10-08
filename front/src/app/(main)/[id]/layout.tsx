@@ -1,5 +1,4 @@
-import { MessageForm } from '@/features/message-form';
-import { ChatHeader } from '@/widgets/chatheader';
+import { ChatHeader, MessageForm } from '@/features/chats';
 
 export default function ChatsLayout({
   children,

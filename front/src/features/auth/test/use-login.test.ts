@@ -3,8 +3,8 @@ import { Mock } from 'vitest';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { UseFormReturn } from 'react-hook-form';
-import $api from '@/shared/config/api';
-import { useLogin } from '../hooks/use-login';
+import { $api } from '@/shared/api';
+import { useLogin } from '../api/use-login';
 import { renderHookWithQueryClient } from '@test/render-hook-with-query';
 
 vi.mock('next/navigation', () => ({
@@ -17,10 +17,8 @@ vi.mock('sonner', () => ({
   },
 }));
 
-vi.mock('@/shared/config/api', async (importOriginal) => {
-  const original = (await importOriginal()) as any;
+vi.mock('@/shared/api', () => {
   return {
-    ...original,
     default: {
       post: vi.fn(),
     },
