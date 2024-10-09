@@ -1,4 +1,4 @@
-import { SessionEntity } from 'src/sessions/entities/session.entity';
+import { SessionEntity } from '../../sessions/entities/session.entity';
 import { ChatEntity } from '../../chats/entities/chat.entity';
 import { MessageEntity } from '../../messages/entities/message.entity';
 import {
