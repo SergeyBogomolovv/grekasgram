@@ -10,18 +10,19 @@ import { RegisterDto } from './dto/register.dto';
 import { MessageResponse } from 'src/common/message-response';
 import { LinksService } from './links.service';
 import { MailService } from 'src/mail/mail.service';
-import { JwtService } from '@nestjs/jwt';
+import { SessionsService } from 'src/sessions/sessions.service';
+import { SessionEntity } from 'src/sessions/entities/session.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService,
     private linksService: LinksService,
     private mailService: MailService,
+    private sessionService: SessionsService,
   ) {}
 
-  async login(dto: LoginDto) {
+  async login(dto: LoginDto, ip: string, device: string) {
     const user = await this.usersService.findOneByEmailOrFail(dto.email);
 
     if (!user.emailConfirmed) {
@@ -32,7 +33,11 @@ export class AuthService {
 
     if (!isPasswordMath) throw new BadRequestException('Invalid credentials');
 
-    const session = this.generateSession(user.id);
+    const session = await this.sessionService.generateSession({
+      userId: user.id,
+      ip,
+      device,
+    });
 
     return { session, message: new MessageResponse('Login successfully') };
   }
@@ -53,7 +58,7 @@ export class AuthService {
     return new MessageResponse('Confirmation email sent');
   }
 
-  async confirmEmail(link: string) {
+  async confirmEmail(link: string, ip: string, device: string) {
     const userId = await this.linksService.confirmLink(link);
     if (!userId) throw new ForbiddenException('Invalid link');
 
@@ -61,13 +66,23 @@ export class AuthService {
     user.emailConfirmed = new Date();
     await this.usersService.update(userId, user);
 
-    const session = this.generateSession(user.id);
+    const session = await this.sessionService.generateSession({
+      userId: user.id,
+      ip,
+      device,
+    });
 
     return { session, message: new MessageResponse('Email confirmed') };
   }
 
-  private generateSession(sessionId: string) {
-    //TODO: use redis
-    return this.jwtService.sign({ sessionId });
+  async logout(sessionId: string) {
+    await this.sessionService.deleteSession(sessionId);
+  }
+
+  async updateSession(currentSession: SessionEntity) {
+    return this.sessionService.updateSession({
+      ...currentSession,
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+    });
   }
 }

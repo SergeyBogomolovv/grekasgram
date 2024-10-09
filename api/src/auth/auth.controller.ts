@@ -1,8 +1,16 @@
-import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -13,6 +21,8 @@ import {
 import { MessageResponse } from 'src/common/message-response';
 import { ConfirmEmailDto } from './dto/confirm.dto';
 import { HttpAuthGuard } from './guards/http-auth.guard';
+import { HttpSession } from './decorators/http-session.decorator';
+import { SessionEntity } from 'src/sessions/entities/session.entity';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -25,8 +35,16 @@ export class AuthController {
   })
   @ApiOperation({ summary: 'Вход в аккаунт' })
   @Post('login')
-  async login(@Body() dto: LoginDto, @Res() res: Response) {
-    const { message, session } = await this.authService.login(dto);
+  async login(
+    @Body() dto: LoginDto,
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
+    const { message, session } = await this.authService.login(
+      dto,
+      req.ip,
+      req.headers['user-agent'],
+    );
     return this.setCookie(res, session).json(message);
   }
 
@@ -46,8 +64,16 @@ export class AuthController {
     type: MessageResponse,
   })
   @Post('confirm-email')
-  async confirmEmail(@Body() dto: ConfirmEmailDto, @Res() res: Response) {
-    const { session, message } = await this.authService.confirmEmail(dto.token);
+  async confirmEmail(
+    @Body() dto: ConfirmEmailDto,
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
+    const { session, message } = await this.authService.confirmEmail(
+      dto.token,
+      req.ip,
+      req.headers['user-agent'],
+    );
 
     return this.setCookie(res, session).json(message);
   }
@@ -57,11 +83,13 @@ export class AuthController {
     description: 'User logged out',
     type: MessageResponse,
   })
+  @UseGuards(HttpAuthGuard)
   @Post('logout')
-  async logout(@Res() res: Response) {
+  async logout(@Res() res: Response, @HttpSession('id') sessionId: string) {
+    await this.authService.logout(sessionId);
     return res
       .clearCookie('session')
-      .json(new MessageResponse('Logout success'));
+      .json(new MessageResponse('Logout sussessfully'));
   }
 
   @ApiOperation({ summary: 'Проверка и обновление сессии' })
@@ -69,9 +97,14 @@ export class AuthController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @UseGuards(HttpAuthGuard)
   @Get('validate-session')
-  async getSession(@Res() res: Response) {
-    const session = res.locals.session;
-    return res.json(session);
+  async getSession(
+    @HttpSession() session: SessionEntity,
+    @Res() res: Response,
+  ) {
+    const newSession = await this.authService.updateSession(session);
+    return this.setCookie(res, newSession).json(
+      new MessageResponse('Session updated'),
+    );
   }
 
   private setCookie(res: Response, session: string) {

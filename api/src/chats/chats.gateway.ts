@@ -10,9 +10,9 @@ import {
 } from '@nestjs/websockets';
 import { ChatsService } from './chats.service';
 import { Socket } from 'socket.io';
-import { WsUser } from 'src/common/ws-user.decorator';
 import { UseGuards } from '@nestjs/common';
 import { WsAuthGuard } from 'src/auth/guards/ws-auth.guard';
+import { WsSession } from 'src/auth/decorators/ws-user.decorator';
 
 @UseGuards(WsAuthGuard)
 @WebSocketGateway({
@@ -25,7 +25,7 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() wss: Socket;
   constructor(private readonly chatsService: ChatsService) {}
 
-  handleConnection(@WsUser('userId') userId: string) {
+  handleConnection(@WsSession('userId') userId: string) {
     console.log('connected', userId);
   }
 
@@ -37,7 +37,7 @@ export class ChatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleMessage(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: string,
-    @WsUser('userId') userId: string,
+    @WsSession('userId') userId: string,
   ): WsResponse<string> {
     console.log(userId);
     console.log(payload);

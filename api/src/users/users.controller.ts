@@ -9,9 +9,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { HttpUser } from 'src/common/http-user.decorator';
 import {
-  ApiBearerAuth,
   ApiConsumes,
   ApiCreatedResponse,
   ApiOkResponse,
@@ -24,6 +22,7 @@ import { UserDto } from './dto/user.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { HttpAuthGuard } from 'src/auth/guards/http-auth.guard';
 import { CacheInterceptor } from '@nestjs/cache-manager';
+import { HttpSession } from 'src/auth/decorators/http-session.decorator';
 
 @ApiTags('users')
 @Controller('users')
@@ -31,23 +30,21 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @ApiOperation({ summary: 'Получение информации о профиле' })
-  @ApiBearerAuth()
   @ApiOkResponse({ type: UserDto, description: 'Get user profile' })
   @UseGuards(HttpAuthGuard)
   @Get('me')
-  getProfile(@HttpUser('userId') userId: string) {
+  getProfile(@HttpSession('userId') userId: string) {
     return this.usersService.getProfile(userId);
   }
 
   @ApiOperation({ summary: 'Обновление профиля пользователя' })
-  @ApiBearerAuth()
   @ApiCreatedResponse({ type: UserDto })
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('avatar'))
   @Post('update-profile')
   @UseGuards(HttpAuthGuard)
   updateUsersProfile(
-    @HttpUser('userId') userId: string,
+    @HttpSession('userId') userId: string,
     @UploadedFile() avatar: Express.Multer.File,
     @Body() dto: UpdateProfileDto,
   ) {
