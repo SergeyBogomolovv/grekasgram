@@ -21,12 +21,12 @@ export class HttpAuthGuard implements CanActivate {
     }
 
     try {
-      const user = await this.sessionService.verifySession(token);
-      if (!user) {
+      const session = await this.sessionService.verifySession(token);
+      if (!session) {
         response.clearCookie('session');
         throw new UnauthorizedException('Unauthorized');
       }
-      request['session'] = user;
+      request['session'] = session;
       return true;
     } catch (error) {
       throw new UnauthorizedException('Unauthorized');

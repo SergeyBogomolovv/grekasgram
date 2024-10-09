@@ -12,7 +12,7 @@ import { ChatsService } from './chats.service';
 import { Socket } from 'socket.io';
 import { UseGuards } from '@nestjs/common';
 import { WsAuthGuard } from 'src/auth/guards/ws-auth.guard';
-import { WsSession } from 'src/auth/decorators/ws-user.decorator';
+import { WsSession } from 'src/auth/decorators/ws-session.decorator';
 
 @UseGuards(WsAuthGuard)
 @WebSocketGateway({

@@ -17,13 +17,13 @@ export class WsAuthGuard implements CanActivate {
     }
 
     try {
-      const user = await this.sessionService.verifySession(token);
-      if (!user) {
+      const session = await this.sessionService.verifySession(token);
+      if (!session) {
         client.disconnect();
         throw new WsException('Unauthorized');
       }
 
-      client.request['session'] = user;
+      client.request['session'] = session;
       return true;
     } catch (error) {
       throw new WsException('Unauthorized');

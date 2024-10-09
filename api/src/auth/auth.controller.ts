@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Req,
   Res,
@@ -22,7 +23,7 @@ import { MessageResponse } from 'src/common/message-response';
 import { ConfirmEmailDto } from './dto/confirm.dto';
 import { HttpAuthGuard } from './guards/http-auth.guard';
 import { HttpSession } from './decorators/http-session.decorator';
-import { SessionEntity } from 'src/sessions/entities/session.entity';
+import { SessionDto } from 'src/sessions/dto/session.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -86,25 +87,39 @@ export class AuthController {
   @UseGuards(HttpAuthGuard)
   @Post('logout')
   async logout(@Res() res: Response, @HttpSession('id') sessionId: string) {
-    await this.authService.logout(sessionId);
-    return res
-      .clearCookie('session')
-      .json(new MessageResponse('Logout sussessfully'));
+    const message = await this.authService.logout(sessionId);
+    return res.clearCookie('session').json(message);
   }
 
   @ApiOperation({ summary: 'Проверка и обновление сессии' })
-  @ApiOkResponse({ description: 'Session validated' })
+  @ApiOkResponse({ description: 'Session validated', type: MessageResponse })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @UseGuards(HttpAuthGuard)
   @Get('validate-session')
-  async getSession(
-    @HttpSession() session: SessionEntity,
+  async validateSession(
+    @HttpSession('id') sessionId: string,
     @Res() res: Response,
   ) {
-    const newSession = await this.authService.updateSession(session);
-    return this.setCookie(res, newSession).json(
-      new MessageResponse('Session updated'),
-    );
+    const { session, message } = await this.authService.renewSession(sessionId);
+    return this.setCookie(res, session).json(message);
+  }
+
+  @ApiOperation({ summary: 'Получение сессий пользователя' })
+  @ApiOkResponse({ description: 'Sessions data', type: [SessionDto] })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @UseGuards(HttpAuthGuard)
+  @Get('all-sessions')
+  async getSession(@HttpSession('userId') userId: string) {
+    return this.authService.getUserSessions(userId);
+  }
+
+  @ApiOperation({ summary: 'Выход с определенной сессии' })
+  @ApiCreatedResponse({ description: 'Выход успешен', type: MessageResponse })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @UseGuards(HttpAuthGuard)
+  @Post('logout-from-device/:sessionId')
+  async logoutFromDevice(@Param('sessionId') sessionId: string) {
+    return this.authService.logout(sessionId);
   }
 
   private setCookie(res: Response, session: string) {

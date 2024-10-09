@@ -9,13 +9,17 @@ export class LinksService {
 
   async generateLink(userId: string) {
     const link = v4();
-    await this.cache.set(link, { userId }, 0);
+    await this.cache.set(this.linkKey(link), userId, 0);
     return link;
   }
 
   async confirmLink(link: string) {
-    const userId = (await this.cache.get<{ userId: string }>(link))?.userId;
-    await this.cache.del(link);
+    const userId = await this.cache.get<string>(this.linkKey(link));
+    await this.cache.del(this.linkKey(link));
     return userId;
+  }
+
+  private linkKey(link: string) {
+    return `link:${link}`;
   }
 }

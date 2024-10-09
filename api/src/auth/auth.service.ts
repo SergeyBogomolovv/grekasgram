@@ -11,7 +11,6 @@ import { MessageResponse } from 'src/common/message-response';
 import { LinksService } from './links.service';
 import { MailService } from 'src/mail/mail.service';
 import { SessionsService } from 'src/sessions/sessions.service';
-import { SessionEntity } from 'src/sessions/entities/session.entity';
 
 @Injectable()
 export class AuthService {
@@ -77,12 +76,16 @@ export class AuthService {
 
   async logout(sessionId: string) {
     await this.sessionService.deleteSession(sessionId);
+
+    return new MessageResponse('Logout sussessfully');
   }
 
-  async updateSession(currentSession: SessionEntity) {
-    return this.sessionService.updateSession({
-      ...currentSession,
-      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
-    });
+  async renewSession(currentSessionId: string) {
+    const session = await this.sessionService.renewSession(currentSessionId);
+    return { session, message: new MessageResponse('Session renewed') };
+  }
+
+  async getUserSessions(userId: string) {
+    return this.sessionService.getUserSessions(userId);
   }
 }
