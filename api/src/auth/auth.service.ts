@@ -90,7 +90,6 @@ export class AuthService {
   async renewSession(currentSessionId: string) {
     const session = await this.sessionService.renewSession(currentSessionId);
 
-    this.logger.debug(`Session ${currentSessionId} renewed`);
     return { session, message: new MessageResponse('Session renewed') };
   }
 
