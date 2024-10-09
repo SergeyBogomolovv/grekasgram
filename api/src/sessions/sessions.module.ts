@@ -14,7 +14,7 @@ import { SessionEntity } from './entities/session.entity';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         secret: config.get('JWT_SECRET'),
-        expiresIn: '30d',
+        expiresIn: '7d',
       }),
     }),
   ],

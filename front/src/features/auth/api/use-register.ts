@@ -26,9 +26,7 @@ export const useRegister = (
     },
     onSuccess: () => {
       form.reset();
-      setSuccessMessage(
-        'Письмо с кодом подтверждения было отправлено на вашу почту',
-      );
+      setSuccessMessage('Код подтверждения отправлен на вашу почту');
     },
     onError: (error) => {
       if (isAxiosError(error) && error.response?.status === 409) {

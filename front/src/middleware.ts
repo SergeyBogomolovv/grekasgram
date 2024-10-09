@@ -11,8 +11,7 @@ export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const isOnPublicRoute = PUBLIC_ROUTES.includes(path);
 
-  const session = req.cookies.get('session')?.value;
-  const isAuthenticated = await validateSession(session);
+  const isAuthenticated = await validateSession();
 
   if (!isOnPublicRoute && !isAuthenticated) {
     return NextResponse.redirect(

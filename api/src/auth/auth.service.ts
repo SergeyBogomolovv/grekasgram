@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  Logger,
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { hash, compare, genSaltSync } from 'bcrypt';
@@ -14,6 +15,7 @@ import { SessionsService } from 'src/sessions/sessions.service';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
   constructor(
     private usersService: UsersService,
     private linksService: LinksService,
@@ -38,6 +40,8 @@ export class AuthService {
       device,
     });
 
+    this.logger.debug(`User ${user.email} logined`);
+
     return { session, message: new MessageResponse('Login successfully') };
   }
 
@@ -53,6 +57,8 @@ export class AuthService {
     const verifyLink = await this.linksService.generateLink(user.id);
 
     this.mailService.sendVerifyEmail(verifyLink, user.email);
+
+    this.logger.debug(`User ${user.email} registered`);
 
     return new MessageResponse('Confirmation email sent');
   }
@@ -71,17 +77,20 @@ export class AuthService {
       device,
     });
 
+    this.logger.debug(`User ${user.email} confirmed email`);
+
     return { session, message: new MessageResponse('Email confirmed') };
   }
 
   async logout(sessionId: string) {
     await this.sessionService.deleteSession(sessionId);
-
     return new MessageResponse('Logout sussessfully');
   }
 
   async renewSession(currentSessionId: string) {
     const session = await this.sessionService.renewSession(currentSessionId);
+
+    this.logger.debug(`Session ${currentSessionId} renewed`);
     return { session, message: new MessageResponse('Session renewed') };
   }
 

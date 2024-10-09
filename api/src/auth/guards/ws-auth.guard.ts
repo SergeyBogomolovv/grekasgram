@@ -19,7 +19,6 @@ export class WsAuthGuard implements CanActivate {
     try {
       const session = await this.sessionService.verifySession(token);
       if (!session) {
-        client.disconnect();
         throw new WsException('Unauthorized');
       }
 

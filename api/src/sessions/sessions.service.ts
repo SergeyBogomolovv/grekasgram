@@ -1,4 +1,9 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,6 +15,7 @@ import { SessionDto } from './dto/session.dto';
 
 @Injectable()
 export class SessionsService {
+  private readonly logger = new Logger(SessionsService.name);
   constructor(
     @Inject(CACHE_MANAGER) private readonly cache: Cache,
     @InjectRepository(SessionEntity)
@@ -19,6 +25,7 @@ export class SessionsService {
 
   async generateSession(dto: CreateSessionDto): Promise<string> {
     const session = await this.createSession(dto);
+    this.logger.debug(`Session ${session.id} for user ${dto.userId} created`);
     return this.jwtService.sign({ sessionId: session.id });
   }
 
@@ -29,12 +36,15 @@ export class SessionsService {
     return sessions.map((session) => new SessionDto(session));
   }
 
-  verifySession(token: string): Promise<SessionEntity | null> {
+  async verifySession(token: string): Promise<SessionEntity | null> {
     try {
       const { sessionId } = this.jwtService.verify(token);
       if (!sessionId) return null;
 
-      return this.getSession(sessionId);
+      const session = await this.getSession(sessionId);
+      if (!session) return null;
+
+      return session;
     } catch (error) {
       return null;
     }
@@ -43,6 +53,7 @@ export class SessionsService {
   async deleteSession(sessionId: string): Promise<void> {
     await this.cache.del(this.sessionKey(sessionId));
     await this.sessionsRepository.delete({ id: sessionId });
+    this.logger.debug(`Session ${sessionId} deleted`);
   }
 
   async renewSession(sessionId: string): Promise<string> {
@@ -57,19 +68,29 @@ export class SessionsService {
       expiresAt: new Date(Date.now() + this.sessionLifetime),
     });
 
+    await this.cache.del(this.sessionKey(sessionId));
+    await this.cache.set(
+      this.sessionKey(newSession.id),
+      newSession,
+      this.sessionLifetime,
+    );
+
     return this.jwtService.sign({ sessionId: newSession.id });
   }
 
   private async createSession(dto: CreateSessionDto) {
-    const session = await this.sessionsRepository.save({
-      ...this.sessionsRepository.create(dto),
-      expiresAt: new Date(Date.now() + this.sessionLifetime),
-    });
+    const session = await this.sessionsRepository.save(
+      this.sessionsRepository.create({
+        ...dto,
+        expiresAt: new Date(Date.now() + this.sessionLifetime),
+      }),
+    );
     await this.cache.set(
       this.sessionKey(session.id),
       session,
       this.sessionLifetime,
     );
+
     return session;
   }
 
@@ -97,7 +118,7 @@ export class SessionsService {
     return session;
   }
 
-  private sessionLifetime = 1000 * 60 * 60 * 24 * 30;
+  private sessionLifetime = 1000 * 60 * 60 * 24 * 7;
 
   private sessionKey(id: string) {
     return `session:${id}`;
