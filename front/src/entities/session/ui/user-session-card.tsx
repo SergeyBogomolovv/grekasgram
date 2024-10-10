@@ -21,6 +21,18 @@ export default function UserSessionCard({
   session: SessionEntity;
   isCurrent?: boolean;
 }) {
+  function clickHandler() {
+    if (isCurrent) {
+      logoutFromOtherDevices().then(() =>
+        toast.success('Вы успешно вышли из других сеансов'),
+      );
+    } else {
+      deleteSession(session.id).then(() =>
+        toast.success('Вы успешно завершили сеанс'),
+      );
+    }
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -37,17 +49,8 @@ export default function UserSessionCard({
       <CardFooter>
         <Button
           variant="destructive"
-          onClick={() => {
-            if (isCurrent) {
-              logoutFromOtherDevices().then(() =>
-                toast.success('Вы успешно вышли из других сеансов'),
-              );
-            } else {
-              deleteSession(session.id).then(() =>
-                toast.success('Вы успешно завершили сеанс'),
-              );
-            }
-          }}
+          onClick={clickHandler}
+          data-testid="user-session-card-button"
         >
           {isCurrent ? 'Выйти со всех других устройств' : 'Завершить сеанс'}
         </Button>

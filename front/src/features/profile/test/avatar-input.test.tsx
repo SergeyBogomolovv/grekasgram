@@ -1,5 +1,4 @@
-import { fireEvent, screen } from '@testing-library/react';
-import { renderComponentWithQueryClient } from '@test/render-component-with-query';
+import { fireEvent, render, screen } from '@testing-library/react';
 import AvatarInput from '../ui/avatar-input';
 import { UseFormReturn } from 'react-hook-form';
 import { vi } from 'vitest';
@@ -13,9 +12,7 @@ describe('AvatarInput', () => {
     global.URL.createObjectURL = vi.fn(() => 'mocked-url');
   });
   it('should render fallback (SVG) when no avatarUrl is provided', () => {
-    renderComponentWithQueryClient(
-      <AvatarInput form={mockForm} avatarUrl={null} />,
-    );
+    render(<AvatarInput form={mockForm} avatarUrl={null} />);
 
     const fallbackIcon = screen.getByLabelText('Аватар пользователя');
     expect(fallbackIcon).toBeInTheDocument();
@@ -23,9 +20,7 @@ describe('AvatarInput', () => {
   });
 
   it('should open file input when button is clicked', () => {
-    renderComponentWithQueryClient(
-      <AvatarInput form={mockForm} avatarUrl="initial-avatar-url" />,
-    );
+    render(<AvatarInput form={mockForm} avatarUrl="initial-avatar-url" />);
 
     const button = screen.getByTestId('avatar-input-button');
     const fileInput = screen.getByTestId('avatar-input');
