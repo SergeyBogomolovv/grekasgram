@@ -1,16 +1,15 @@
 'use server';
 import { queryClient } from '@/app/config';
 import { userSchema } from '@/entities/user';
-import { $api } from '@/shared/api';
-import { cookies } from 'next/headers';
+import { fetcher } from '@/shared/api/fetcher';
 
 export const getProfile = async () => {
-  const { data } = await $api.get('/users/me', {
-    headers: {
-      Cookie: cookies().toString(),
-    },
-  });
-  const parsed = userSchema.parse(data);
-  queryClient.setQueryData(['profile'], parsed);
-  return parsed;
+  try {
+    const data = await fetcher('/users/me', { tags: ['profile'] });
+    const parsed = userSchema.parse(data);
+    queryClient.setQueryData(['profile'], parsed);
+    return parsed;
+  } catch (error) {
+    return null;
+  }
 };

@@ -1,17 +1,13 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { Socket } from 'socket.io';
-import { Observable } from 'rxjs';
 import { WsException } from '@nestjs/websockets';
-import { SessionPayload } from '../entities/session';
 import { parse } from 'cookie';
+import { SessionsService } from 'src/sessions/sessions.service';
 
 @Injectable()
 export class WsAuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  constructor(private sessionService: SessionsService) {}
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const client: Socket = context.switchToWs().getClient();
 
     const token = parse(client.handshake.headers.cookie).session;
@@ -21,12 +17,12 @@ export class WsAuthGuard implements CanActivate {
     }
 
     try {
-      const user = this.jwtService.verify<SessionPayload>(token);
-      if (!user) {
+      const session = await this.sessionService.verifySession(token);
+      if (!session) {
         throw new WsException('Unauthorized');
       }
 
-      client.request['user'] = user;
+      client.request['session'] = session;
       return true;
     } catch (error) {
       throw new WsException('Unauthorized');

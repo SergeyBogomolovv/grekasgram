@@ -1,3 +1,4 @@
+import { SessionEntity } from '../../sessions/entities/session.entity';
 import { ChatEntity } from '../../chats/entities/chat.entity';
 import { MessageEntity } from '../../messages/entities/message.entity';
 import {
@@ -46,4 +47,7 @@ export class UserEntity {
 
   @OneToMany(() => MessageEntity, (message) => message.from)
   messages: MessageEntity[];
+
+  @OneToMany(() => SessionEntity, (session) => session.user)
+  sessions: SessionEntity[];
 }

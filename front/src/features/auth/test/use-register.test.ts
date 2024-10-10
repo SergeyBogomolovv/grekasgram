@@ -51,7 +51,7 @@ describe('useRegister', () => {
 
     expect(mockReset).toHaveBeenCalled();
     expect(setSuccessMessage).toHaveBeenCalledWith(
-      'Письмо с кодом подтверждения было отправлено на вашу почту',
+      'Код подтверждения отправлен на вашу почту',
     );
   });
 

@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  Logger,
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { hash, compare, genSaltSync } from 'bcrypt';
@@ -10,19 +11,19 @@ import { RegisterDto } from './dto/register.dto';
 import { MessageResponse } from 'src/common/message-response';
 import { LinksService } from './links.service';
 import { MailService } from 'src/mail/mail.service';
-import { SessionPayload } from './entities/session';
-import { JwtService } from '@nestjs/jwt';
+import { SessionsService } from 'src/sessions/sessions.service';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService,
     private linksService: LinksService,
     private mailService: MailService,
+    private sessionService: SessionsService,
   ) {}
 
-  async login(dto: LoginDto) {
+  async login(dto: LoginDto, ip: string, device: string) {
     const user = await this.usersService.findOneByEmailOrFail(dto.email);
 
     if (!user.emailConfirmed) {
@@ -33,7 +34,13 @@ export class AuthService {
 
     if (!isPasswordMath) throw new BadRequestException('Invalid credentials');
 
-    const session = this.generateSession(user.id);
+    const session = await this.sessionService.generateSession({
+      userId: user.id,
+      ip,
+      device,
+    });
+
+    this.logger.debug(`User ${user.email} logined`);
 
     return { session, message: new MessageResponse('Login successfully') };
   }
@@ -51,10 +58,12 @@ export class AuthService {
 
     this.mailService.sendVerifyEmail(verifyLink, user.email);
 
+    this.logger.debug(`User ${user.email} registered`);
+
     return new MessageResponse('Confirmation email sent');
   }
 
-  async confirmEmail(link: string) {
+  async confirmEmail(link: string, ip: string, device: string) {
     const userId = await this.linksService.confirmLink(link);
     if (!userId) throw new ForbiddenException('Invalid link');
 
@@ -62,13 +71,34 @@ export class AuthService {
     user.emailConfirmed = new Date();
     await this.usersService.update(userId, user);
 
-    const session = this.generateSession(user.id);
+    const session = await this.sessionService.generateSession({
+      userId: user.id,
+      ip,
+      device,
+    });
+
+    this.logger.debug(`User ${user.email} confirmed email`);
 
     return { session, message: new MessageResponse('Email confirmed') };
   }
 
-  private generateSession(userId: string) {
-    const session = new SessionPayload({ userId });
-    return this.jwtService.sign({ ...session });
+  async logout(sessionId: string) {
+    await this.sessionService.deleteSession(sessionId);
+    return new MessageResponse('Logout sussessfully');
+  }
+
+  async logoutFromOtherDevices(sessionId: string) {
+    await this.sessionService.logoutFromOtherDevices(sessionId);
+    return new MessageResponse('Logout sussessfully');
+  }
+
+  async renewSession(currentSessionId: string) {
+    const session = await this.sessionService.renewSession(currentSessionId);
+
+    return { session, message: new MessageResponse('Session renewed') };
+  }
+
+  async getUserSessions(userId: string) {
+    return this.sessionService.getUserSessions(userId);
   }
 }

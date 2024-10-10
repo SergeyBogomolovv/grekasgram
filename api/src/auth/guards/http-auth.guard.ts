@@ -4,17 +4,13 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { Observable } from 'rxjs';
-import { SessionPayload } from '../entities/session';
+import { SessionsService } from 'src/sessions/sessions.service';
 
 @Injectable()
 export class HttpAuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  constructor(private sessionService: SessionsService) {}
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
 
     const token = request.cookies.session;
@@ -24,10 +20,11 @@ export class HttpAuthGuard implements CanActivate {
     }
 
     try {
-      const user = this.jwtService.verify<SessionPayload>(token);
-      if (!user) throw new UnauthorizedException('Unauthorized');
-
-      request['user'] = user;
+      const session = await this.sessionService.verifySession(token);
+      if (!session) {
+        throw new UnauthorizedException('Unauthorized');
+      }
+      request['session'] = session;
       return true;
     } catch (error) {
       throw new UnauthorizedException('Unauthorized');
