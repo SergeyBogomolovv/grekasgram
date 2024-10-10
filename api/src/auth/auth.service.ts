@@ -87,6 +87,11 @@ export class AuthService {
     return new MessageResponse('Logout sussessfully');
   }
 
+  async logoutFromOtherDevices(sessionId: string) {
+    await this.sessionService.logoutFromOtherDevices(sessionId);
+    return new MessageResponse('Logout sussessfully');
+  }
+
   async renewSession(currentSessionId: string) {
     const session = await this.sessionService.renewSession(currentSessionId);
 

@@ -122,6 +122,15 @@ export class AuthController {
     return this.authService.logout(sessionId);
   }
 
+  @ApiOperation({ summary: 'Выход с других сессий' })
+  @ApiCreatedResponse({ description: 'Выход успешен', type: MessageResponse })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @UseGuards(HttpAuthGuard)
+  @Post('logout-from-other-devices')
+  async logoutFromOtherDevices(@HttpSession('id') sessionId: string) {
+    return this.authService.logoutFromOtherDevices(sessionId);
+  }
+
   private setCookie(res: Response, session: string) {
     return res.cookie('session', session, {
       httpOnly: true,

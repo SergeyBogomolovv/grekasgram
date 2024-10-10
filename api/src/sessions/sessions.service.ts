@@ -78,6 +78,21 @@ export class SessionsService {
     return this.jwtService.sign({ sessionId: newSession.id });
   }
 
+  async logoutFromOtherDevices(sessionId: string): Promise<void> {
+    const currentSession = await this.sessionsRepository.findOne({
+      where: { id: sessionId },
+    });
+    const userSessions = await this.sessionsRepository.find({
+      where: { userId: currentSession.userId },
+    });
+
+    for (const session of userSessions) {
+      if (session.id !== sessionId) {
+        await this.deleteSession(session.id);
+      }
+    }
+  }
+
   private async createSession(dto: CreateSessionDto) {
     const session = await this.sessionsRepository.save(
       this.sessionsRepository.create({

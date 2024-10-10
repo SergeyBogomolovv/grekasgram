@@ -10,7 +10,7 @@ export interface Chat {
 export const chats: Chat[] = [
   {
     id: 1,
-    name: 'Шарипова Амина',
+    name: 'User 1',
     lastMessage: 'Hello do you know this',
     lastMessageAt: new Date(),
     isNew: true,
@@ -18,7 +18,7 @@ export const chats: Chat[] = [
   },
   {
     id: 2,
-    name: 'Письмак Виктория',
+    name: 'John Doe',
     lastMessage: 'Hello do you know this',
     lastMessageAt: new Date(),
     isNew: true,
@@ -26,13 +26,13 @@ export const chats: Chat[] = [
   },
   {
     id: 3,
-    name: 'Гришина Ксения',
+    name: 'Jane Dane',
     lastMessage: 'Hello do you know this',
     lastMessageAt: new Date(),
   },
   {
     id: 4,
-    name: 'Ермолов Егор',
+    name: 'Kate Smith',
     lastMessage: 'Hello do you know this',
     lastMessageAt: new Date(),
   },
