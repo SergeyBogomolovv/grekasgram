@@ -4,8 +4,12 @@ import { userSchema } from '@/entities/user';
 import { fetcher } from '@/shared/api/fetcher';
 
 export const getProfile = async () => {
-  const data = await fetcher('/users/me', { tags: ['profile'] });
-  const parsed = userSchema.parse(data);
-  queryClient.setQueryData(['profile'], parsed);
-  return parsed;
+  try {
+    const data = await fetcher('/users/me', { tags: ['profile'] });
+    const parsed = userSchema.parse(data);
+    queryClient.setQueryData(['profile'], parsed);
+    return parsed;
+  } catch (error) {
+    return null;
+  }
 };

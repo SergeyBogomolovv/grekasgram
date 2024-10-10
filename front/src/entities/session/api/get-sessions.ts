@@ -6,14 +6,18 @@ import { decodeSession } from '@/shared/lib/decode-session';
 import { fetcher } from '@/shared/api/fetcher';
 
 export const getSessions = async () => {
-  const res = await fetcher('/auth/all-sessions', {
-    tags: ['sessions'],
-  });
+  try {
+    const res = await fetcher('/auth/all-sessions', {
+      tags: ['sessions'],
+    });
 
-  const parsed = z.array(sessionSchema).parse(res);
-  const currentSessionId = await decodeSession();
-  return {
-    currentSession: parsed.find((session) => session.id === currentSessionId),
-    sessions: parsed.filter((session) => session.id !== currentSessionId),
-  };
+    const parsed = z.array(sessionSchema).parse(res);
+    const currentSessionId = await decodeSession();
+    return {
+      currentSession: parsed.find((session) => session.id === currentSessionId),
+      sessions: parsed.filter((session) => session.id !== currentSessionId),
+    };
+  } catch (error) {
+    return null;
+  }
 };

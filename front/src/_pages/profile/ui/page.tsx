@@ -9,9 +9,9 @@ export default async function ProfilePage() {
   return (
     <div className="flex flex-col gap-10 items-center w-full lg:p-10 md:p-8 sm:p-6 p-4">
       <h1 className="text-3xl font-bold self-start">Ваша учетная запись</h1>
-      <ProfileForm user={user} />
+      {!!user && <ProfileForm user={user} />}
       <SessionsList />
-      <PersonalInfo user={user} />
+      {!!user && <PersonalInfo user={user} />}
     </div>
   );
 }
