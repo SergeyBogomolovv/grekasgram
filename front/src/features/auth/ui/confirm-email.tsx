@@ -10,7 +10,6 @@ export default function ConfirmEmail() {
 
   const { mutate, isSuccess, isPending, isError } = useConfirmEmail();
 
-  //TODO: fix double sending token
   useEffect(() => {
     if (token) {
       mutate(token);

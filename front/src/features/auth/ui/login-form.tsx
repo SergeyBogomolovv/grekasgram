@@ -52,7 +52,6 @@ export default function LoginForm() {
                 <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input
-                    data-testid="email-input"
                     type="email"
                     autoComplete="email"
                     placeholder="email@example.com"
@@ -71,7 +70,6 @@ export default function LoginForm() {
                 <FormLabel>Пароль</FormLabel>
                 <FormControl>
                   <Input
-                    data-testid="password-input"
                     type="password"
                     autoComplete="current-password"
                     placeholder="******"
@@ -84,8 +82,8 @@ export default function LoginForm() {
           />
 
           <Button
-            size="lg"
             data-testid="login-button"
+            size="lg"
             type="submit"
             disabled={isPending}
           >
@@ -94,13 +92,7 @@ export default function LoginForm() {
           <FormError error={form.formState.errors.root?.message} />
         </div>
         <div className="flex items-center justify-center">
-          <Button
-            aria-label="go to register"
-            variant={'link'}
-            type="button"
-            asChild
-            className="mx-auto"
-          >
+          <Button variant={'link'} type="button" asChild className="mx-auto">
             <Link href="/register">
               У вас еще нету аккаунта? Зарегистрируйтесь
             </Link>

@@ -1,59 +1,95 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { Mock } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { render } from '@testing-library/react';
+import { describe, vi, expect, it, afterEach, Mock } from 'vitest';
 import LoginForm from '../ui/login-form';
-import { useLogin } from '../api/use-login';
+import { toast } from 'sonner';
+import { QueryProvider } from '@/config/providers';
+import { $api } from '@/shared/api';
+import { useRouter } from 'next/navigation';
 
-vi.mock('../api/use-login');
+vi.mock('@/shared/api', () => ({
+  $api: {
+    post: vi.fn(),
+  },
+}));
+
+vi.spyOn(toast, 'success');
+
+vi.mock('next/navigation');
 
 describe('LoginForm', () => {
-  it('should render correctly', () => {
-    (useLogin as Mock).mockReturnValue({
-      mutate: vi.fn(),
-      isPending: false,
-    });
+  const mockRouter = { refresh: vi.fn() };
 
-    render(<LoginForm />);
-
-    expect(screen.getByTestId('email-input')).toBeInTheDocument();
-    expect(screen.getByTestId('password-input')).toBeInTheDocument();
-    expect(screen.getByTestId('login-button')).toBeInTheDocument();
+  beforeEach(() => {
+    (useRouter as Mock).mockReturnValue(mockRouter);
   });
 
-  it('should call mutate', async () => {
-    const mockMutate = vi.fn();
-    (useLogin as Mock).mockReturnValue({
-      mutate: mockMutate,
-      isPending: false,
-    });
-
-    render(<LoginForm />);
-
-    fireEvent.change(screen.getByTestId('email-input'), {
-      target: { value: 'user@example.com' },
-    });
-    fireEvent.change(screen.getByTestId('password-input'), {
-      target: { value: 'password123' },
-    });
-
-    fireEvent.click(screen.getByTestId('login-button'));
-
-    await waitFor(() => {
-      expect(mockMutate).toHaveBeenCalledWith({
-        email: 'user@example.com',
-        password: 'password123',
-      });
-    });
+  afterEach(() => {
+    vi.clearAllMocks();
   });
 
-  it('should be disabled', () => {
-    (useLogin as Mock).mockReturnValue({
-      mutate: vi.fn(),
-      isPending: true,
+  it('should call post with correct input and show toast', async () => {
+    ($api.post as Mock).mockResolvedValue({ data: { message: 'ok' } });
+
+    const { getByLabelText, getByTestId } = render(
+      <QueryProvider>
+        <LoginForm />
+      </QueryProvider>,
+    );
+
+    const user = userEvent.setup();
+    await user.type(getByLabelText('Email'), 'email@example.com');
+    await user.type(getByLabelText('Пароль'), '123456');
+    await user.click(getByTestId('login-button'));
+
+    expect($api.post).toHaveBeenCalledWith('/auth/login', {
+      email: 'email@example.com',
+      password: '123456',
     });
 
-    render(<LoginForm />);
+    expect(toast.success).toHaveBeenCalledWith('Вы успешно вошли в аккаунт');
 
-    const button = screen.getByTestId('login-button');
-    expect(button).toBeDisabled();
+    expect(mockRouter.refresh).toHaveBeenCalled();
+  });
+
+  it('should not call post if form is invalid', async () => {
+    const { getByTestId } = render(
+      <QueryProvider>
+        <LoginForm />
+      </QueryProvider>,
+    );
+
+    const user = userEvent.setup();
+    await user.click(getByTestId('login-button'));
+
+    expect($api.post).not.toHaveBeenCalled();
+    expect(mockRouter.refresh).not.toHaveBeenCalled();
+  });
+
+  it('should show error message', async () => {
+    ($api.post as Mock).mockRejectedValue(new Error());
+
+    const { getByTestId, getByLabelText, getByText } = render(
+      <QueryProvider>
+        <LoginForm />
+      </QueryProvider>,
+    );
+
+    const user = userEvent.setup();
+    await user.type(getByLabelText('Email'), 'email@example.com');
+    await user.type(getByLabelText('Пароль'), '123456');
+    await user.click(getByTestId('login-button'));
+
+    expect($api.post).toHaveBeenCalledWith('/auth/login', {
+      email: 'email@example.com',
+      password: '123456',
+    });
+
+    expect(getByText('Введенны неверные данные')).toBeInTheDocument();
+
+    expect(toast.success).not.toHaveBeenCalledWith(
+      'Вы успешно вошли в аккаунт',
+    );
+    expect(mockRouter.refresh).not.toHaveBeenCalled();
   });
 });
