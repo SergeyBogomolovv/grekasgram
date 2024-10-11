@@ -15,14 +15,27 @@ import { BsSearch } from 'react-icons/bs';
 import { useSearch } from '../model/use-search';
 import NavButton from '@/shared/ui/nav-button';
 import { Tabs } from '@/shared/lib/tabs';
+import { useForm } from 'react-hook-form';
+import {
+  SearchInputFields,
+  SearchInputSchema,
+} from '../model/search-input.schema';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export default function SearchInput({ currentTab }: { currentTab: Tabs }) {
-  const { form, onSubmit } = useSearch();
+  const { onSubmit, query } = useSearch();
+
+  const form = useForm<SearchInputFields>({
+    resolver: zodResolver(SearchInputSchema),
+    defaultValues: {
+      query: query || '',
+    },
+  });
+
   return (
     <Form {...form}>
       <form
-        data-testid="search-form"
-        onSubmit={onSubmit}
+        onSubmit={form.handleSubmit(onSubmit)}
         className="w-full flex flex-col items-center gap-2 p-4 border-b-2"
       >
         <FormField
@@ -57,11 +70,7 @@ export default function SearchInput({ currentTab }: { currentTab: Tabs }) {
                   <BsSearch className="size-4" />
                 </Button>
                 <FormControl>
-                  <Input
-                    data-testid="search-input"
-                    {...field}
-                    placeholder="Поиск..."
-                  />
+                  <Input {...field} placeholder="Поиск..." />
                 </FormControl>
               </div>
             </FormItem>
