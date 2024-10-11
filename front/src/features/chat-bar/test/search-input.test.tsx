@@ -1,69 +1,46 @@
-import { render, screen, fireEvent, act } from '@testing-library/react';
-import { Mock } from 'vitest';
-import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import { render } from '@testing-library/react';
+import { Mock, describe, it, expect, vi, beforeEach } from 'vitest';
+import { useRouter } from 'next/navigation';
+import userEvent from '@testing-library/user-event';
 import SearchInput from '../ui/search-input';
 
-vi.mock('next/navigation');
+vi.mock('next/navigation', () => ({
+  usePathname: vi.fn(() => '/current-path'),
+  useSearchParams: vi.fn(() => new URLSearchParams()),
+  useRouter: vi.fn(),
+}));
 
 describe('SearchInput', () => {
-  const mockRouter = {
-    push: vi.fn(),
-  };
-
-  const mockSearchParams = new URLSearchParams();
-
-  const mockPathname = '/chats';
+  const mockPush = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
-
-    (useRouter as Mock).mockReturnValue(mockRouter);
-
-    (useSearchParams as Mock).mockReturnValue(mockSearchParams);
-
-    (usePathname as Mock).mockReturnValue(mockPathname);
-  });
-
-  it('should render with default query value from searchParams', () => {
-    mockSearchParams.set('query', 'test-query');
-
-    render(<SearchInput currentTab="chats" />);
-
-    const input = screen.getByTestId('search-input');
-    expect(input).toHaveValue('test-query');
-  });
-
-  it('should update searchParams and call router.push on form submit', async () => {
-    mockSearchParams.delete('query');
-
-    render(<SearchInput currentTab="chats" />);
-
-    const input = screen.getByTestId('search-input');
-    const form = screen.getByTestId('search-form');
-
-    fireEvent.change(input, { target: { value: 'new-query' } });
-
-    await act(async () => {
-      fireEvent.submit(form);
+    (useRouter as Mock).mockReturnValue({
+      push: mockPush,
     });
-
-    expect(mockRouter.push).toHaveBeenCalledWith('/chats?query=new-query');
   });
 
-  it('should remove query param if input is cleared and form is submitted', async () => {
-    mockSearchParams.set('query', 'existing-query');
+  it('should set query', async () => {
+    const { getByPlaceholderText, getByRole } = render(
+      <SearchInput currentTab="chats" />,
+    );
+    const user = userEvent.setup();
 
-    render(<SearchInput currentTab="chats" />);
+    await user.type(getByPlaceholderText('Поиск...'), 'test-query');
+    await user.click(getByRole('button', { name: 'Поиск' }));
 
-    const input = screen.getByTestId('search-input');
-    const form = screen.getByTestId('search-form');
+    expect(mockPush).toHaveBeenCalledWith('/current-path?query=test-query');
+  });
 
-    fireEvent.change(input, { target: { value: '' } });
+  it('should remove query', async () => {
+    const { getByPlaceholderText, getByRole } = render(
+      <SearchInput currentTab="chats" />,
+    );
+    const user = userEvent.setup();
 
-    await act(async () => {
-      fireEvent.submit(form);
-    });
+    await user.clear(getByPlaceholderText('Поиск...'));
+    await user.click(getByRole('button', { name: 'Поиск' }));
 
-    expect(mockRouter.push).toHaveBeenCalledWith('/chats');
+    expect(mockPush).toHaveBeenCalledWith('/current-path');
   });
 });

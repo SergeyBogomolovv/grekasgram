@@ -1,9 +1,13 @@
 import { Mock } from 'vitest';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { renderHook } from '@testing-library/react';
 import { useCheckTab } from '../model/use-check-tab';
 
-vi.mock('next/navigation');
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(),
+  usePathname: vi.fn(() => '/current-path'),
+  useSearchParams: vi.fn(),
+}));
 
 describe('useCheckTab', () => {
   const mockRouter = {
@@ -15,7 +19,6 @@ describe('useCheckTab', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (useRouter as Mock).mockReturnValue(mockRouter);
-    (usePathname as Mock).mockReturnValue('/current-path');
     (useSearchParams as Mock).mockReturnValue(mockSearchParams);
   });
 

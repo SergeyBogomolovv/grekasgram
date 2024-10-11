@@ -1,8 +1,6 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { SearchInputFields, SearchInputSchema } from './search-input.schema';
+import { SearchInputFields } from './search-input.schema';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 export const useSearch = () => {
@@ -11,13 +9,6 @@ export const useSearch = () => {
   const router = useRouter();
 
   const query = searchParams.get('query');
-
-  const form = useForm<SearchInputFields>({
-    resolver: zodResolver(SearchInputSchema),
-    defaultValues: {
-      query: query || '',
-    },
-  });
 
   const onSubmit = (data: SearchInputFields) => {
     const newParams = new URLSearchParams(searchParams);
@@ -32,5 +23,5 @@ export const useSearch = () => {
     router.push(url);
   };
 
-  return { onSubmit: form.handleSubmit(onSubmit), form };
+  return { onSubmit, query };
 };

@@ -1,79 +1,101 @@
-import { screen } from '@testing-library/dom';
-import { Mock } from 'vitest';
+import { waitFor } from '@testing-library/dom';
+import { Mock, describe, vi, expect, it, afterEach } from 'vitest';
 import { useSearchParams } from 'next/navigation';
-import { useSearchUsers } from '@/entities/user';
+import { User } from '@/entities/user';
 import UsersList from '../ui/users-list';
 import { render } from '@testing-library/react';
+import { QueryProvider } from '@/config/providers';
+import { $api } from '@/shared/api';
 
-vi.mock('@/entities/user', async (importOriginal) => ({
-  ...(await importOriginal()),
-  useSearchUsers: vi.fn(),
+const mockUsers: User[] = [
+  {
+    id: 'test-id',
+    email: 'test-email',
+    createdAt: '123',
+    online: true,
+    lastOnlineAt: '123',
+    username: 'test-username',
+    about: 'test-about',
+    avatarUrl: 'test-avatar-url',
+  },
+  {
+    id: 'test-id2',
+    email: 'test-email2',
+    createdAt: '1233',
+    online: false,
+    lastOnlineAt: '1235',
+    username: 'test-username2',
+    about: null,
+    avatarUrl: null,
+  },
+];
+
+vi.mock('@/shared/api', () => ({
+  $api: {
+    get: vi.fn(),
+  },
 }));
 
-vi.mock('next/navigation');
+vi.mock('next/navigation', () => ({ useSearchParams: vi.fn() }));
 
 describe('UsersList', () => {
-  it('should render loading state', () => {
-    (useSearchParams as Mock).mockReturnValue({
-      get: vi.fn().mockReturnValue('test-query'),
-    });
-    (useSearchUsers as Mock).mockReturnValue({
-      data: null,
-      isLoading: true,
-    });
+  const mockGet = vi.fn();
+  const mockSearchParams = {
+    get: mockGet,
+  };
 
-    render(<UsersList />);
-
-    expect(screen.getByText('Загрузка...')).toBeInTheDocument();
+  beforeEach(() => {
+    (useSearchParams as Mock).mockReturnValue(mockSearchParams);
   });
 
-  it('should render no users found message', () => {
-    (useSearchParams as Mock).mockReturnValue({
-      get: vi.fn().mockReturnValue('test-query'),
-    });
-    (useSearchUsers as Mock).mockReturnValue({
-      data: [],
-      isLoading: false,
-    });
-
-    render(<UsersList />);
-
-    expect(screen.getByText('Пользователи не найдены')).toBeInTheDocument();
+  afterEach(() => {
+    vi.clearAllMocks();
   });
 
-  it('should render message when query is empty', () => {
-    (useSearchParams as Mock).mockReturnValue({
-      get: vi.fn().mockReturnValue(null),
-    });
-    (useSearchUsers as Mock).mockReturnValue({
-      data: null,
-      isLoading: false,
-    });
-
-    render(<UsersList />);
+  it('should render label if no query', () => {
+    mockGet.mockReturnValue(null);
+    const { getByText } = render(
+      <QueryProvider>
+        <UsersList />
+      </QueryProvider>,
+    );
 
     expect(
-      screen.getByText('Ищите пользователей, с которыми хотели бы пообщаться'),
+      getByText('Ищите пользователей, с которыми хотели бы пообщаться'),
     ).toBeInTheDocument();
   });
 
-  it('should render users list', () => {
-    const mockUsers = [
-      { id: '1', username: 'user1', about: 'about1', avatarUrl: 'avatar1' },
-      { id: '2', username: 'user2', about: 'about2', avatarUrl: 'avatar2' },
-    ];
+  it('should render users', async () => {
+    ($api.get as Mock).mockResolvedValue({ data: mockUsers });
 
-    (useSearchParams as Mock).mockReturnValue({
-      get: vi.fn().mockReturnValue('test-query'),
+    mockGet.mockReturnValue('test-query');
+    const { getByText } = render(
+      <QueryProvider>
+        <UsersList />
+      </QueryProvider>,
+    );
+
+    expect($api.get).toHaveBeenCalledOnce();
+
+    expect(getByText('Загрузка...')).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(getByText('test-username')).toBeInTheDocument();
+      expect(getByText('test-username2')).toBeInTheDocument();
     });
-    (useSearchUsers as Mock).mockReturnValue({
-      data: mockUsers,
-      isLoading: false,
+  });
+
+  it('should show not found', async () => {
+    ($api.get as Mock).mockResolvedValue({ data: [] });
+
+    const { getByText } = render(
+      <QueryProvider>
+        <UsersList />
+      </QueryProvider>,
+    );
+
+    await waitFor(() => {
+      expect(getByText('Пользователи не найдены')).toBeInTheDocument();
     });
-
-    render(<UsersList />);
-
-    expect(screen.getByText('user1')).toBeInTheDocument();
-    expect(screen.getByText('user2')).toBeInTheDocument();
   });
 });
