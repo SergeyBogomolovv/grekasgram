@@ -1,4 +1,4 @@
-import { Mock } from 'vitest';
+import { Mock, describe, it, vi, expect, beforeEach } from 'vitest';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { renderHook } from '@testing-library/react';
 import { useCheckTab } from '../model/use-check-tab';

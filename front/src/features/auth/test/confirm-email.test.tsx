@@ -8,32 +8,23 @@ import { QueryProvider } from '@/config/providers';
 
 vi.mock('next/navigation');
 
-vi.spyOn(toast, 'error');
-
-vi.mock('@/shared/api', () => ({
-  $api: {
-    post: vi.fn(),
-  },
-}));
-
 describe('ConfirmEmail', () => {
-  const mockRouter = {
-    refresh: vi.fn(),
-  };
+  const mockGet = vi.fn();
+  const mockRefresh = vi.fn();
 
   beforeEach(() => {
-    (useRouter as Mock).mockReturnValue(mockRouter);
+    (useRouter as Mock).mockReturnValue({ refresh: mockRefresh });
+    (useSearchParams as Mock).mockReturnValue({ get: mockGet });
   });
 
   afterEach(() => {
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('should call post if token exists', async () => {
-    ($api.post as Mock).mockResolvedValue({ data: { message: 'ok' } });
-    (useSearchParams as Mock).mockReturnValue({
-      get: vi.fn().mockReturnValue('test-token'),
-    });
+    vi.spyOn($api, 'post').mockResolvedValue({ data: { message: 'ok' } });
+
+    mockGet.mockReturnValue('test-token');
 
     render(
       <QueryProvider>
@@ -49,12 +40,12 @@ describe('ConfirmEmail', () => {
       }),
     );
 
-    await waitFor(() => expect(mockRouter.refresh).toHaveBeenCalled());
+    await waitFor(() => expect(mockRefresh).toHaveBeenCalled());
   });
   it('should not call post if token does not exist', async () => {
-    (useSearchParams as Mock).mockReturnValue({
-      get: vi.fn().mockReturnValue(null),
-    });
+    vi.spyOn($api, 'post').mockResolvedValue({ data: { message: 'ok' } });
+
+    mockGet.mockReturnValue(null);
 
     render(
       <QueryProvider>
@@ -63,13 +54,14 @@ describe('ConfirmEmail', () => {
     );
 
     await waitFor(() => expect($api.post).not.toHaveBeenCalled());
-    await waitFor(() => expect(mockRouter.refresh).not.toHaveBeenCalled());
+    await waitFor(() => expect(mockRefresh).not.toHaveBeenCalled());
   });
   it('should render error', async () => {
-    ($api.post as Mock).mockRejectedValue(new Error());
-    (useSearchParams as Mock).mockReturnValue({
-      get: vi.fn().mockReturnValue('test-token'),
-    });
+    const post = vi.spyOn($api, 'post').mockRejectedValue(new Error());
+
+    const error = vi.spyOn(toast, 'error');
+
+    mockGet.mockReturnValue('test-token');
 
     render(
       <QueryProvider>
@@ -77,9 +69,9 @@ describe('ConfirmEmail', () => {
       </QueryProvider>,
     );
 
-    await waitFor(() => expect($api.post).toHaveBeenCalledOnce());
+    await waitFor(() => expect(post).toHaveBeenCalledOnce());
     await waitFor(() =>
-      expect(toast.error).toHaveBeenCalledWith(
+      expect(error).toHaveBeenCalledWith(
         'Произошла ошибка подтверждения почты',
       ),
     );

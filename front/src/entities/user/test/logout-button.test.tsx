@@ -6,10 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { $api } from '@/shared/api';
 import { useRouter } from 'next/navigation';
 
-vi.mock('@/shared/api', () => ({
-  $api: { post: vi.fn() },
-}));
-
+vi.mock('@/shared/api');
 vi.mock('next/navigation');
 
 describe('LogoutButton', () => {

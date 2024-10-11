@@ -1,35 +1,29 @@
 import userEvent from '@testing-library/user-event';
 import { render } from '@testing-library/react';
-import { describe, vi, expect, it, afterEach, Mock } from 'vitest';
+import { describe, vi, expect, it, afterEach, Mock, beforeEach } from 'vitest';
 import LoginForm from '../ui/login-form';
 import { toast } from 'sonner';
 import { QueryProvider } from '@/config/providers';
 import { $api } from '@/shared/api';
 import { useRouter } from 'next/navigation';
 
-vi.mock('@/shared/api', () => ({
-  $api: {
-    post: vi.fn(),
-  },
-}));
-
-vi.spyOn(toast, 'success');
-
 vi.mock('next/navigation');
+vi.mock('@/shared/api');
 
 describe('LoginForm', () => {
-  const mockRouter = { refresh: vi.fn() };
+  const mockRefresh = vi.fn();
 
   beforeEach(() => {
-    (useRouter as Mock).mockReturnValue(mockRouter);
+    (useRouter as Mock).mockReturnValue({ refresh: mockRefresh });
   });
 
   afterEach(() => {
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('should call post with correct input and show toast', async () => {
-    ($api.post as Mock).mockResolvedValue({ data: { message: 'ok' } });
+    vi.spyOn($api, 'post').mockResolvedValue({ data: { message: 'ok' } });
+    vi.spyOn(toast, 'success');
 
     const { getByLabelText, getByTestId } = render(
       <QueryProvider>
@@ -49,7 +43,7 @@ describe('LoginForm', () => {
 
     expect(toast.success).toHaveBeenCalledWith('Вы успешно вошли в аккаунт');
 
-    expect(mockRouter.refresh).toHaveBeenCalled();
+    expect(mockRefresh).toHaveBeenCalled();
   });
 
   it('should not call post if form is invalid', async () => {
@@ -63,11 +57,13 @@ describe('LoginForm', () => {
     await user.click(getByTestId('login-button'));
 
     expect($api.post).not.toHaveBeenCalled();
-    expect(mockRouter.refresh).not.toHaveBeenCalled();
+    expect(mockRefresh).not.toHaveBeenCalled();
   });
 
   it('should show error message', async () => {
-    ($api.post as Mock).mockRejectedValue(new Error());
+    vi.spyOn($api, 'post').mockRejectedValue(new Error());
+
+    vi.spyOn(toast, 'success');
 
     const { getByTestId, getByLabelText, getByText } = render(
       <QueryProvider>
@@ -90,6 +86,6 @@ describe('LoginForm', () => {
     expect(toast.success).not.toHaveBeenCalledWith(
       'Вы успешно вошли в аккаунт',
     );
-    expect(mockRouter.refresh).not.toHaveBeenCalled();
+    expect(mockRefresh).not.toHaveBeenCalled();
   });
 });

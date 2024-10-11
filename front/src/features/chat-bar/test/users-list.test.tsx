@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { Mock, describe, vi, expect, it, afterEach } from 'vitest';
+import { Mock, describe, vi, expect, it, afterEach, beforeEach } from 'vitest';
 import { useSearchParams } from 'next/navigation';
 import { User } from '@/entities/user';
 import UsersList from '../ui/users-list';
@@ -30,26 +30,19 @@ const mockUsers: User[] = [
   },
 ];
 
-vi.mock('@/shared/api', () => ({
-  $api: {
-    get: vi.fn(),
-  },
-}));
-
 vi.mock('next/navigation', () => ({ useSearchParams: vi.fn() }));
 
 describe('UsersList', () => {
   const mockGet = vi.fn();
-  const mockSearchParams = {
-    get: mockGet,
-  };
 
   beforeEach(() => {
-    (useSearchParams as Mock).mockReturnValue(mockSearchParams);
+    (useSearchParams as Mock).mockReturnValue({
+      get: mockGet,
+    });
   });
 
   afterEach(() => {
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('should render label if no query', () => {
@@ -66,16 +59,16 @@ describe('UsersList', () => {
   });
 
   it('should render users', async () => {
-    ($api.get as Mock).mockResolvedValue({ data: mockUsers });
-
+    const get = vi.spyOn($api, 'get').mockResolvedValue({ data: mockUsers });
     mockGet.mockReturnValue('test-query');
+
     const { getByText } = render(
       <QueryProvider>
         <UsersList />
       </QueryProvider>,
     );
 
-    expect($api.get).toHaveBeenCalledOnce();
+    expect(get).toHaveBeenCalledOnce();
 
     expect(getByText('Загрузка...')).toBeInTheDocument();
 
@@ -86,7 +79,8 @@ describe('UsersList', () => {
   });
 
   it('should show not found', async () => {
-    ($api.get as Mock).mockResolvedValue({ data: [] });
+    vi.spyOn($api, 'get').mockResolvedValue({ data: [] });
+    mockGet.mockReturnValue('test-query');
 
     const { getByText } = render(
       <QueryProvider>

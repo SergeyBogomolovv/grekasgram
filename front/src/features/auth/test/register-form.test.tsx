@@ -1,4 +1,4 @@
-import { vi, describe, it, expect, Mock, afterEach } from 'vitest';
+import { vi, describe, it, expect, afterEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { render } from '@testing-library/react';
 import RegisterForm from '../ui/register-form';
@@ -6,19 +6,15 @@ import { $api } from '@/shared/api';
 import { QueryProvider } from '@/config/providers';
 import { AxiosError } from 'axios';
 
-vi.mock('@/shared/api', () => ({
-  $api: {
-    post: vi.fn(),
-  },
-}));
+vi.mock('@/shared/api');
 
 describe('RegisterForm', () => {
   afterEach(() => {
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('should call post with correct input and show success message', async () => {
-    ($api.post as Mock).mockResolvedValue({ data: { message: 'ok' } });
+    vi.spyOn($api, 'post').mockResolvedValue({ data: { message: 'ok' } });
 
     const { getByLabelText, getByRole, getByText } = render(
       <QueryProvider>
@@ -55,7 +51,7 @@ describe('RegisterForm', () => {
         data: {},
       } as any,
     );
-    ($api.post as Mock).mockRejectedValue(mockError);
+    vi.spyOn($api, 'post').mockRejectedValue(mockError);
 
     const { getByRole, getByLabelText, getByText } = render(
       <QueryProvider>
@@ -74,7 +70,7 @@ describe('RegisterForm', () => {
   });
 
   it('should show other error message', async () => {
-    ($api.post as Mock).mockRejectedValue(new Error());
+    vi.spyOn($api, 'post').mockRejectedValue(new Error());
 
     const { getByRole, getByLabelText, getByText } = render(
       <QueryProvider>

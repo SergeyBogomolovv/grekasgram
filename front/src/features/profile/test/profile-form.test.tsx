@@ -1,6 +1,6 @@
 import { QueryProvider } from '@/config/providers';
 import { render } from '@testing-library/react';
-import { vi, describe, expect, it, Mock, beforeEach } from 'vitest';
+import { vi, describe, expect, it, afterEach } from 'vitest';
 import ProfileForm from '../ui/profile-form';
 import { User } from '@/entities/user';
 import userEvent from '@testing-library/user-event';
@@ -18,21 +18,14 @@ const mockUser: User = {
   avatarUrl: 'test-avatar-url',
 };
 
-vi.mock('@/shared/api', () => ({
-  $api: {
-    post: vi.fn(),
-  },
-}));
-
-vi.spyOn(toast, 'error');
-
 describe('ProfileForm', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('should call post', async () => {
-    ($api.post as Mock).mockResolvedValue({ data: mockUser });
+    const post = vi.spyOn($api, 'post').mockResolvedValue({ data: mockUser });
+    const success = vi.spyOn(toast, 'success');
 
     const { getByPlaceholderText, getByRole } = render(
       <QueryProvider>
@@ -46,11 +39,15 @@ describe('ProfileForm', () => {
     await user.type(getByPlaceholderText('Обо мне'), 'test-about');
     await user.click(getByRole('button', { name: 'Сохранить' }));
 
-    expect($api.post).toHaveBeenCalledOnce();
+    expect(post).toHaveBeenCalledOnce();
+
+    expect(success).toHaveBeenCalledWith('Профиль обновлен');
   });
 
   it('should handle error', async () => {
-    ($api.post as Mock).mockRejectedValue(new Error());
+    vi.spyOn($api, 'post').mockRejectedValue(new Error());
+
+    const error = vi.spyOn(toast, 'error');
 
     const { getByRole } = render(
       <QueryProvider>
@@ -61,6 +58,8 @@ describe('ProfileForm', () => {
 
     await user.click(getByRole('button', { name: 'Сохранить' }));
 
-    expect(toast.error).toHaveBeenCalledOnce();
+    expect(error).toHaveBeenCalledWith(
+      'Произошла ошибка при обновлении профиля',
+    );
   });
 });
