@@ -57,11 +57,7 @@ export default function ProfileForm({ user }: { user: User }) {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input
-                        data-testid="username-input"
-                        placeholder="Имя пользователя"
-                        {...field}
-                      />
+                      <Input placeholder="Имя пользователя" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -74,7 +70,6 @@ export default function ProfileForm({ user }: { user: User }) {
                   <FormItem>
                     <FormControl>
                       <Textarea
-                        data-testid="about-info-input"
                         className="h-fit"
                         placeholder="Обо мне"
                         {...field}
@@ -87,11 +82,7 @@ export default function ProfileForm({ user }: { user: User }) {
             </div>
           </CardContent>
           <CardFooter>
-            <Button
-              data-testid="save-profile-button"
-              type="submit"
-              disabled={isPending}
-            >
+            <Button type="submit" disabled={isPending}>
               Сохранить
             </Button>
           </CardFooter>

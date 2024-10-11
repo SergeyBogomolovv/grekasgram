@@ -33,7 +33,6 @@ export default function AvatarInput({ avatarUrl, form }: Props) {
         <Tooltip>
           <TooltipTrigger asChild>
             <button
-              data-testid="avatar-input-button"
               type="button"
               className="relative group cursor-pointer p-0 aspect-square sm:size-24 size-32"
               onClick={() => fileInputRef.current?.click()}
