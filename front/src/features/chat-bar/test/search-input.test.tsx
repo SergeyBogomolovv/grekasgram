@@ -1,12 +1,17 @@
 import { render } from '@testing-library/react';
-import { Mock, describe, it, expect, vi, beforeEach } from 'vitest';
-import { useRouter } from 'next/navigation';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import {
+  ReadonlyURLSearchParams,
+  usePathname,
+  useRouter,
+} from 'next/navigation';
 import userEvent from '@testing-library/user-event';
 import SearchInput from '../ui/search-input';
 
-vi.mock('next/navigation', () => ({
+vi.mock('next/navigation', async (importOriginal) => ({
+  ...(await importOriginal()),
   usePathname: vi.fn(() => '/current-path'),
-  useSearchParams: vi.fn(() => new URLSearchParams()),
+  useSearchParams: vi.fn(() => new ReadonlyURLSearchParams()),
   useRouter: vi.fn(),
 }));
 
@@ -14,10 +19,15 @@ describe('SearchInput', () => {
   const mockPush = vi.fn();
 
   beforeEach(() => {
-    vi.clearAllMocks();
-    (useRouter as Mock).mockReturnValue({
+    vi.mocked(useRouter, { partial: true }).mockReturnValue({
       push: mockPush,
     });
+
+    vi.mocked(usePathname).mockReturnValue('/current-path');
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('should set query', async () => {

@@ -1,6 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import { render } from '@testing-library/react';
-import { describe, vi, expect, it, afterEach, Mock, beforeEach } from 'vitest';
+import { describe, vi, expect, it, afterEach, beforeEach } from 'vitest';
 import LoginForm from '../ui/login-form';
 import { toast } from 'sonner';
 import { QueryProvider } from '@/config/providers';
@@ -14,7 +14,9 @@ describe('LoginForm', () => {
   const mockRefresh = vi.fn();
 
   beforeEach(() => {
-    (useRouter as Mock).mockReturnValue({ refresh: mockRefresh });
+    vi.mocked(useRouter, { partial: true }).mockReturnValue({
+      refresh: mockRefresh,
+    });
   });
 
   afterEach(() => {
@@ -22,7 +24,7 @@ describe('LoginForm', () => {
   });
 
   it('should call post with correct input and show toast', async () => {
-    vi.spyOn($api, 'post').mockResolvedValue({ data: { message: 'ok' } });
+    vi.mocked($api.post).mockResolvedValue({ data: { message: 'ok' } });
     vi.spyOn(toast, 'success');
 
     const { getByLabelText, getByTestId } = render(
@@ -61,7 +63,7 @@ describe('LoginForm', () => {
   });
 
   it('should show error message', async () => {
-    vi.spyOn($api, 'post').mockRejectedValue(new Error());
+    vi.mocked($api.post).mockRejectedValue(new Error());
 
     vi.spyOn(toast, 'success');
 

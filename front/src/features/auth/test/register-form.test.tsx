@@ -14,7 +14,7 @@ describe('RegisterForm', () => {
   });
 
   it('should call post with correct input and show success message', async () => {
-    vi.spyOn($api, 'post').mockResolvedValue({ data: { message: 'ok' } });
+    vi.mocked($api.post).mockResolvedValue({ data: { message: 'ok' } });
 
     const { getByLabelText, getByRole, getByText } = render(
       <QueryProvider>
@@ -51,7 +51,7 @@ describe('RegisterForm', () => {
         data: {},
       } as any,
     );
-    vi.spyOn($api, 'post').mockRejectedValue(mockError);
+    vi.mocked($api.post).mockRejectedValue(mockError);
 
     const { getByRole, getByLabelText, getByText } = render(
       <QueryProvider>
@@ -70,7 +70,7 @@ describe('RegisterForm', () => {
   });
 
   it('should show other error message', async () => {
-    vi.spyOn($api, 'post').mockRejectedValue(new Error());
+    vi.mocked($api.post).mockRejectedValue(new Error());
 
     const { getByRole, getByLabelText, getByText } = render(
       <QueryProvider>

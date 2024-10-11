@@ -1,4 +1,4 @@
-import { Mock, it, describe, vi, expect, beforeEach, afterEach } from 'vitest';
+import { it, describe, vi, expect, beforeEach, afterEach } from 'vitest';
 import { render, waitFor } from '@testing-library/react';
 import { toast } from 'sonner';
 import { $api } from '@/shared/api';
@@ -13,8 +13,12 @@ describe('ConfirmEmail', () => {
   const mockRefresh = vi.fn();
 
   beforeEach(() => {
-    (useRouter as Mock).mockReturnValue({ refresh: mockRefresh });
-    (useSearchParams as Mock).mockReturnValue({ get: mockGet });
+    vi.mocked(useRouter, { partial: true }).mockReturnValue({
+      refresh: mockRefresh,
+    });
+    vi.mocked(useSearchParams, { partial: true }).mockReturnValue({
+      get: mockGet,
+    });
   });
 
   afterEach(() => {
@@ -31,8 +35,6 @@ describe('ConfirmEmail', () => {
         <ConfirmEmail />
       </QueryProvider>,
     );
-
-    //waitFor for useEffect
 
     await waitFor(() =>
       expect($api.post).toHaveBeenCalledWith('/auth/confirm-email', {

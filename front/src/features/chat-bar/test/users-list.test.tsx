@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { Mock, describe, vi, expect, it, afterEach, beforeEach } from 'vitest';
+import { describe, vi, expect, it, afterEach, beforeEach } from 'vitest';
 import { useSearchParams } from 'next/navigation';
 import { User } from '@/entities/user';
 import UsersList from '../ui/users-list';
@@ -30,13 +30,13 @@ const mockUsers: User[] = [
   },
 ];
 
-vi.mock('next/navigation', () => ({ useSearchParams: vi.fn() }));
+vi.mock('next/navigation');
 
 describe('UsersList', () => {
   const mockGet = vi.fn();
 
   beforeEach(() => {
-    (useSearchParams as Mock).mockReturnValue({
+    vi.mocked(useSearchParams, { partial: true }).mockReturnValue({
       get: mockGet,
     });
   });

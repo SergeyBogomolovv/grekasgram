@@ -1,6 +1,6 @@
 import { QueryProvider } from '@/config/providers';
 import { render } from '@testing-library/react';
-import { vi, describe, it, expect, Mock } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 import LogoutButton from '../ui/logout-button';
 import userEvent from '@testing-library/user-event';
 import { $api } from '@/shared/api';
@@ -13,9 +13,10 @@ describe('LogoutButton', () => {
   it('should call logout', async () => {
     const mockRefresh = vi.fn();
 
-    (useRouter as Mock).mockReturnValue({
+    vi.mocked(useRouter, { partial: true }).mockReturnValue({
       refresh: mockRefresh,
     });
+
     const { getByText } = render(
       <QueryProvider>
         <LogoutButton>Logout</LogoutButton>

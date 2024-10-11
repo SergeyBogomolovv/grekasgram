@@ -1,25 +1,30 @@
-import { Mock, describe, it, vi, expect, beforeEach } from 'vitest';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { describe, it, vi, expect, beforeEach, afterEach } from 'vitest';
+import {
+  ReadonlyURLSearchParams,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 import { renderHook } from '@testing-library/react';
 import { useCheckTab } from '../model/use-check-tab';
 
-vi.mock('next/navigation', () => ({
+vi.mock('next/navigation', async (importOriginal) => ({
+  ...(await importOriginal()),
   useRouter: vi.fn(),
   usePathname: vi.fn(() => '/current-path'),
   useSearchParams: vi.fn(),
 }));
 
 describe('useCheckTab', () => {
-  const mockRouter = {
-    push: vi.fn(),
-  };
-
-  const mockSearchParams = new URLSearchParams();
+  const mockPush = vi.fn();
+  const mockSearchParams = new ReadonlyURLSearchParams();
 
   beforeEach(() => {
-    vi.clearAllMocks();
-    (useRouter as Mock).mockReturnValue(mockRouter);
-    (useSearchParams as Mock).mockReturnValue(mockSearchParams);
+    vi.mocked(useRouter, { partial: true }).mockReturnValue({ push: mockPush });
+    vi.mocked(useSearchParams).mockReturnValue(mockSearchParams);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('should set default tab if current tab is invalid', () => {
@@ -27,7 +32,7 @@ describe('useCheckTab', () => {
 
     renderHook(() => useCheckTab());
 
-    expect(mockRouter.push).toHaveBeenCalledWith('/current-path?tab=chats');
+    expect(mockPush).toHaveBeenCalledWith('/current-path?tab=chats');
   });
 
   it('should not change the tab if it is valid', () => {
@@ -35,6 +40,6 @@ describe('useCheckTab', () => {
 
     renderHook(() => useCheckTab());
 
-    expect(mockRouter.push).not.toHaveBeenCalled();
+    expect(mockPush).not.toHaveBeenCalled();
   });
 });
