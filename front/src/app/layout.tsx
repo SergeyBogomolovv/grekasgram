@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 
 import './globals.css';
-import { QueryProvider, ThemeProvider } from './providers';
 import { Toaster } from '@/shared/ui/sonner';
+import { QueryProvider, ThemeProvider } from '@/config/providers';
 
 const font = Inter({
   subsets: ['latin'],
@@ -11,8 +11,8 @@ const font = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'WebChat',
-  description: 'WebChat app',
+  title: 'Grekasgram',
+  description: 'Online messenger',
 };
 
 export default function RootLayout({

@@ -1,6 +1,6 @@
 'use server';
 
-import { fetcher } from '@/shared/api/fetcher';
+import { fetcher } from '@/shared/api';
 import { revalidateTag } from 'next/cache';
 
 export const logoutFromOtherDevices = async () => {

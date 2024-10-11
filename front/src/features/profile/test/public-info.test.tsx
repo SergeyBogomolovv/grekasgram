@@ -1,9 +1,9 @@
-import { renderComponentWithQueryClient } from '@test/render-component-with-query';
 import PublicInfo from '../ui/profile-form';
 import { User } from '@/entities/user';
 import { fireEvent, screen, waitFor } from '@testing-library/dom';
 import { useUpdateProfile } from '@/entities/user';
 import { Mock } from 'vitest';
+import { render } from '@testing-library/react';
 
 const mockUser: User = {
   id: 'test-id',
@@ -24,7 +24,7 @@ describe('PublicInfo', () => {
       mutate: vi.fn(),
       isPending: false,
     });
-    renderComponentWithQueryClient(<PublicInfo user={mockUser} />);
+    render(<PublicInfo user={mockUser} />);
     expect(screen.getByDisplayValue('test-username')).toBeInTheDocument();
     expect(screen.getByDisplayValue('test-about')).toBeInTheDocument();
   });
@@ -35,7 +35,7 @@ describe('PublicInfo', () => {
       mutate: mockMutate,
       isPending: false,
     });
-    renderComponentWithQueryClient(<PublicInfo user={mockUser} />);
+    render(<PublicInfo user={mockUser} />);
     fireEvent.change(screen.getByTestId('username-input'), {
       target: { value: 'new-username' },
     });
@@ -56,7 +56,7 @@ describe('PublicInfo', () => {
       mutate: vi.fn(),
       isPending: true,
     });
-    renderComponentWithQueryClient(<PublicInfo user={mockUser} />);
+    render(<PublicInfo user={mockUser} />);
     expect(screen.getByTestId('save-profile-button')).toBeDisabled();
   });
 });

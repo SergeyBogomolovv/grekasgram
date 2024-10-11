@@ -3,21 +3,17 @@
 import { sessionSchema } from '../model/session.schema';
 import { z } from 'zod';
 import { decodeSession } from '@/shared/lib/decode-session';
-import { fetcher } from '@/shared/api/fetcher';
+import { fetcher } from '@/shared/api';
 
 export const getSessions = async () => {
-  try {
-    const res = await fetcher('/auth/all-sessions', {
-      tags: ['sessions'],
-    });
+  const res = await fetcher('/auth/all-sessions', {
+    tags: ['sessions'],
+    schema: z.array(sessionSchema),
+  });
 
-    const parsed = z.array(sessionSchema).parse(res);
-    const currentSessionId = await decodeSession();
-    return {
-      currentSession: parsed.find((session) => session.id === currentSessionId),
-      sessions: parsed.filter((session) => session.id !== currentSessionId),
-    };
-  } catch (error) {
-    return null;
-  }
+  const currentSessionId = await decodeSession();
+  return {
+    currentSession: res.find((session) => session.id === currentSessionId),
+    sessions: res.filter((session) => session.id !== currentSessionId),
+  };
 };
