@@ -1,15 +1,14 @@
 'use server';
-import { queryClient } from '@/app/config';
 import { userSchema } from '@/entities/user';
+import { queryClient } from '@/shared/api';
 import { fetcher } from '@/shared/api/fetcher';
 
 export const getProfile = async () => {
-  try {
-    const data = await fetcher('/users/me', { tags: ['profile'] });
-    const parsed = userSchema.parse(data);
-    queryClient.setQueryData(['profile'], parsed);
-    return parsed;
-  } catch (error) {
-    return null;
-  }
+  const profile = await fetcher('/users/me', {
+    tags: ['profile'],
+    schema: userSchema,
+  });
+
+  queryClient.setQueryData(['profile'], profile);
+  return profile;
 };

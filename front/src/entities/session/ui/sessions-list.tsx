@@ -7,10 +7,10 @@ export default async function SessionsList() {
     <section className="flex flex-col gap-4 w-full">
       <h3 className="font-bold text-2xl">Управление сеансами</h3>
       <div className="flex flex-col gap-4">
-        {data?.currentSession && (
+        {data.currentSession && (
           <UserSessionCard session={data.currentSession} isCurrent />
         )}
-        {data?.sessions.map((session) => (
+        {data.sessions.map((session) => (
           <UserSessionCard key={session.id} session={session} />
         ))}
       </div>

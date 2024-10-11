@@ -1,8 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { userSchema } from '@/entities/user';
 import { toast } from 'sonner';
-import { queryClient } from '@/app/config';
-import { $api } from '@/shared/api';
+import { $api, queryClient } from '@/shared/api';
 
 interface Values {
   username?: string;
