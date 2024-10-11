@@ -47,11 +47,7 @@ export default function UserSessionCard({
         />
       </CardContent>
       <CardFooter>
-        <Button
-          variant="destructive"
-          onClick={clickHandler}
-          data-testid="user-session-card-button"
-        >
+        <Button variant="destructive" onClick={clickHandler}>
           {isCurrent ? 'Выйти со всех других устройств' : 'Завершить сеанс'}
         </Button>
       </CardFooter>

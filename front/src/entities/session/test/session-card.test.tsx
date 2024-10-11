@@ -1,9 +1,10 @@
 import { vi, expect, describe, it, afterEach } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { SessionEntity } from '../model/session.schema';
 import UserSessionCard from '../ui/user-session-card';
 import { deleteSession } from '../api/delete-session';
 import { logoutFromOtherDevices } from '../api/logout-from-other-devices';
+import userEvent from '@testing-library/user-event';
 
 const mockSession: SessionEntity = {
   id: 'test-id',
@@ -26,27 +27,33 @@ describe('UserSessionCard', () => {
     vi.clearAllMocks();
   });
 
-  it('should not render current session', () => {
-    render(<UserSessionCard session={mockSession} />);
+  it('should not render current session', async () => {
+    const { getByText, queryByText } = render(
+      <UserSessionCard session={mockSession} />,
+    );
 
-    fireEvent.click(screen.getByTestId('user-session-card-button'));
+    const user = userEvent.setup();
+    await user.click(getByText('Завершить сеанс'));
 
     expect(deleteSession).toHaveBeenCalledWith(mockSession.id);
     expect(logoutFromOtherDevices).not.toHaveBeenCalled();
 
-    expect(screen.queryByText('Это устройство')).not.toBeInTheDocument();
-    expect(screen.queryByText('Сеанс')).toBeInTheDocument();
+    expect(queryByText('Это устройство')).not.toBeInTheDocument();
+    expect(getByText('Сеанс')).toBeInTheDocument();
   });
 
-  it('should render current session', () => {
-    render(<UserSessionCard session={mockSession} isCurrent />);
+  it('should render current session', async () => {
+    const { getByText, queryByText } = render(
+      <UserSessionCard session={mockSession} isCurrent />,
+    );
 
-    fireEvent.click(screen.getByTestId('user-session-card-button'));
+    const user = userEvent.setup();
+    await user.click(getByText('Выйти со всех других устройств'));
 
     expect(deleteSession).not.toHaveBeenCalled();
     expect(logoutFromOtherDevices).toHaveBeenCalled();
 
-    expect(screen.getByText('Это устройство')).toBeInTheDocument();
-    expect(screen.queryByText('Сеанс')).not.toBeInTheDocument();
+    expect(getByText('Это устройство')).toBeInTheDocument();
+    expect(queryByText('Сеанс')).not.toBeInTheDocument();
   });
 });
