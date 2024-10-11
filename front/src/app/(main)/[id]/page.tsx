@@ -6,10 +6,10 @@ export default function ChatPage({ params }: { params: { id: string } }) {
     (msg) => msg.chatId === Number(params.id),
   );
   return (
-    <div className="flex-grow flex flex-col gap-4 p-4">
+    <section className="flex-grow flex flex-col gap-4 p-4 overflow-y-scroll">
       {currentMessages.map((msg) => (
         <Message message={msg} key={msg.id} />
       ))}
-    </div>
+    </section>
   );
 }

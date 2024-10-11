@@ -10,11 +10,11 @@ export default function Chatbar() {
   const currentTab = useCurrentTab();
 
   return (
-    <div className="flex flex-col md:border-r-2 md:w-[300px] items-center overflow-y-auto">
+    <section className="flex flex-col md:border-r-2 md:w-[300px] items-center overflow-y-auto">
       <SearchInput currentTab={currentTab} />
       {currentTab === 'chats' && <ChatsList />}
       {currentTab === 'users' && <UsersList />}
       {currentTab === 'groups' && <GroupsList />}
-    </div>
+    </section>
   );
 }

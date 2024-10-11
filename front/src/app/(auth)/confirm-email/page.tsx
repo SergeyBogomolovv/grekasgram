@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 
 export default function ConfirmEmailPage() {
   return (
-    <main className="flex flex-col items-center justify-center gap-y-6 col-span-2">
+    <main className="flex flex-col items-center justify-center gap-y-6 min-h-screen">
       <Suspense fallback={<h1 className="font-bold text-3xl">Загрузка...</h1>}>
         <ConfirmEmail />
       </Suspense>

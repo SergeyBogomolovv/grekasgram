@@ -6,7 +6,7 @@ export default function ChatsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col flex-grow">
+    <div className="flex flex-col flex-grow overflow-y-auto">
       <ChatHeader />
       {children}
       <MessageForm />
