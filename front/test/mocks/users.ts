@@ -2,7 +2,7 @@ import { User } from '@/entities/user';
 import { API_URL } from '@/shared/constants';
 import { http, HttpResponse } from 'msw';
 
-const mockUsers: User[] = [
+export const mockUsers: User[] = [
   {
     id: '1',
     username: 'sergey',
@@ -39,10 +39,8 @@ export const userHandlers = [
   http.get(`${API_URL}/users/me`, () => {
     return HttpResponse.json(mockUsers[0]);
   }),
-  http.post(`${API_URL}/users/update-profile`, async ({ request }) => {
-    const body = (await request.json()) as any;
-    mockUsers[0] = { ...mockUsers[0], ...body };
-    return HttpResponse.json(mockUsers[0], { status: 201 });
+  http.post(`${API_URL}/users/update-profile`, async () => {
+    return HttpResponse.json(mockUsers[1], { status: 201 });
   }),
   http.get(`${API_URL}/users/search`, ({ request }) => {
     const query = new URL(request.url).searchParams.get('query');

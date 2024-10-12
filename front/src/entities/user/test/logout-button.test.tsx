@@ -1,10 +1,9 @@
-import { QueryProvider } from '@/config/providers';
-import { render } from '@testing-library/react';
 import { vi, describe, it, expect } from 'vitest';
 import LogoutButton from '../ui/logout-button';
 import userEvent from '@testing-library/user-event';
 import { $api } from '@/shared/api';
 import { useRouter } from 'next/navigation';
+import { render } from '@test/utils';
 
 vi.mock('@/shared/api');
 vi.mock('next/navigation');
@@ -17,11 +16,7 @@ describe('LogoutButton', () => {
       refresh: mockRefresh,
     });
 
-    const { getByText } = render(
-      <QueryProvider>
-        <LogoutButton>Logout</LogoutButton>
-      </QueryProvider>,
-    );
+    const { getByText } = render(<LogoutButton>Logout</LogoutButton>);
 
     const user = userEvent.setup();
 
