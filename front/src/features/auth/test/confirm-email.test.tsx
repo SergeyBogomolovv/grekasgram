@@ -1,10 +1,9 @@
 import { it, describe, vi, expect, beforeEach, afterEach } from 'vitest';
-import { render, waitFor } from '@testing-library/react';
 import { toast } from 'sonner';
 import { $api } from '@/shared/api';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ConfirmEmail from '../ui/confirm-email';
-import { QueryProvider } from '@/config/providers';
+import { render, waitFor } from '@test/utils';
 
 vi.mock('next/navigation');
 
@@ -30,11 +29,7 @@ describe('ConfirmEmail', () => {
 
     mockGet.mockReturnValue('test-token');
 
-    render(
-      <QueryProvider>
-        <ConfirmEmail />
-      </QueryProvider>,
-    );
+    render(<ConfirmEmail />);
 
     await waitFor(() =>
       expect($api.post).toHaveBeenCalledWith('/auth/confirm-email', {
@@ -49,11 +44,7 @@ describe('ConfirmEmail', () => {
 
     mockGet.mockReturnValue(null);
 
-    render(
-      <QueryProvider>
-        <ConfirmEmail />
-      </QueryProvider>,
-    );
+    render(<ConfirmEmail />);
 
     await waitFor(() => expect($api.post).not.toHaveBeenCalled());
     await waitFor(() => expect(mockRefresh).not.toHaveBeenCalled());
@@ -65,11 +56,7 @@ describe('ConfirmEmail', () => {
 
     mockGet.mockReturnValue('test-token');
 
-    render(
-      <QueryProvider>
-        <ConfirmEmail />
-      </QueryProvider>,
-    );
+    render(<ConfirmEmail />);
 
     await waitFor(() => expect(post).toHaveBeenCalledOnce());
     await waitFor(() =>

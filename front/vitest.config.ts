@@ -8,7 +8,7 @@ export default defineConfig({
     environment: 'jsdom',
     passWithNoTests: true,
     watch: false,
-    setupFiles: './test/setup.ts',
+    setupFiles: './test/utils.tsx',
   },
   resolve: {
     alias: {

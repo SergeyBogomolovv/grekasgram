@@ -1,11 +1,10 @@
 import userEvent from '@testing-library/user-event';
-import { render } from '@testing-library/react';
 import { describe, vi, expect, it, afterEach, beforeEach } from 'vitest';
 import LoginForm from '../ui/login-form';
 import { toast } from 'sonner';
-import { QueryProvider } from '@/config/providers';
 import { $api } from '@/shared/api';
 import { useRouter } from 'next/navigation';
+import { render } from '@test/utils';
 
 vi.mock('next/navigation');
 vi.mock('@/shared/api');
@@ -27,11 +26,7 @@ describe('LoginForm', () => {
     vi.mocked($api.post).mockResolvedValue({ data: { message: 'ok' } });
     vi.spyOn(toast, 'success');
 
-    const { getByLabelText, getByTestId } = render(
-      <QueryProvider>
-        <LoginForm />
-      </QueryProvider>,
-    );
+    const { getByLabelText, getByTestId } = render(<LoginForm />);
 
     const user = userEvent.setup();
     await user.type(getByLabelText('Email'), 'email@example.com');
@@ -49,11 +44,7 @@ describe('LoginForm', () => {
   });
 
   it('should not call post if form is invalid', async () => {
-    const { getByTestId } = render(
-      <QueryProvider>
-        <LoginForm />
-      </QueryProvider>,
-    );
+    const { getByTestId } = render(<LoginForm />);
 
     const user = userEvent.setup();
     await user.click(getByTestId('login-button'));
@@ -67,11 +58,7 @@ describe('LoginForm', () => {
 
     vi.spyOn(toast, 'success');
 
-    const { getByTestId, getByLabelText, getByText } = render(
-      <QueryProvider>
-        <LoginForm />
-      </QueryProvider>,
-    );
+    const { getByTestId, getByLabelText, getByText } = render(<LoginForm />);
 
     const user = userEvent.setup();
     await user.type(getByLabelText('Email'), 'email@example.com');
