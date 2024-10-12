@@ -1,11 +1,10 @@
-import { QueryProvider } from '@/config/providers';
-import { render } from '@testing-library/react';
 import { vi, describe, expect, it, afterEach } from 'vitest';
 import ProfileForm from '../ui/profile-form';
 import { User } from '@/entities/user';
 import userEvent from '@testing-library/user-event';
 import { $api } from '@/shared/api';
 import { toast } from 'sonner';
+import { render } from '@test/utils';
 
 const mockUser: User = {
   id: 'test-id',
@@ -28,9 +27,7 @@ describe('ProfileForm', () => {
     const success = vi.spyOn(toast, 'success');
 
     const { getByPlaceholderText, getByRole } = render(
-      <QueryProvider>
-        <ProfileForm user={mockUser} />
-      </QueryProvider>,
+      <ProfileForm user={mockUser} />,
     );
 
     const user = userEvent.setup();
@@ -49,11 +46,7 @@ describe('ProfileForm', () => {
 
     const error = vi.spyOn(toast, 'error');
 
-    const { getByRole } = render(
-      <QueryProvider>
-        <ProfileForm user={mockUser} />
-      </QueryProvider>,
-    );
+    const { getByRole } = render(<ProfileForm user={mockUser} />);
     const user = userEvent.setup();
 
     await user.click(getByRole('button', { name: 'Сохранить' }));

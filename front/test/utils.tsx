@@ -9,6 +9,7 @@ import * as matchers from '@testing-library/jest-dom/matchers';
 import { cleanup } from '@testing-library/react';
 import { expect, afterEach, beforeAll, afterAll } from 'vitest';
 import { server } from './mocks/server';
+import { queryClient } from '@/shared/api';
 
 expect.extend(matchers);
 
@@ -18,6 +19,7 @@ afterAll(() => server.close());
 afterEach(() => {
   cleanup();
   server.resetHandlers();
+  queryClient.clear();
 });
 
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
