@@ -8,7 +8,11 @@ export default defineConfig({
     environment: 'jsdom',
     passWithNoTests: true,
     watch: false,
-    setupFiles: './test/setup.ts',
+    setupFiles: './test/utils.tsx',
+    env: {
+      API_URL: 'http://localhost:4000/api',
+      WS_URL: 'http://localhost:4000/api',
+    },
   },
   resolve: {
     alias: {
