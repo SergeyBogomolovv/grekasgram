@@ -9,6 +9,10 @@ export default defineConfig({
     passWithNoTests: true,
     watch: false,
     setupFiles: './test/utils.tsx',
+    env: {
+      API_URL: 'http://localhost:4000/api',
+      WS_URL: 'http://localhost:4000/api',
+    },
   },
   resolve: {
     alias: {
