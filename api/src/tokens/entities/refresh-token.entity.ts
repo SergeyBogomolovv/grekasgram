@@ -8,11 +8,13 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class SessionEntity {
+export class RefreshTokenEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => UserEntity, (user) => user.sessions, { onDelete: 'CASCADE' })
+  @ManyToOne(() => UserEntity, (user) => user.refreshTokens, {
+    onDelete: 'CASCADE',
+  })
   user: UserEntity;
 
   @Column()

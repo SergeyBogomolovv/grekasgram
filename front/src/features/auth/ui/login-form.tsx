@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 
 import { useLogin } from '../api/use-login';
-import { LoginFields, loginFieldsSchema } from '../model/response.schema';
+import { LoginFields, loginFieldsSchema } from '../model/auth.schema';
 
 import { Button } from '@/shared/ui/button';
 import {

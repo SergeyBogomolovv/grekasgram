@@ -1,5 +1,5 @@
 'use client';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@/shared/lib/utils/utils';
 import { Button, ButtonProps } from '@/shared/ui/button';
 import {
   Tooltip,
@@ -9,8 +9,8 @@ import {
 } from '@/shared/ui/tooltip';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { Tabs } from '@/shared/lib/tabs';
-import { useCurrentTab } from '@/shared/lib/use-current-tab';
+import { Tabs } from '@/shared/lib/model/tabs';
+import { useCurrentTab } from '@/shared/lib/hooks/use-current-tab';
 
 interface Props extends ButtonProps {
   label?: string;

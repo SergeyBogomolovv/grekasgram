@@ -5,26 +5,26 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { SessionsService } from 'src/sessions/sessions.service';
+import { TokensService } from 'src/tokens/tokens.service';
 
 @Injectable()
 export class HttpAuthGuard implements CanActivate {
-  constructor(private sessionService: SessionsService) {}
+  constructor(private tokensService: TokensService) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
 
-    const token = request.cookies.session;
+    const token = request.headers.authorization?.split(' ')[1];
 
     if (!token) {
       throw new UnauthorizedException('Unauthorized');
     }
 
     try {
-      const session = await this.sessionService.verifySession(token);
-      if (!session) {
+      const payload = await this.tokensService.verifyAccessToken(token);
+      if (!payload) {
         throw new UnauthorizedException('Unauthorized');
       }
-      request['session'] = session;
+      request['user'] = payload;
       return true;
     } catch (error) {
       throw new UnauthorizedException('Unauthorized');

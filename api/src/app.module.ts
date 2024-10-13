@@ -16,8 +16,8 @@ import { MessageEntity } from './messages/entities/message.entity';
 import { ChatEntity } from './chats/entities/chat.entity';
 import { AuthModule } from './auth/auth.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { SessionsModule } from './sessions/sessions.module';
-import { SessionEntity } from './sessions/entities/session.entity';
+import { TokensModule } from './tokens/tokens.module';
+import { RefreshTokenEntity } from './tokens/entities/refresh-token.entity';
 
 @Module({
   imports: [
@@ -71,7 +71,7 @@ import { SessionEntity } from './sessions/entities/session.entity';
 
     TypeOrmModule.forRoot({
       ...AppDataSource.options,
-      entities: [UserEntity, MessageEntity, ChatEntity, SessionEntity],
+      entities: [UserEntity, MessageEntity, ChatEntity, RefreshTokenEntity],
     }),
 
     TerminusModule.forRoot({ gracefulShutdownTimeoutMs: 1000 }),
@@ -82,7 +82,7 @@ import { SessionEntity } from './sessions/entities/session.entity';
     ChatsModule,
     MessagesModule,
     AuthModule,
-    SessionsModule,
+    TokensModule,
   ],
 })
 export class AppModule {}

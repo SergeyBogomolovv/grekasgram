@@ -3,8 +3,9 @@ import { useRouter } from 'next/navigation';
 import { UseFormReturn } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { LoginFields, messageResponseSchema } from '../model/response.schema';
+import { LoginFields, accessTokenReponseSchema } from '../model/auth.schema';
 import { $api } from '@/shared/api';
+import { setAccessToken } from '@/shared/lib/utils';
 
 export const useLogin = (form: UseFormReturn<LoginFields>) => {
   const router = useRouter();
@@ -12,9 +13,10 @@ export const useLogin = (form: UseFormReturn<LoginFields>) => {
   return useMutation({
     mutationFn: async (fields: LoginFields) => {
       const { data } = await $api.post('/auth/login', fields);
-      return messageResponseSchema.parse(data);
+      return accessTokenReponseSchema.parse(data);
     },
-    onSuccess: () => {
+    onSuccess: async (data) => {
+      await setAccessToken(data.accessToken);
       toast.success('Вы успешно вошли в аккаунт');
       router.refresh();
     },

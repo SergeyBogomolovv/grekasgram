@@ -3,6 +3,7 @@ import {
   ForbiddenException,
   Injectable,
   Logger,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { hash, compare, genSaltSync } from 'bcrypt';
@@ -11,7 +12,7 @@ import { RegisterDto } from './dto/register.dto';
 import { MessageResponse } from 'src/common/message-response';
 import { LinksService } from './links.service';
 import { MailService } from 'src/mail/mail.service';
-import { SessionsService } from 'src/sessions/sessions.service';
+import { TokensService } from 'src/tokens/tokens.service';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +21,7 @@ export class AuthService {
     private usersService: UsersService,
     private linksService: LinksService,
     private mailService: MailService,
-    private sessionService: SessionsService,
+    private tokensService: TokensService,
   ) {}
 
   async login(dto: LoginDto, ip: string, device: string) {
@@ -34,15 +35,22 @@ export class AuthService {
 
     if (!isPasswordMath) throw new BadRequestException('Invalid credentials');
 
-    const session = await this.sessionService.generateSession({
+    const refreshToken = await this.tokensService.signRefreshToken({
       userId: user.id,
       ip,
       device,
     });
 
+    const accessToken = this.tokensService.signAccessToken({
+      userId: user.id,
+    });
+
     this.logger.debug(`User ${user.email} logined`);
 
-    return { session, message: new MessageResponse('Login successfully') };
+    return {
+      refreshToken,
+      accessToken,
+    };
   }
 
   async register(dto: RegisterDto) {
@@ -71,34 +79,52 @@ export class AuthService {
     user.emailConfirmed = new Date();
     await this.usersService.update(userId, user);
 
-    const session = await this.sessionService.generateSession({
+    const refreshToken = await this.tokensService.signRefreshToken({
       userId: user.id,
       ip,
       device,
     });
 
+    const accessToken = this.tokensService.signAccessToken({
+      userId: user.id,
+    });
+
     this.logger.debug(`User ${user.email} confirmed email`);
 
-    return { session, message: new MessageResponse('Email confirmed') };
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
 
-  async logout(sessionId: string) {
-    await this.sessionService.deleteSession(sessionId);
+  async logout(refreshToken: string) {
+    if (refreshToken) await this.tokensService.logout(refreshToken);
     return new MessageResponse('Logout sussessfully');
   }
 
-  async logoutFromOtherDevices(sessionId: string) {
-    await this.sessionService.logoutFromOtherDevices(sessionId);
+  async deleteRefreshToken(refreshTokenId: string) {
+    await this.tokensService.deleteRefreshToken(refreshTokenId);
     return new MessageResponse('Logout sussessfully');
   }
 
-  async renewSession(currentSessionId: string) {
-    const session = await this.sessionService.renewSession(currentSessionId);
-
-    return { session, message: new MessageResponse('Session renewed') };
+  async logoutFromOtherDevices(refreshToken: string) {
+    if (refreshToken) {
+      await this.tokensService.logoutFromOtherDevices(refreshToken);
+    }
+    return new MessageResponse('Logout sussessfully');
   }
 
-  async getUserSessions(userId: string) {
-    return this.sessionService.getUserSessions(userId);
+  async refreshAccessToken(refreshToken: string) {
+    if (!refreshToken) throw new UnauthorizedException('Invalid token');
+    const accessToken =
+      await this.tokensService.resignAccessToken(refreshToken);
+
+    return {
+      accessToken,
+    };
+  }
+
+  async getUserRefreshTokens(refreshToken: string) {
+    return this.tokensService.getUserSessions(refreshToken);
   }
 }

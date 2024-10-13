@@ -22,7 +22,7 @@ import { UserDto } from './dto/user.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { HttpAuthGuard } from 'src/auth/guards/http-auth.guard';
 import { CacheInterceptor } from '@nestjs/cache-manager';
-import { HttpSession } from 'src/auth/decorators/http-session.decorator';
+import { HttpUser } from 'src/auth/decorators/http-user.decorator';
 
 @ApiTags('users')
 @Controller('users')
@@ -33,7 +33,7 @@ export class UsersController {
   @ApiOkResponse({ type: UserDto, description: 'Get user profile' })
   @UseGuards(HttpAuthGuard)
   @Get('me')
-  getProfile(@HttpSession('userId') userId: string) {
+  getProfile(@HttpUser('userId') userId: string) {
     return this.usersService.getProfile(userId);
   }
 
@@ -44,7 +44,7 @@ export class UsersController {
   @Post('update-profile')
   @UseGuards(HttpAuthGuard)
   updateUsersProfile(
-    @HttpSession('userId') userId: string,
+    @HttpUser('userId') userId: string,
     @UploadedFile() avatar: Express.Multer.File,
     @Body() dto: UpdateProfileDto,
   ) {

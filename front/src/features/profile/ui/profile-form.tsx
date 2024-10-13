@@ -1,5 +1,5 @@
 'use client';
-import { User, useUpdateProfile } from '@/entities/user';
+import { useGetProfile, useUpdateProfile } from '@/entities/user';
 import {
   Card,
   CardContent,
@@ -25,17 +25,29 @@ import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 import { Textarea } from '@/shared/ui/textarea';
 import AvatarInput from './avatar-input';
+import { useEffect } from 'react';
 
-export default function ProfileForm({ user }: { user: User }) {
+export default function ProfileForm() {
+  const { data: user } = useGetProfile();
+
   const form = useForm<ProfileFormFields>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      username: user.username,
-      about: user.about || '',
+      username: 'Загрузка...',
+      about: 'Загрузка...',
     },
   });
 
   const { mutate, isPending } = useUpdateProfile();
+
+  useEffect(() => {
+    if (user) {
+      form.reset({
+        username: user.username,
+        about: user.about || '',
+      });
+    }
+  }, [user, form]);
 
   return (
     <Form {...form}>
@@ -48,7 +60,7 @@ export default function ProfileForm({ user }: { user: User }) {
         </CardHeader>
         <form onSubmit={form.handleSubmit((data) => mutate(data))}>
           <CardContent className="flex gap-4 sm:flex-row flex-col items-start">
-            <AvatarInput form={form} avatarUrl={user.avatarUrl} />
+            <AvatarInput form={form} avatarUrl={user?.avatarUrl} />
 
             <div className="flex flex-col gap-y-2 w-full">
               <FormField

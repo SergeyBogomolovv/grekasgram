@@ -1,5 +1,6 @@
 'use client';
 import { $api } from '@/shared/api';
+import { deleteAccessToken } from '@/shared/lib/utils';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
@@ -8,7 +9,8 @@ export const useLogout = () => {
 
   return useMutation({
     mutationFn: () => $api.post('/auth/logout'),
-    onSuccess: () => {
+    onSuccess: async () => {
+      await deleteAccessToken();
       router.refresh();
     },
   });

@@ -4,7 +4,7 @@ import ChatsList from './chats-list';
 import UsersList from './users-list';
 import GroupsList from './groups-list';
 import SearchInput from './search-input';
-import { useCurrentTab } from '@/shared/lib/use-current-tab';
+import { useCurrentTab } from '@/shared/lib/hooks/use-current-tab';
 
 export default function Chatbar() {
   const currentTab = useCurrentTab();

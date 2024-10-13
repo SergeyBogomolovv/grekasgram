@@ -1,5 +1,5 @@
 'use client';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@/shared/lib/utils/utils';
 import { HiOutlineDotsHorizontal } from 'react-icons/hi';
 import Link from 'next/link';
 import { Chat } from '@/assets/mocks/cards';

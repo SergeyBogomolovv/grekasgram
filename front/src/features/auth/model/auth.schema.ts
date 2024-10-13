@@ -1,10 +1,10 @@
 import { z } from 'zod';
 
-export const messageResponseSchema = z.object({
-  message: z.string(),
+export const accessTokenReponseSchema = z.object({
+  accessToken: z.string(),
 });
 
-export type MessageResponse = z.infer<typeof messageResponseSchema>;
+export type AccessTokenResponse = z.infer<typeof accessTokenReponseSchema>;
 
 export const loginFieldsSchema = z.object({
   email: z.string().email(),

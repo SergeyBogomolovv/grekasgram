@@ -1,4 +1,4 @@
-import { describe, it, vi, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, vi, expect, afterEach } from 'vitest';
 import {
   ReadonlyURLSearchParams,
   useRouter,
@@ -18,13 +18,11 @@ describe('useCheckTab', () => {
   const mockPush = vi.fn();
   const mockSearchParams = new ReadonlyURLSearchParams();
 
-  beforeEach(() => {
-    vi.mocked(useRouter, { partial: true }).mockReturnValue({ push: mockPush });
-    vi.mocked(useSearchParams).mockReturnValue(mockSearchParams);
-  });
+  vi.mocked(useRouter, { partial: true }).mockReturnValue({ push: mockPush });
+  vi.mocked(useSearchParams).mockReturnValue(mockSearchParams);
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should set default tab if current tab is invalid', () => {

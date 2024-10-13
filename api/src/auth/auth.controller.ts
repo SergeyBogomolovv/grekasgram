@@ -22,8 +22,8 @@ import {
 import { MessageResponse } from 'src/common/message-response';
 import { ConfirmEmailDto } from './dto/confirm.dto';
 import { HttpAuthGuard } from './guards/http-auth.guard';
-import { HttpSession } from './decorators/http-session.decorator';
-import { SessionDto } from 'src/sessions/dto/session.dto';
+import { AccessTokenResponse } from './dto/accessToken.response';
+import { SessionsResponse } from './dto/sessions.response';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -32,7 +32,7 @@ export class AuthController {
 
   @ApiCreatedResponse({
     description: 'User succesfully logged in',
-    type: MessageResponse,
+    type: AccessTokenResponse,
   })
   @ApiOperation({ summary: 'Вход в аккаунт' })
   @Post('login')
@@ -41,12 +41,12 @@ export class AuthController {
     @Res() res: Response,
     @Req() req: Request,
   ) {
-    const { message, session } = await this.authService.login(
+    const { accessToken, refreshToken } = await this.authService.login(
       dto,
       req.ip,
       req.headers['user-agent'],
     );
-    return this.setCookie(res, session).json(message);
+    return this.setCookie(res, refreshToken).json({ accessToken });
   }
 
   @ApiOperation({ summary: 'Регистрация' })
@@ -70,13 +70,13 @@ export class AuthController {
     @Res() res: Response,
     @Req() req: Request,
   ) {
-    const { session, message } = await this.authService.confirmEmail(
+    const { refreshToken, accessToken } = await this.authService.confirmEmail(
       dto.token,
       req.ip,
       req.headers['user-agent'],
     );
 
-    return this.setCookie(res, session).json(message);
+    return this.setCookie(res, refreshToken).json({ accessToken });
   }
 
   @ApiOperation({ summary: 'Выход из аккаунта' })
@@ -84,55 +84,50 @@ export class AuthController {
     description: 'User logged out',
     type: MessageResponse,
   })
-  @UseGuards(HttpAuthGuard)
   @Post('logout')
-  async logout(@Res() res: Response, @HttpSession('id') sessionId: string) {
-    const message = await this.authService.logout(sessionId);
-    return res.clearCookie('session').json(message);
+  async logout(@Req() req: Request, @Res() res: Response) {
+    const message = await this.authService.logout(req.cookies.refreshToken);
+    return res.clearCookie('refreshToken').json(message);
   }
 
-  @ApiOperation({ summary: 'Проверка и обновление сессии' })
-  @ApiOkResponse({ description: 'Session validated', type: MessageResponse })
+  @ApiOperation({ summary: 'Обновление access token' })
+  @ApiOkResponse({
+    description: 'Access token updated',
+    type: AccessTokenResponse,
+  })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @UseGuards(HttpAuthGuard)
-  @Get('validate-session')
-  async validateSession(
-    @HttpSession('id') sessionId: string,
-    @Res() res: Response,
-  ) {
-    const { session, message } = await this.authService.renewSession(sessionId);
-    return this.setCookie(res, session).json(message);
+  @Get('refresh')
+  async refresh(@Req() req: Request) {
+    return this.authService.refreshAccessToken(req.cookies.refreshToken);
   }
 
   @ApiOperation({ summary: 'Получение сессий пользователя' })
-  @ApiOkResponse({ description: 'Sessions data', type: [SessionDto] })
+  @ApiOkResponse({ description: 'Sessions data', type: SessionsResponse })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @UseGuards(HttpAuthGuard)
   @Get('all-sessions')
-  async getSession(@HttpSession('userId') userId: string) {
-    return this.authService.getUserSessions(userId);
+  async getUserSessions(@Req() req: Request) {
+    return this.authService.getUserRefreshTokens(req.cookies.refreshToken);
   }
 
-  @ApiOperation({ summary: 'Выход с определенной сессии' })
+  @ApiOperation({ summary: 'Выход с определенного устройства' })
   @ApiCreatedResponse({ description: 'Выход успешен', type: MessageResponse })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @UseGuards(HttpAuthGuard)
-  @Post('logout-from-device/:sessionId')
-  async logoutFromDevice(@Param('sessionId') sessionId: string) {
-    return this.authService.logout(sessionId);
+  @Post('logout-from-device/:refreshTokenId')
+  async logoutFromDevice(@Param('refreshTokenId') refreshTokenId: string) {
+    return this.authService.deleteRefreshToken(refreshTokenId);
   }
 
   @ApiOperation({ summary: 'Выход с других сессий' })
   @ApiCreatedResponse({ description: 'Выход успешен', type: MessageResponse })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @UseGuards(HttpAuthGuard)
   @Post('logout-from-other-devices')
-  async logoutFromOtherDevices(@HttpSession('id') sessionId: string) {
-    return this.authService.logoutFromOtherDevices(sessionId);
+  async logoutFromOtherDevices(@Req() req: Request) {
+    return this.authService.logoutFromOtherDevices(req.cookies.refreshToken);
   }
 
   private setCookie(res: Response, session: string) {
-    return res.cookie('session', session, {
+    return res.cookie('refreshToken', session, {
       httpOnly: true,
       secure: true,
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
