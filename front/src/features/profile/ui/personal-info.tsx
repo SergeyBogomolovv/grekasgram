@@ -1,5 +1,5 @@
 'use client';
-import { LogoutButton, useGetProfile } from '@/entities/user';
+import { useGetProfile } from '@/entities/user';
 import {
   Card,
   CardContent,
@@ -8,6 +8,7 @@ import {
   CardHeader,
 } from '@/shared/ui/card';
 import { format } from 'date-fns';
+import { LogoutButton } from '@/features/auth';
 import InformationBlock from '@/shared/ui/information-block';
 
 export default function PersonalInfo() {

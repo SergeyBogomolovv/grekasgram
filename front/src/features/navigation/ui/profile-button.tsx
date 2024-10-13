@@ -10,8 +10,9 @@ import {
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import UserAvatar from '@/shared/ui/user-avatar';
-import { useGetProfile, useLogout } from '@/entities/user';
+import { useGetProfile } from '@/entities/user';
 import { cn } from '@/shared/lib/utils';
+import { useLogout } from '@/features/auth';
 
 interface Props {
   className?: string;
