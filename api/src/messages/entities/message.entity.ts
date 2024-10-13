@@ -17,8 +17,8 @@ export class MessageEntity {
   @Column()
   content: string;
 
-  @Column({ nullable: true })
-  imageUrl?: string;
+  @Column({ default: false, type: 'boolean' })
+  viewed: boolean;
 
   @ManyToOne(() => UserEntity, (user) => user.messages)
   from: UserEntity;
