@@ -16,6 +16,7 @@ import {
   ApiOperation,
   ApiQuery,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserDto } from './dto/user.dto';
@@ -31,6 +32,7 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Получение информации о профиле' })
   @ApiOkResponse({ type: UserDto, description: 'Get user profile' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @UseGuards(HttpAuthGuard)
   @Get('me')
   getProfile(@HttpUser('userId') userId: string) {
@@ -42,6 +44,7 @@ export class UsersController {
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('avatar'))
   @Post('update-profile')
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @UseGuards(HttpAuthGuard)
   updateUsersProfile(
     @HttpUser('userId') userId: string,
