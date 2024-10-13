@@ -1,29 +1,32 @@
 import userEvent from '@testing-library/user-event';
-import { describe, vi, expect, it, afterEach, beforeEach } from 'vitest';
+import { describe, vi, expect, it, afterEach } from 'vitest';
 import LoginForm from '../ui/login-form';
 import { toast } from 'sonner';
 import { $api } from '@/shared/api';
 import { useRouter } from 'next/navigation';
-import { render } from '@test/utils';
+import { render, waitFor } from '@test/utils';
+import { setAccessToken } from '@/shared/lib/utils';
 
 vi.mock('next/navigation');
 vi.mock('@/shared/api');
+vi.mock('@/shared/lib/utils');
 
 describe('LoginForm', () => {
   const mockRefresh = vi.fn();
 
-  beforeEach(() => {
-    vi.mocked(useRouter, { partial: true }).mockReturnValue({
-      refresh: mockRefresh,
-    });
+  vi.mocked(useRouter, { partial: true }).mockReturnValue({
+    refresh: mockRefresh,
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
-  it('should call post with correct input and show toast', async () => {
-    vi.mocked($api.post).mockResolvedValue({ data: { message: 'ok' } });
+  it('should call post with correct input, set access token and show toast', async () => {
+    vi.mocked($api.post).mockResolvedValue({
+      data: { accessToken: 'access-token' },
+    });
+
     vi.spyOn(toast, 'success');
 
     const { getByLabelText, getByTestId } = render(<LoginForm />);
@@ -33,14 +36,16 @@ describe('LoginForm', () => {
     await user.type(getByLabelText('Пароль'), '123456');
     await user.click(getByTestId('login-button'));
 
-    expect($api.post).toHaveBeenCalledWith('/auth/login', {
-      email: 'email@example.com',
-      password: '123456',
+    await waitFor(() => {
+      expect($api.post).toHaveBeenCalledWith('/auth/login', {
+        email: 'email@example.com',
+        password: '123456',
+      });
+
+      expect(toast.success).toHaveBeenCalledWith('Вы успешно вошли в аккаунт');
+      expect(setAccessToken).toHaveBeenCalledWith('access-token');
+      expect(mockRefresh).toHaveBeenCalled();
     });
-
-    expect(toast.success).toHaveBeenCalledWith('Вы успешно вошли в аккаунт');
-
-    expect(mockRefresh).toHaveBeenCalled();
   });
 
   it('should not call post if form is invalid', async () => {

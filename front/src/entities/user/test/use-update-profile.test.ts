@@ -1,15 +1,20 @@
 import { renderHook, waitFor } from '@test/utils';
-import { vi, describe, it, expect } from 'vitest';
+import { vi, describe, it, expect, afterEach } from 'vitest';
 import { useUpdateProfile } from '../api/use-update-profile';
 import { toast } from 'sonner';
-import { queryClient } from '@/shared/api';
+import { $api, queryClient } from '@/shared/api';
 import { mockUsers } from '@test/mocks/users';
-import { server } from '@test/mocks/server';
-import { http, HttpResponse } from 'msw';
-import { API_URL } from '@/shared/constants';
+
+vi.mock('@/shared/api');
 
 describe('useUpdateProfile', () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('should update profile', async () => {
+    vi.mocked($api.post).mockResolvedValue({ data: mockUsers[1] });
+
     vi.spyOn(toast, 'success');
     vi.spyOn(queryClient, 'setQueryData');
 
@@ -27,12 +32,11 @@ describe('useUpdateProfile', () => {
   });
 
   it('should handle error', async () => {
+    vi.mocked($api.post).mockRejectedValue(new Error());
+
     vi.spyOn(toast, 'error');
 
     const { result } = renderHook(() => useUpdateProfile());
-    server.use(
-      http.post(`${API_URL}/users/update-profile`, () => HttpResponse.error()),
-    );
 
     result.current.mutate({ username: 'test' });
 

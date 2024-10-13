@@ -32,6 +32,10 @@ export default function ProfileForm() {
 
   const form = useForm<ProfileFormFields>({
     resolver: zodResolver(profileFormSchema),
+    defaultValues: {
+      username: 'Загрузка...',
+      about: 'Загрузка...',
+    },
   });
 
   const { mutate, isPending } = useUpdateProfile();

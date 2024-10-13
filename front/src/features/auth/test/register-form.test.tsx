@@ -9,7 +9,7 @@ vi.mock('@/shared/api');
 
 describe('RegisterForm', () => {
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should call post with correct input and show success message', async () => {

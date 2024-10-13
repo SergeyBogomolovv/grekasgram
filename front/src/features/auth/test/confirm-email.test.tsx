@@ -1,47 +1,48 @@
-import { it, describe, vi, expect, beforeEach, afterEach } from 'vitest';
+import { it, describe, vi, expect, afterEach } from 'vitest';
 import { toast } from 'sonner';
 import { $api } from '@/shared/api';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ConfirmEmail from '../ui/confirm-email';
 import { render, waitFor } from '@test/utils';
+import { setAccessToken } from '@/shared/lib/utils';
 
 vi.mock('next/navigation');
+vi.mock('@/shared/api');
+vi.mock('@/shared/lib/utils');
 
 describe('ConfirmEmail', () => {
   const mockGet = vi.fn();
   const mockRefresh = vi.fn();
 
-  beforeEach(() => {
-    vi.mocked(useRouter, { partial: true }).mockReturnValue({
-      refresh: mockRefresh,
-    });
-    vi.mocked(useSearchParams, { partial: true }).mockReturnValue({
-      get: mockGet,
-    });
+  vi.mocked(useRouter, { partial: true }).mockReturnValue({
+    refresh: mockRefresh,
+  });
+  vi.mocked(useSearchParams, { partial: true }).mockReturnValue({
+    get: mockGet,
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should call post if token exists', async () => {
-    vi.spyOn($api, 'post').mockResolvedValue({ data: { message: 'ok' } });
+    vi.mocked($api.post).mockResolvedValue({
+      data: { accessToken: 'access-token' },
+    });
 
     mockGet.mockReturnValue('test-token');
 
     render(<ConfirmEmail />);
 
-    await waitFor(() =>
+    await waitFor(() => {
       expect($api.post).toHaveBeenCalledWith('/auth/confirm-email', {
         token: 'test-token',
-      }),
-    );
-
-    await waitFor(() => expect(mockRefresh).toHaveBeenCalled());
+      });
+      expect(mockRefresh).toHaveBeenCalled();
+      expect(setAccessToken).toHaveBeenCalledWith('access-token');
+    });
   });
   it('should not call post if token does not exist', async () => {
-    vi.spyOn($api, 'post').mockResolvedValue({ data: { message: 'ok' } });
-
     mockGet.mockReturnValue(null);
 
     render(<ConfirmEmail />);
@@ -50,19 +51,20 @@ describe('ConfirmEmail', () => {
     await waitFor(() => expect(mockRefresh).not.toHaveBeenCalled());
   });
   it('should render error', async () => {
-    const post = vi.spyOn($api, 'post').mockRejectedValue(new Error());
+    vi.mocked($api.post).mockRejectedValue(new Error());
 
-    const error = vi.spyOn(toast, 'error');
+    vi.spyOn(toast, 'error');
 
     mockGet.mockReturnValue('test-token');
 
     render(<ConfirmEmail />);
 
-    await waitFor(() => expect(post).toHaveBeenCalledOnce());
-    await waitFor(() =>
-      expect(error).toHaveBeenCalledWith(
+    await waitFor(() => {
+      expect($api.post).toHaveBeenCalledOnce();
+      expect(mockRefresh).not.toHaveBeenCalled();
+      expect(toast.error).toHaveBeenCalledWith(
         'Произошла ошибка подтверждения почты',
-      ),
-    );
+      );
+    });
   });
 });

@@ -20,8 +20,9 @@ export default function UserSessionCard({
   session: SessionEntity;
   isCurrent?: boolean;
 }) {
-  const { mutate: deleteSession } = useDeleteSession();
-  const { mutate: logoutFromOtherDevices } = useLogoutFromOtherDevices();
+  const { mutate: deleteSession, isPending: isDeleting } = useDeleteSession();
+  const { mutate: logoutFromOtherDevices, isPending: isLoggingOut } =
+    useLogoutFromOtherDevices();
 
   function clickHandler() {
     if (isCurrent) {
@@ -45,7 +46,11 @@ export default function UserSessionCard({
         />
       </CardContent>
       <CardFooter>
-        <Button variant="destructive" onClick={clickHandler}>
+        <Button
+          disabled={isDeleting || isLoggingOut}
+          variant="destructive"
+          onClick={clickHandler}
+        >
           {isCurrent ? 'Выйти со всех других устройств' : 'Завершить сеанс'}
         </Button>
       </CardFooter>

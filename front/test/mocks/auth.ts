@@ -4,26 +4,26 @@ import { http, HttpResponse } from 'msw';
 
 const mockMessage = { message: 'ok' };
 const mockAccessToken = { accessToken: 'test-token' };
-const mockSessions: SessionEntity[] = [
+export const mockSessions: SessionEntity[] = [
   {
     id: '1',
     userId: '1',
-    device: 'test-device',
-    ip: 'test-ip',
+    device: 'test-device1',
+    ip: 'test-ip1',
     loginedAt: new Date().toISOString(),
   },
   {
     id: '2',
     userId: '1',
-    device: 'test-device',
-    ip: 'test-ip',
+    device: 'test-device2',
+    ip: 'test-ip2',
     loginedAt: new Date().toISOString(),
   },
   {
     id: '3',
     userId: '1',
-    device: 'test-device',
-    ip: 'test-ip',
+    device: 'test-device3',
+    ip: 'test-ip3',
     loginedAt: new Date().toISOString(),
   },
 ];
