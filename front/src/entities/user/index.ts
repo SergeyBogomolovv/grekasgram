@@ -1,6 +1,5 @@
 export { useGetProfile } from './api/use-get-profile';
 export { useUpdateProfile } from './api/use-update-profile';
-export { getProfile } from './api/get-profile';
 export { useSearchUsers } from './api/use-search-users';
 
 export { userSchema } from './model/user.schema';

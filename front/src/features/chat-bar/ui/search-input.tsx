@@ -14,7 +14,7 @@ import { BsSearch } from 'react-icons/bs';
 
 import { useSearch } from '../model/use-search';
 import NavButton from '@/shared/ui/nav-button';
-import { Tabs } from '@/shared/lib/tabs';
+import { Tabs } from '@/shared/lib/model/tabs';
 import { useForm } from 'react-hook-form';
 import {
   SearchInputFields,

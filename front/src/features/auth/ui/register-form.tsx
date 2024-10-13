@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useRegister } from '../api/use-register';
-import { RegisterFields, registerFieldsSchema } from '../model/response.schema';
+import { RegisterFields, registerFieldsSchema } from '../model/auth.schema';
 
 import { Button } from '@/shared/ui/button';
 import {

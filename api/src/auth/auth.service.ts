@@ -124,7 +124,7 @@ export class AuthService {
     };
   }
 
-  async getUserRefreshTokens(userId: string) {
-    return this.tokensService.getUserRefreshTokens(userId);
+  async getUserRefreshTokens(refreshToken: string) {
+    return this.tokensService.getUserSessions(refreshToken);
   }
 }

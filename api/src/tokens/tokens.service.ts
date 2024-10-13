@@ -72,11 +72,19 @@ export class TokensService {
     return this.jwtService.sign({ tokenId: newToken.id }, { expiresIn: '30d' });
   }
 
-  async getUserRefreshTokens(userId: string): Promise<RefreshTokenDto[]> {
+  async getUserSessions(refreshToken: string) {
+    const { userId, id } = await this.verifyRefreshToken(refreshToken);
     const tokens = await this.refreshTokensRepository.find({
       where: { userId },
     });
-    return tokens.map((token) => new RefreshTokenDto(token));
+
+    const currentToken = tokens.find((token) => token.id === id);
+    const otherTokens = tokens.filter((token) => token.id !== id);
+
+    return {
+      current: new RefreshTokenDto(currentToken),
+      other: otherTokens.map((token) => new RefreshTokenDto(token)),
+    };
   }
 
   async verifyRefreshToken(token: string): Promise<RefreshTokenDto | null> {

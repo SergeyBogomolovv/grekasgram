@@ -1,6 +1,6 @@
 import { FaUserCircle } from 'react-icons/fa';
 import { Avatar, AvatarFallback, AvatarImage } from './avatar';
-import { cn } from '../lib/utils';
+import { cn } from '../lib/utils/utils';
 
 interface Props {
   className?: string;

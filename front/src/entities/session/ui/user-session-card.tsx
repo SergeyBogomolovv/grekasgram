@@ -10,9 +10,8 @@ import { SessionEntity } from '../model/session.schema';
 import { Button } from '@/shared/ui/button';
 import InformationBlock from '@/shared/ui/information-block';
 import { format } from 'date-fns';
-import { deleteSession } from '../api/delete-session';
-import { logoutFromOtherDevices } from '../api/logout-from-other-devices';
-import { toast } from 'sonner';
+import { useDeleteSession } from '../api/use-delete-session';
+import { useLogoutFromOtherDevices } from '../api/use-logout-from-other-devices';
 
 export default function UserSessionCard({
   session,
@@ -21,15 +20,14 @@ export default function UserSessionCard({
   session: SessionEntity;
   isCurrent?: boolean;
 }) {
+  const { mutate: deleteSession } = useDeleteSession();
+  const { mutate: logoutFromOtherDevices } = useLogoutFromOtherDevices();
+
   function clickHandler() {
     if (isCurrent) {
-      logoutFromOtherDevices().then(() =>
-        toast.success('Вы успешно вышли из других сеансов'),
-      );
+      logoutFromOtherDevices();
     } else {
-      deleteSession(session.id).then(() =>
-        toast.success('Вы успешно завершили сеанс'),
-      );
+      deleteSession(session.id);
     }
   }
 

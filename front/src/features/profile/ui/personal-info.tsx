@@ -1,4 +1,5 @@
-import { LogoutButton, User } from '@/entities/user';
+'use client';
+import { LogoutButton, useGetProfile } from '@/entities/user';
 import {
   Card,
   CardContent,
@@ -9,7 +10,8 @@ import {
 import { format } from 'date-fns';
 import InformationBlock from '@/shared/ui/information-block';
 
-export default function PersonalInfo({ user }: { user: User }) {
+export default function PersonalInfo() {
+  const { data, isLoading } = useGetProfile();
   return (
     <section className="flex flex-col gap-4 w-full">
       <h3 className="font-bold text-2xl">Персональная информация</h3>
@@ -20,11 +22,19 @@ export default function PersonalInfo({ user }: { user: User }) {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-y-4">
-          <InformationBlock label="ID:" content={user.id} />
-          <InformationBlock label="Email:" content={user.email} />
+          <InformationBlock
+            label="ID:"
+            content={isLoading ? '...' : data?.id}
+          />
+          <InformationBlock
+            label="Email:"
+            content={isLoading ? '...' : data?.email}
+          />
           <InformationBlock
             label="Зарегистрирован:"
-            content={format(user.createdAt || 0, 'dd.MM.yyyy')}
+            content={
+              isLoading ? '...' : format(data?.createdAt || 0, 'dd.MM.yyyy')
+            }
           />
         </CardContent>
         <CardFooter>

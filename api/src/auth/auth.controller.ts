@@ -23,8 +23,7 @@ import { MessageResponse } from 'src/common/message-response';
 import { ConfirmEmailDto } from './dto/confirm.dto';
 import { HttpAuthGuard } from './guards/http-auth.guard';
 import { AccessTokenResponse } from './dto/accessToken.response';
-import { RefreshTokenDto } from 'src/tokens/dto/refresh-token.dto';
-import { HttpUser } from './decorators/http-user.decorator';
+import { SessionsResponse } from './dto/sessions.response';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -103,12 +102,11 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: 'Получение сессий пользователя' })
-  @ApiOkResponse({ description: 'Sessions data', type: [RefreshTokenDto] })
+  @ApiOkResponse({ description: 'Sessions data', type: SessionsResponse })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @UseGuards(HttpAuthGuard)
   @Get('all-sessions')
-  async getUserSessions(@HttpUser('userId') userId: string) {
-    return this.authService.getUserRefreshTokens(userId);
+  async getUserSessions(@Req() req: Request) {
+    return this.authService.getUserRefreshTokens(req.cookies.refreshToken);
   }
 
   @ApiOperation({ summary: 'Выход с определенного устройства' })

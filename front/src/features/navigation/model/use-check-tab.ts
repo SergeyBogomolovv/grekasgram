@@ -1,7 +1,7 @@
 'use client';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
-import { tabs, tabsSchema } from '@/shared/lib/tabs';
+import { tabs, tabsSchema } from '@/shared/lib/model';
 
 export const useCheckTab = () => {
   const pathname = usePathname();

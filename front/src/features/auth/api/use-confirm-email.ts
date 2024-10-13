@@ -2,7 +2,8 @@ import { $api } from '@/shared/api';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { messageResponseSchema } from '../model/response.schema';
+import { accessTokenReponseSchema } from '../model/auth.schema';
+import { setAccessToken } from '@/shared/lib/utils';
 
 export const useConfirmEmail = () => {
   const router = useRouter();
@@ -12,10 +13,11 @@ export const useConfirmEmail = () => {
       const { data } = await $api.post('/auth/confirm-email', {
         token: confirmToken,
       });
-      return messageResponseSchema.parse(data);
+      return accessTokenReponseSchema.parse(data);
     },
 
-    onSuccess: () => {
+    onSuccess: async (data) => {
+      await setAccessToken(data.accessToken);
       router.refresh();
     },
     onError() {
