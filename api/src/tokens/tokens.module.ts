@@ -1,24 +1,23 @@
 import { Global, Module } from '@nestjs/common';
-import { SessionsService } from './sessions.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { SessionEntity } from './entities/session.entity';
+import { RefreshTokenEntity } from './entities/refresh-token.entity';
+import { TokensService } from './tokens.service';
 
 @Global()
 @Module({
   imports: [
-    TypeOrmModule.forFeature([SessionEntity]),
+    TypeOrmModule.forFeature([RefreshTokenEntity]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         secret: config.get('JWT_SECRET'),
-        expiresIn: '7d',
       }),
     }),
   ],
-  providers: [SessionsService],
-  exports: [SessionsService, TypeOrmModule],
+  providers: [TokensService],
+  exports: [TokensService, TypeOrmModule],
 })
-export class SessionsModule {}
+export class TokensModule {}

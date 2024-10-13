@@ -1,6 +1,6 @@
 import { IsIP, IsString, IsUUID } from 'class-validator';
 
-export class CreateSessionDto {
+export class CreateRefreshTokenDto {
   @IsUUID()
   userId: string;
 

@@ -1,4 +1,4 @@
-import { SessionEntity } from '../../sessions/entities/session.entity';
+import { RefreshTokenEntity } from '../../tokens/entities/refresh-token.entity';
 import { ChatEntity } from '../../chats/entities/chat.entity';
 import { MessageEntity } from '../../messages/entities/message.entity';
 import {
@@ -48,6 +48,6 @@ export class UserEntity {
   @OneToMany(() => MessageEntity, (message) => message.from)
   messages: MessageEntity[];
 
-  @OneToMany(() => SessionEntity, (session) => session.user)
-  sessions: SessionEntity[];
+  @OneToMany(() => RefreshTokenEntity, (refreshToken) => refreshToken.user)
+  refreshTokens: RefreshTokenEntity[];
 }
