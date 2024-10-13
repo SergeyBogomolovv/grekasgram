@@ -46,7 +46,6 @@ export default function SearchInput({ currentTab }: { currentTab: Tabs }) {
               <div className="flex items-center justify-between w-full">
                 <FormLabel className="text-xl font-bold">
                   Поиск {currentTab === 'chats' && 'чатов'}
-                  {currentTab === 'groups' && 'групп'}
                   {currentTab === 'users' && 'пользователей'}
                 </FormLabel>
                 <NavButton
