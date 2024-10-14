@@ -4,12 +4,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'message' })
 export class MessageEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -17,8 +19,9 @@ export class MessageEntity {
   @Column()
   content: string;
 
-  @Column({ default: false, type: 'boolean' })
-  viewed: boolean;
+  @ManyToMany(() => UserEntity)
+  @JoinTable({ name: 'messages_viewed_by' })
+  viewedBy: UserEntity[];
 
   @ManyToOne(() => UserEntity, (user) => user.messages)
   from: UserEntity;

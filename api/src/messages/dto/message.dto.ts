@@ -1,14 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { MessageEntity } from '../entities/message.entity';
 
 export class MessageDto {
-  constructor(payload: MessageDto) {
+  constructor(payload: MessageEntity) {
     this.id = payload.id;
     this.content = payload.content;
     this.createdAt = payload.createdAt;
     this.updatedAt = payload.updatedAt;
     this.fromId = payload.fromId;
     this.chatId = payload.chatId;
-    this.viewed = payload.viewed;
+    this.viewedBy = payload.viewedBy.map((user) => user.id);
   }
 
   @ApiProperty({ example: 'uuid of message' })
@@ -29,6 +30,6 @@ export class MessageDto {
   @ApiProperty({ example: 'uuid of chat' })
   chatId: string;
 
-  @ApiProperty({ example: false })
-  viewed: boolean;
+  @ApiProperty({ type: () => [String] })
+  viewedBy: string[];
 }

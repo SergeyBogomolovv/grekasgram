@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Inject,
   Injectable,
   NotFoundException,
@@ -9,9 +10,10 @@ import { ChatEntity } from './entities/chat.entity';
 import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { ChatDto } from './dto/chat.dto';
-import { UserDto } from 'src/users/dto/user.dto';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { UserEntity } from 'src/users/entities/user.entity';
+import { MessageEntity } from 'src/messages/entities/message.entity';
 
 @Injectable()
 export class ChatsService {
@@ -20,10 +22,14 @@ export class ChatsService {
     private readonly cache: Cache,
     @InjectRepository(ChatEntity)
     private chatsRepository: Repository<ChatEntity>,
+    @InjectRepository(UserEntity)
+    private usersRepository: Repository<UserEntity>,
+    @InjectRepository(MessageEntity)
+    private messagesRepository: Repository<MessageEntity>,
     private usersService: UsersService,
   ) {}
 
-  async createChat(userId: string, companionId: string): Promise<ChatDto> {
+  async createChat(userId: string, companionId: string) {
     if (userId === companionId) {
       throw new ConflictException('You cannot create chat with yourself');
     }
@@ -44,52 +50,36 @@ export class ChatsService {
       this.usersService.findOneByIdOrFail(userId),
       this.usersService.findOneByIdOrFail(companionId),
     ]);
-
     const chat = await this.chatsRepository.save(
       this.chatsRepository.create({ users: [user, companion] }),
     );
 
-    return new ChatDto({
-      createdAt: chat.createdAt,
-      id: chat.id,
-      companion: new UserDto(companion),
-    });
+    return { chatId: chat.id };
   }
 
   async getUserChats(userId: string): Promise<ChatDto[]> {
-    const userChats = await this.chatsRepository.find({
-      where: {
-        users: {
-          id: userId,
-        },
-      },
-      relations: ['users'],
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+      relations: { chats: { messages: { viewedBy: true }, users: true } },
+      order: { chats: { messages: { createdAt: 'DESC' } } },
     });
 
-    const chats = await Promise.all(
-      userChats.map((chat) =>
-        this.chatsRepository.findOne({
-          where: { id: chat.id },
-          relations: ['users'],
-        }),
-      ),
-    );
+    if (!user) throw new NotFoundException('User not found');
 
-    return chats.map(
-      (chat) =>
-        new ChatDto({
-          createdAt: chat.createdAt,
-          id: chat.id,
-          companion: chat.users.find((user) => user.id !== userId),
-        }),
-    );
+    return user.chats.map((chat) => new ChatDto(chat, userId));
   }
 
   async deleteChat(chatId: string, userId: string): Promise<ChatEntity> {
     const chat = await this.chatsRepository.findOne({
-      where: { id: chatId, users: { id: userId } },
+      where: { id: chatId },
+      relations: { users: true },
     });
+
     if (!chat) throw new NotFoundException('Chat not found');
+
+    if (!chat.users.some((user) => user.id === userId)) {
+      throw new ForbiddenException('You are not a part of this chat');
+    }
 
     await this.cache.del(chatId);
 

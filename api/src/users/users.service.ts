@@ -137,11 +137,12 @@ export class UsersService {
     });
   }
 
-  async searchUsers(query: string): Promise<UserDto[]> {
+  async searchUsers(query: string, userId: string): Promise<UserDto[]> {
     const users = await this.userRepository
       .createQueryBuilder('user')
       .where('user.username LIKE :query', { query: `%${query}%` })
       .orWhere('user.email LIKE :query', { query: `%${query}%` })
+      .andWhere('user.id != :userId', { userId })
       .getMany();
     return users.map((user) => new UserDto(user));
   }

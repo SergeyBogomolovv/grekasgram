@@ -1,14 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { MessageDto } from 'src/messages/dto/message.dto';
 import { UserDto } from 'src/users/dto/user.dto';
+import { ChatEntity } from '../entities/chat.entity';
 
 export class ChatDto {
-  constructor(payload: ChatDto) {
-    this.id = payload.id;
-    this.companion = payload.companion;
-    this.createdAt = payload.createdAt;
-    this.lastMessage = payload.lastMessage;
-    this.newMessages = payload.newMessages;
+  constructor(chat: ChatEntity, userId: string) {
+    this.id = chat.id;
+    this.companion = new UserDto(
+      chat?.users.find((user) => user.id !== userId),
+    );
+    this.lastActivity = chat?.messages[0]?.createdAt || chat.createdAt;
+    this.lastMessage = chat?.messages[0]?.content;
+    this.newMessages = chat?.messages?.filter(
+      (message) => !message.viewedBy.some((user) => user.id === userId),
+    ).length;
   }
 
   @ApiProperty({ example: 'uuid of chat' })
@@ -17,12 +21,12 @@ export class ChatDto {
   @ApiProperty({ type: () => UserDto })
   companion: UserDto;
 
-  @ApiProperty({ type: () => MessageDto })
-  lastMessage?: MessageDto;
+  @ApiProperty({ example: 'message' })
+  lastMessage?: string;
 
   @ApiProperty({ type: Number, example: 3 })
   newMessages?: number;
 
   @ApiProperty({ example: 'timestamp' })
-  createdAt: Date;
+  lastActivity: Date;
 }

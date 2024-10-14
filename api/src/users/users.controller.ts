@@ -58,8 +58,13 @@ export class UsersController {
   @ApiOkResponse({ type: [UserDto] })
   @ApiQuery({ name: 'query', type: String, required: true })
   @UseInterceptors(CacheInterceptor)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @UseGuards(HttpAuthGuard)
   @Get('search')
-  searchUsers(@Query('query') query: string) {
-    return this.usersService.searchUsers(query);
+  searchUsers(
+    @Query('query') query: string,
+    @HttpUser('userId') userId: string,
+  ) {
+    return this.usersService.searchUsers(query, userId);
   }
 }

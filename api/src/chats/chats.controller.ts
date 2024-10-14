@@ -20,6 +20,7 @@ import { HttpAuthGuard } from 'src/auth/guards/http-auth.guard';
 import { ChatDto } from './dto/chat.dto';
 import { HttpUser } from 'src/auth/decorators/http-user.decorator';
 import { MessageResponse } from 'src/common/message-response';
+import { CreateChatResponse } from './dto/create-chat.response';
 
 @ApiTags('chats')
 @UseGuards(HttpAuthGuard)
@@ -28,13 +29,10 @@ export class ChatsController {
   constructor(private readonly chatsService: ChatsService) {}
 
   @ApiOperation({ summary: 'Создание чата' })
-  @ApiCreatedResponse({ type: ChatDto })
+  @ApiCreatedResponse({ type: CreateChatResponse })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Post('create')
-  create(
-    @Body() dto: CreateChatDto,
-    @HttpUser('userId') userId: string,
-  ): Promise<ChatDto> {
+  create(@Body() dto: CreateChatDto, @HttpUser('userId') userId: string) {
     return this.chatsService.createChat(userId, dto.companionId);
   }
 

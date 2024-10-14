@@ -9,13 +9,13 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'chat' })
 export class ChatEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @ManyToMany(() => UserEntity, (user) => user.chats)
-  @JoinTable({ name: 'Chat_Members' })
+  @JoinTable({ name: 'chat_members' })
   users: UserEntity[];
 
   @OneToMany(() => MessageEntity, (message) => message.chat)
