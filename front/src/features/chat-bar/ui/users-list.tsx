@@ -1,6 +1,7 @@
 'use client';
-import { UserCard, useSearchUsers } from '@/entities/user';
+import { useSearchUsers } from '@/entities/user';
 import { useSearchParams } from 'next/navigation';
+import UserButton from './user-button';
 
 export default function UsersList() {
   const searchParams = useSearchParams();
@@ -26,14 +27,7 @@ export default function UsersList() {
           Ищите пользователей, с которыми хотели бы пообщаться
         </p>
       )}
-      {data?.map((user) => (
-        <UserCard
-          key={user.id}
-          name={user.username}
-          about={user.about}
-          avatarUrl={user.avatarUrl}
-        />
-      ))}
+      {data?.map((user) => <UserButton key={user.id} user={user} />)}
     </div>
   );
 }

@@ -4,3 +4,4 @@ export {
   setAccessToken,
   deleteAccessToken,
 } from './access-token-actions';
+export { formatDate } from './format-date';

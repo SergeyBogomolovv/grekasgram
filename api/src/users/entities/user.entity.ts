@@ -5,12 +5,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'user' })
 export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -42,12 +43,17 @@ export class UserEntity {
   @Column({ nullable: true, type: 'timestamp' })
   emailConfirmed?: Date;
 
-  @ManyToMany(() => ChatEntity, (chat) => chat.users)
-  chats: ChatEntity[];
-
   @OneToMany(() => MessageEntity, (message) => message.from)
   messages: MessageEntity[];
 
   @OneToMany(() => RefreshTokenEntity, (refreshToken) => refreshToken.user)
   refreshTokens: RefreshTokenEntity[];
+
+  @ManyToMany(() => ChatEntity, (chat) => chat.users)
+  @JoinTable({ name: 'chat_members' })
+  chats: ChatEntity[];
+
+  @ManyToMany(() => ChatEntity)
+  @JoinTable({ name: 'user_favorites' })
+  favorites: ChatEntity[];
 }

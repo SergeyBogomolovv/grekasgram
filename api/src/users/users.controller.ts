@@ -16,12 +16,12 @@ import {
   ApiOperation,
   ApiQuery,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserDto } from './dto/user.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { HttpAuthGuard } from 'src/auth/guards/http-auth.guard';
-import { CacheInterceptor } from '@nestjs/cache-manager';
 import { HttpUser } from 'src/auth/decorators/http-user.decorator';
 
 @ApiTags('users')
@@ -31,6 +31,7 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Получение информации о профиле' })
   @ApiOkResponse({ type: UserDto, description: 'Get user profile' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @UseGuards(HttpAuthGuard)
   @Get('me')
   getProfile(@HttpUser('userId') userId: string) {
@@ -42,6 +43,7 @@ export class UsersController {
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('avatar'))
   @Post('update-profile')
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @UseGuards(HttpAuthGuard)
   updateUsersProfile(
     @HttpUser('userId') userId: string,
@@ -54,9 +56,13 @@ export class UsersController {
   @ApiOperation({ summary: 'Поиск пользователей' })
   @ApiOkResponse({ type: [UserDto] })
   @ApiQuery({ name: 'query', type: String, required: true })
-  @UseInterceptors(CacheInterceptor)
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @UseGuards(HttpAuthGuard)
   @Get('search')
-  searchUsers(@Query('query') query: string) {
-    return this.usersService.searchUsers(query);
+  searchUsers(
+    @Query('query') query: string,
+    @HttpUser('userId') userId: string,
+  ) {
+    return this.usersService.searchUsers(query, userId);
   }
 }

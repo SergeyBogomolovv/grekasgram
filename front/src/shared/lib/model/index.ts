@@ -1,5 +1,5 @@
-export { messageSchema } from './message-schema';
-export type { MessageSchema } from './message-schema';
+export { messageResponseSchema } from './message-response.schema';
+export type { MessageResponse } from './message-response.schema';
 
 export { tabsSchema } from './tabs';
 export { tabs } from './tabs';

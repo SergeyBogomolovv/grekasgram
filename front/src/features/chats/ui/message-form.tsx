@@ -7,7 +7,9 @@ import { IoSend } from 'react-icons/io5';
 import { Button } from '@/shared/ui/button';
 import { Textarea } from '@/shared/ui/textarea';
 
-export default function MessageForm() {
+export default function MessageForm({ chatId }: { chatId: string }) {
+  console.log(chatId);
+
   const form = useForm<MessageFormFields>({
     resolver: zodResolver(messageFormSchema),
     defaultValues: { content: '' },

@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { Like, Not, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserDto } from './dto/user.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
@@ -137,12 +137,11 @@ export class UsersService {
     });
   }
 
-  async searchUsers(query: string): Promise<UserDto[]> {
-    const users = await this.userRepository
-      .createQueryBuilder('user')
-      .where('user.username LIKE :query', { query: `%${query}%` })
-      .orWhere('user.email LIKE :query', { query: `%${query}%` })
-      .getMany();
+  async searchUsers(query: string, userId: string): Promise<UserDto[]> {
+    const users = await this.userRepository.find({
+      where: { username: Like(`%${query}%`), id: Not(userId) },
+    });
+
     return users.map((user) => new UserDto(user));
   }
 

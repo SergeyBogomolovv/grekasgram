@@ -5,13 +5,13 @@ import {
   AUTHETICATED_REDIRECT_URL,
   NOT_AUTHETICATED_REDIRECT_URL,
 } from '@/shared/constants';
-import { getAccessToken } from './shared/lib/utils';
+import { validateSession } from './shared/lib/utils/validate-session';
 
 export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const isOnPublicRoute = PUBLIC_ROUTES.includes(path);
 
-  const isAuthenticated = await getAccessToken();
+  const isAuthenticated = await validateSession();
 
   if (!isOnPublicRoute && !isAuthenticated) {
     return NextResponse.redirect(

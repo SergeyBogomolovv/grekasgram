@@ -6,7 +6,7 @@ import { RegisterFields } from '../model/auth.schema';
 
 import { isAxiosError } from 'axios';
 import { $api } from '@/shared/api';
-import { MessageSchema, messageSchema } from '@/shared/lib/model';
+import { MessageResponse, messageResponseSchema } from '@/shared/lib/model';
 
 export const useRegister = (
   form: UseFormReturn<RegisterFields>,
@@ -14,8 +14,11 @@ export const useRegister = (
 ) => {
   return useMutation({
     mutationFn: async (fields: RegisterFields) => {
-      const { data } = await $api.post<MessageSchema>('/auth/register', fields);
-      const { message } = messageSchema.parse(data);
+      const { data } = await $api.post<MessageResponse>(
+        '/auth/register',
+        fields,
+      );
+      const { message } = messageResponseSchema.parse(data);
       return message;
     },
     onSuccess: () => {

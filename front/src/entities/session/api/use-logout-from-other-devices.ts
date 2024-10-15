@@ -1,5 +1,5 @@
 import { $api, queryClient } from '@/shared/api';
-import { messageSchema } from '@/shared/lib/model';
+import { messageResponseSchema } from '@/shared/lib/model';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
@@ -7,7 +7,7 @@ export const useLogoutFromOtherDevices = () => {
   return useMutation({
     mutationFn: async () => {
       const { data } = await $api.post('/auth/logout-from-other-devices');
-      return messageSchema.parse(data);
+      return messageResponseSchema.parse(data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sessions'] });
