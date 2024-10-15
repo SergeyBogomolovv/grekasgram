@@ -16,6 +16,7 @@ async function bootstrap() {
     .setTitle('Online Chat Api')
     .setDescription('This is the api for online chat')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   app.use(

@@ -8,6 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiNotFoundResponse,
@@ -25,6 +26,7 @@ import { MessageResponse } from 'src/common/message-response';
 import { CreateChatResponse } from './dto/create-chat.response';
 
 @ApiTags('chats')
+@ApiBearerAuth()
 @UseGuards(HttpAuthGuard)
 @Controller('chats')
 export class ChatsController {

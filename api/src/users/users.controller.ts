@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
+  ApiBearerAuth,
   ApiConsumes,
   ApiCreatedResponse,
   ApiOkResponse,
@@ -24,6 +25,8 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { HttpAuthGuard } from 'src/auth/guards/http-auth.guard';
 import { HttpUser } from 'src/auth/decorators/http-user.decorator';
 
+@UseGuards(HttpAuthGuard)
+@ApiBearerAuth()
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
@@ -32,7 +35,6 @@ export class UsersController {
   @ApiOperation({ summary: 'Получение информации о профиле' })
   @ApiOkResponse({ type: UserDto, description: 'Get user profile' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @UseGuards(HttpAuthGuard)
   @Get('me')
   getProfile(@HttpUser('userId') userId: string) {
     return this.usersService.getProfile(userId);
@@ -44,7 +46,6 @@ export class UsersController {
   @UseInterceptors(FileInterceptor('avatar'))
   @Post('update-profile')
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @UseGuards(HttpAuthGuard)
   updateUsersProfile(
     @HttpUser('userId') userId: string,
     @UploadedFile() avatar: Express.Multer.File,
@@ -57,7 +58,6 @@ export class UsersController {
   @ApiOkResponse({ type: [UserDto] })
   @ApiQuery({ name: 'query', type: String, required: true })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @UseGuards(HttpAuthGuard)
   @Get('search')
   searchUsers(
     @Query('query') query: string,

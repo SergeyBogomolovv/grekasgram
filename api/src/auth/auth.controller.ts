@@ -13,6 +13,7 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { Request, Response } from 'express';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
@@ -113,6 +114,7 @@ export class AuthController {
   @ApiCreatedResponse({ description: 'Выход успешен', type: MessageResponse })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @UseGuards(HttpAuthGuard)
+  @ApiBearerAuth()
   @Post('logout-from-device/:refreshTokenId')
   async logoutFromDevice(@Param('refreshTokenId') refreshTokenId: string) {
     return this.authService.deleteRefreshToken(refreshTokenId);
