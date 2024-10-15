@@ -1,10 +1,10 @@
 'use client';
-import { ChatCard, useGetMyChats } from '@/entities/chat';
+import { ChatCard, useGetFavorites } from '@/entities/chat';
 import { useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
 
-export default function ChatsList() {
-  const { data, isLoading, isError } = useGetMyChats();
+export default function FavoritesList() {
+  const { data, isLoading, isError } = useGetFavorites();
   const query = useSearchParams().get('query');
 
   const filteredChats = useMemo(() => {
@@ -18,7 +18,7 @@ export default function ChatsList() {
     <div className="w-full flex flex-col divide-y-2 overflow-y-auto">
       {isError && (
         <p className="text-center text-muted-foreground font-mono p-3">
-          Произошла ошибка при загрузке чатов
+          Произошла ошибка при загрузке избранных чатов
         </p>
       )}
       {isLoading && (
@@ -28,7 +28,7 @@ export default function ChatsList() {
       )}
       {data?.length === 0 && (
         <p className="text-center text-muted-foreground font-mono p-3">
-          Чатов пока что нет
+          Избранных чатов пока что нет
         </p>
       )}
       {!!data?.length && filteredChats?.length === 0 && (

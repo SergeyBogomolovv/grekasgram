@@ -22,7 +22,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UserDto } from './dto/user.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { HttpAuthGuard } from 'src/auth/guards/http-auth.guard';
-import { CacheInterceptor } from '@nestjs/cache-manager';
 import { HttpUser } from 'src/auth/decorators/http-user.decorator';
 
 @ApiTags('users')
@@ -57,7 +56,6 @@ export class UsersController {
   @ApiOperation({ summary: 'Поиск пользователей' })
   @ApiOkResponse({ type: [UserDto] })
   @ApiQuery({ name: 'query', type: String, required: true })
-  @UseInterceptors(CacheInterceptor)
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @UseGuards(HttpAuthGuard)
   @Get('search')

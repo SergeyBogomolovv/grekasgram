@@ -3,7 +3,6 @@ import { UserEntity } from '../../users/entities/user.entity';
 import {
   CreateDateColumn,
   Entity,
-  JoinTable,
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -15,7 +14,6 @@ export class ChatEntity {
   id: string;
 
   @ManyToMany(() => UserEntity, (user) => user.chats)
-  @JoinTable({ name: 'chat_members' })
   users: UserEntity[];
 
   @OneToMany(() => MessageEntity, (message) => message.chat)

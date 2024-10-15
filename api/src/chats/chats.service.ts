@@ -1,7 +1,6 @@
 import {
   ConflictException,
   ForbiddenException,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -10,16 +9,13 @@ import { ChatEntity } from './entities/chat.entity';
 import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { ChatDto } from './dto/chat.dto';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { MessageEntity } from 'src/messages/entities/message.entity';
+import { MessageResponse } from 'src/common/message-response';
 
 @Injectable()
 export class ChatsService {
   constructor(
-    @Inject(CACHE_MANAGER)
-    private readonly cache: Cache,
     @InjectRepository(ChatEntity)
     private chatsRepository: Repository<ChatEntity>,
     @InjectRepository(UserEntity)
@@ -69,6 +65,30 @@ export class ChatsService {
     return user.chats.map((chat) => new ChatDto(chat, userId));
   }
 
+  async getChatById(chatId: string, userId: string): Promise<ChatDto> {
+    const chat = await this.chatsRepository.findOne({
+      where: { id: chatId },
+      relations: { users: true, messages: { viewedBy: true } },
+      order: { messages: { createdAt: 'DESC' } },
+    });
+
+    if (!chat) throw new NotFoundException('Chat not found');
+
+    return new ChatDto(chat, userId);
+  }
+
+  async getUserFavorites(userId: string): Promise<ChatDto[]> {
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+      relations: { favorites: { messages: { viewedBy: true }, users: true } },
+      order: { favorites: { messages: { createdAt: 'DESC' } } },
+    });
+
+    if (!user) throw new NotFoundException('User not found');
+
+    return user.favorites.map((chat) => new ChatDto(chat, userId));
+  }
+
   async deleteChat(chatId: string, userId: string): Promise<ChatEntity> {
     const chat = await this.chatsRepository.findOne({
       where: { id: chatId },
@@ -81,16 +101,33 @@ export class ChatsService {
       throw new ForbiddenException('You are not a part of this chat');
     }
 
-    await this.cache.del(chatId);
-
     return this.chatsRepository.remove(chat);
   }
 
-  async findOne(chatId: string): Promise<ChatEntity> {
-    const cached = await this.cache.get<ChatEntity>(chatId);
-    if (cached) return cached;
+  async addToFavorites(chatId: string, userId: string) {
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+      relations: { favorites: true },
+    });
+    if (!user) throw new NotFoundException('User not found');
+
     const chat = await this.chatsRepository.findOne({ where: { id: chatId } });
-    if (chat) await this.cache.set(chatId, chat);
-    return chat;
+    if (!chat) throw new NotFoundException('Chat not found');
+
+    user.favorites.push(chat);
+    await this.usersRepository.save(user);
+    return new MessageResponse('Added to favorites');
+  }
+
+  async removeFromFavorites(chatId: string, userId: string) {
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+      relations: { favorites: true },
+    });
+    if (!user) throw new NotFoundException('User not found');
+
+    user.favorites = user.favorites.filter((chat) => chat.id !== chatId);
+    await this.usersRepository.save(user);
+    return new MessageResponse('Removed from favorites');
   }
 }

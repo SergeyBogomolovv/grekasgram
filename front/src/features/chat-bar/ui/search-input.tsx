@@ -45,8 +45,9 @@ export default function SearchInput({ currentTab }: { currentTab: Tabs }) {
             <FormItem className="w-full">
               <div className="flex items-center justify-between w-full">
                 <FormLabel className="text-xl font-bold">
-                  Поиск {currentTab === 'chats' && 'чатов'}
-                  {currentTab === 'users' && 'пользователей'}
+                  {currentTab === 'chats' && 'Мои чаты'}
+                  {currentTab === 'favorites' && 'Избранное'}
+                  {currentTab === 'users' && 'Поиск пользователей'}
                 </FormLabel>
                 <NavButton
                   toolipSide="bottom"
