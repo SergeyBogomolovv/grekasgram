@@ -36,7 +36,7 @@ export class ChatsService {
       .where('user.id IN (:...ids)', { ids: [userId, companionId] })
       .groupBy('chat.id')
       .having('COUNT(user.id) = 2')
-      .getOne();
+      .getExists();
 
     if (existingChat) {
       throw new ConflictException('Chat between these users already exists');
