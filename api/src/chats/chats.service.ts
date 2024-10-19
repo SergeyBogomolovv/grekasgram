@@ -10,7 +10,6 @@ import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { ChatDto } from './dto/chat.dto';
 import { UserEntity } from 'src/users/entities/user.entity';
-import { MessageEntity } from 'src/messages/entities/message.entity';
 import { MessageResponse } from 'src/common/message-response';
 
 @Injectable()
@@ -20,8 +19,6 @@ export class ChatsService {
     private chatsRepository: Repository<ChatEntity>,
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
-    @InjectRepository(MessageEntity)
-    private messagesRepository: Repository<MessageEntity>,
     private usersService: UsersService,
   ) {}
 
@@ -36,8 +33,9 @@ export class ChatsService {
       .where('user.id IN (:...ids)', { ids: [userId, companionId] })
       .groupBy('chat.id')
       .having('COUNT(user.id) = 2')
-      .getExists();
+      .getOne();
 
+    console.log(existingChat);
     if (existingChat) {
       throw new ConflictException('Chat between these users already exists');
     }
@@ -53,6 +51,7 @@ export class ChatsService {
     return { chatId: chat.id };
   }
 
+  //TODO: optimize query
   async getUserChats(userId: string): Promise<ChatDto[]> {
     const user = await this.usersRepository.findOne({
       where: { id: userId },
@@ -77,6 +76,7 @@ export class ChatsService {
     return new ChatDto(chat, userId);
   }
 
+  //TODO: optimize query
   async getUserFavorites(userId: string): Promise<ChatDto[]> {
     const user = await this.usersRepository.findOne({
       where: { id: userId },
