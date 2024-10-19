@@ -1,15 +1,17 @@
+import { formatDate } from '@/shared/lib/utils';
 import { cn } from '@/shared/lib/utils/utils';
 
 interface Props {
   isMe: boolean;
   content: string;
+  createdAt: string;
 }
 
-export default function MessageCard({ isMe, content }: Props) {
+export default function MessageCard({ isMe, content, createdAt }: Props) {
   return (
     <div
       className={cn('flex flex-col gap-1', {
-        'self-start': !isMe, //MOCK
+        'self-start': !isMe,
         'self-end': isMe,
       })}
     >
@@ -17,7 +19,7 @@ export default function MessageCard({ isMe, content }: Props) {
         className={cn(
           'p-3 rounded-2xl bg-primary text-primary-foreground break-words',
           {
-            'bg-muted text-foreground': !isMe, //MOCK
+            'bg-muted text-foreground': !isMe,
             'bg-primary text-primary-foreground': isMe,
           },
         )}
@@ -29,7 +31,7 @@ export default function MessageCard({ isMe, content }: Props) {
           'self-end': isMe,
         })}
       >
-        10:41
+        {formatDate(createdAt)}
       </span>
     </div>
   );

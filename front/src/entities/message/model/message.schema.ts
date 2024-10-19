@@ -7,7 +7,7 @@ export const messageSchema = z.object({
   updatedAt: z.string(),
   fromId: z.string().uuid(),
   chatId: z.string().uuid(),
-  viewed: z.boolean(),
+  viewedBy: z.array(z.string().uuid()),
 });
 
-export type MessageSchema = z.infer<typeof messageSchema>;
+export type MessageEntity = z.infer<typeof messageSchema>;

@@ -1,7 +1,6 @@
 import {
   ForbiddenException,
   Injectable,
-  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,7 +13,6 @@ import { MessageResponse } from 'src/common/message-response';
 
 @Injectable()
 export class MessagesService {
-  private readonly logger = new Logger(MessagesService.name);
   constructor(
     @InjectRepository(MessageEntity)
     private messagesRepository: Repository<MessageEntity>,
@@ -26,6 +24,7 @@ export class MessagesService {
         content: dto.content,
         chatId: dto.chatId,
         fromId: userId,
+        viewedBy: [{ id: userId }],
       }),
     );
 

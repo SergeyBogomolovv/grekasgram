@@ -6,9 +6,10 @@ import { Form, FormControl, FormField, FormItem } from '@/shared/ui/form';
 import { IoSend } from 'react-icons/io5';
 import { Button } from '@/shared/ui/button';
 import { Textarea } from '@/shared/ui/textarea';
+import { useCreateMessage } from '@/entities/message/api/use-create-message';
 
 export default function MessageForm({ chatId }: { chatId: string }) {
-  console.log(chatId);
+  const { mutate } = useCreateMessage(chatId);
 
   const form = useForm<MessageFormFields>({
     resolver: zodResolver(messageFormSchema),
@@ -18,7 +19,10 @@ export default function MessageForm({ chatId }: { chatId: string }) {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit((data) => console.log(data))}
+        onSubmit={form.handleSubmit((data) => {
+          mutate(data);
+          form.reset();
+        })}
         className="p-4 border-t-2 flex items-center gap-2"
       >
         <FormField

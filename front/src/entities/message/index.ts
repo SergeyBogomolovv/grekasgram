@@ -1,3 +1,5 @@
 export { default as Message } from './ui/message';
 export { messageSchema } from './model/message.schema';
-export type { MessageSchema } from './model/message.schema';
+export type { MessageEntity } from './model/message.schema';
+export { useGetMessages } from './api/use-get-messages';
+export { useCreateMessage } from './api/use-create-message';
