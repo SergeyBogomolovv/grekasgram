@@ -1,18 +1,18 @@
 'use client';
 import { $api } from '@/shared/api';
 import { useQuery } from '@tanstack/react-query';
-import { chatSchema } from '../model/chat.schema';
+import { chatCompanionSchema } from '../model/chat.schema';
 import { useRouter } from 'next/navigation';
 
-export const useGetChat = (id: string) => {
+export const useGetChatCompanion = (chatId: string) => {
   const router = useRouter();
 
   return useQuery({
-    queryKey: ['chat', id],
+    queryKey: ['chat', chatId],
     queryFn: async () => {
       try {
-        const { data } = await $api.get(`/chats/chat/${id}`);
-        return chatSchema.parse(data);
+        const { data } = await $api.get(`/chats/companion/${chatId}`);
+        return chatCompanionSchema.parse(data);
       } catch (error) {
         router.push('/');
       }

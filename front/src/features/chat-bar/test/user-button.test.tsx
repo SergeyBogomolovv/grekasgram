@@ -10,7 +10,7 @@ vi.mock('next/navigation');
 vi.mock('@/entities/chat', async (importOriginal) => ({
   ...(await importOriginal()),
   useGetMyChats: vi.fn(() => ({
-    data: [{ companion: { id: '1' }, id: 'my-chat-id' }],
+    data: [{ companionId: '1', chatId: 'my-chat-id' }],
   })),
 }));
 

@@ -10,7 +10,7 @@ import { useDeleteChat } from '../api/use-delete-chat';
 
 vi.mock('../api/use-get-favorites', () => ({
   useGetFavorites: () => ({
-    data: [{ id: '2' }, { id: '3' }],
+    data: [{ chatId: '2' }, { chatId: '3' }],
   }),
 }));
 

@@ -13,8 +13,8 @@ async function bootstrap() {
   app.use(helmet());
 
   const openApiConfig = new DocumentBuilder()
-    .setTitle('Online Chat Api')
-    .setDescription('This is the api for online chat')
+    .setTitle('Grekasgram Api')
+    .setDescription('This is the api for grekasgram')
     .setVersion('1.0')
     .addBearerAuth()
     .build();

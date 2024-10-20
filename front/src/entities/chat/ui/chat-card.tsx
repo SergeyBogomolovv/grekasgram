@@ -4,33 +4,35 @@ import Link from 'next/link';
 import { format } from 'date-fns';
 import { useParams, useSearchParams } from 'next/navigation';
 import UserAvatar from '@/shared/ui/user-avatar';
-import { Chat } from '../model/chat.schema';
+import { ChatPreview } from '../model/chat.schema';
 
-const ChatCard = ({ chat }: { chat: Chat }) => {
+const ChatCard = ({ chat }: { chat: ChatPreview }) => {
   const params = useParams<{ id: string }>();
   const searchParams = useSearchParams();
 
   return (
     <Link
-      href={{ pathname: `/${chat.id}`, query: searchParams.toString() }}
+      href={{ pathname: `/${chat.chatId}`, query: searchParams.toString() }}
       className={cn(
         'flex justify-between px-6 py-3 cursor-pointer hover:bg-primary/5 transition-all gap-4',
         {
-          'bg-primary/10': params.id === chat.id,
+          'bg-primary/10': params.id === chat.chatId,
         },
       )}
     >
       <div className="flex items-start gap-x-2 overflow-clip">
-        <UserAvatar src={chat.companion.avatarUrl} />
+        <UserAvatar src={chat.companionAvatarUrl} />
         <div>
-          <p className="font-semibold truncate">{chat.companion.username}</p>
+          <p className="font-semibold truncate">{chat.companionUsername}</p>
           <p className="text-sm text-muted-foreground truncate max-w-[200px]">
             {chat.lastMessage || 'Сообщений пока нет'}
           </p>
         </div>
       </div>
       <div className="flex flex-col gap-2 items-end">
-        <p className="text-xs">{format(chat.lastActivity, 'HH:mm')}</p>
+        <p className="text-xs">
+          {format(chat.lastMessageAt || chat.createdAt, 'HH:mm')}
+        </p>
         {!!chat.newMessages && (
           <p
             className={cn(

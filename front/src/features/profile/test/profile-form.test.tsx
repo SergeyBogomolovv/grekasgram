@@ -15,7 +15,7 @@ describe('ProfileForm', () => {
 
   it('should call post', async () => {
     vi.mocked($api.get).mockResolvedValue({ data: mockUsers[0] });
-    vi.mocked($api.post).mockResolvedValue({ data: mockUsers[1] });
+    vi.mocked($api.put).mockResolvedValue({ data: mockUsers[1] });
     vi.spyOn(toast, 'success');
 
     const { getByPlaceholderText, getByRole } = render(<ProfileForm />);
@@ -26,14 +26,14 @@ describe('ProfileForm', () => {
     await user.type(getByPlaceholderText('Обо мне'), 'test-about');
     await user.click(getByRole('button', { name: 'Сохранить' }));
 
-    expect($api.post).toHaveBeenCalledOnce();
+    expect($api.put).toHaveBeenCalledOnce();
 
     expect(toast.success).toHaveBeenCalledWith('Профиль обновлен');
   });
 
   it('should handle error', async () => {
     vi.mocked($api.get).mockResolvedValue({ data: mockUsers[0] });
-    vi.mocked($api.post).mockRejectedValue(new Error());
+    vi.mocked($api.put).mockRejectedValue(new Error());
 
     vi.spyOn(toast, 'error');
 

@@ -8,17 +8,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ChatEntity } from './entities/chat.entity';
 import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
-import { ChatDto } from './dto/chat.dto';
-import { UserEntity } from 'src/users/entities/user.entity';
+import { ChatCompanionDto } from './dto/chat-companion.dto';
 import { MessageResponse } from 'src/common/message-response';
+import { MessageEntity } from 'src/messages/entities/message.entity';
+import { ChatPreviewDto } from './dto/chat-preview.dto';
 
 @Injectable()
 export class ChatsService {
   constructor(
     @InjectRepository(ChatEntity)
     private chatsRepository: Repository<ChatEntity>,
-    @InjectRepository(UserEntity)
-    private usersRepository: Repository<UserEntity>,
     private usersService: UsersService,
   ) {}
 
@@ -29,13 +28,12 @@ export class ChatsService {
 
     const existingChat = await this.chatsRepository
       .createQueryBuilder('chat')
-      .innerJoin('chat.users', 'user')
-      .where('user.id IN (:...ids)', { ids: [userId, companionId] })
-      .groupBy('chat.id')
-      .having('COUNT(user.id) = 2')
-      .getOne();
+      .innerJoin('chat.users', 'user1', 'user1.id = :userId', { userId })
+      .innerJoin('chat.users', 'user2', 'user2.id = :companionId', {
+        companionId,
+      })
+      .getExists();
 
-    console.log(existingChat);
     if (existingChat) {
       throw new ConflictException('Chat between these users already exists');
     }
@@ -51,42 +49,127 @@ export class ChatsService {
     return { chatId: chat.id };
   }
 
-  //TODO: optimize query
-  async getUserChats(userId: string): Promise<ChatDto[]> {
-    const user = await this.usersRepository.findOne({
-      where: { id: userId },
-      relations: { chats: { messages: { viewedBy: true }, users: true } },
-      order: { chats: { messages: { createdAt: 'DESC' } } },
-    });
+  async getUserChats(userId: string): Promise<ChatPreviewDto[]> {
+    const chats = await this.chatsRepository
+      .createQueryBuilder('chat')
+      .select([
+        'chat.id AS "chatId"',
+        'chat.createdAt AS "createdAt"',
+        'companion.id AS "companionId"',
+        'companion.username AS "companionUsername"',
+        'companion.avatarUrl AS "companionAvatarUrl"',
+        'companion.online AS "companionOnline"',
+        'companion.lastOnlineAt AS "companionLastOnlineAt"',
+      ])
+      .innerJoin('chat.users', 'user', 'user.id = :userId')
+      .innerJoin('chat.users', 'companion', 'companion.id != :userId')
+      .addSelect((qb) => {
+        return qb
+          .select('message.content', 'lastMessage')
+          .from(MessageEntity, 'message')
+          .where('message.chatId = chat.id')
+          .orderBy('message.createdAt', 'DESC')
+          .limit(1);
+      }, 'lastMessage')
+      .addSelect((qb) => {
+        return qb
+          .select('MAX(message.createdAt)', 'lastMessageAt')
+          .from(MessageEntity, 'message')
+          .where('message.chatId = chat.id');
+      }, 'lastMessageAt')
+      .addSelect((qb) => {
+        return qb
+          .select('COUNT(message.id)', 'newMessages')
+          .from(MessageEntity, 'message')
+          .leftJoin(
+            'message_viewed_by',
+            'viewedBy',
+            'viewedBy.messageId = message.id AND viewedBy.userId = :userId',
+          )
+          .where('message.chatId = chat.id')
+          .andWhere('message.fromId != :userId');
+      }, 'newMessages')
+      .setParameter('userId', userId)
+      .getRawMany<ChatPreviewDto>();
 
-    if (!user) throw new NotFoundException('User not found');
-
-    return user.chats.map((chat) => new ChatDto(chat, userId));
+    return chats;
   }
 
-  async getChatById(chatId: string, userId: string): Promise<ChatDto> {
-    const chat = await this.chatsRepository.findOne({
-      where: { id: chatId },
-      relations: { users: true, messages: { viewedBy: true } },
-      order: { messages: { createdAt: 'DESC' } },
-    });
+  async getChatCompanion(
+    chatId: string,
+    userId: string,
+  ): Promise<ChatCompanionDto> {
+    const chat = await this.chatsRepository
+      .createQueryBuilder('chat')
+      .select([
+        'chat.id AS "chatId"',
+        'chat.createdAt AS "createdAt"',
+        'companion.id AS "companionId"',
+        'companion.username AS "companionUsername"',
+        'companion.avatarUrl AS "companionAvatarUrl"',
+        'companion.online AS "companionOnline"',
+        'companion.lastOnlineAt AS "companionLastOnlineAt"',
+      ])
+      .innerJoin('chat.users', 'user', 'user.id = :userId')
+      .innerJoin('chat.users', 'companion', 'companion.id != :userId')
+      .where('chat.id = :chatId', { chatId })
+      .setParameter('userId', userId)
+      .getRawOne<ChatCompanionDto>();
 
     if (!chat) throw new NotFoundException('Chat not found');
 
-    return new ChatDto(chat, userId);
+    return chat;
   }
 
-  //TODO: optimize query
-  async getUserFavorites(userId: string): Promise<ChatDto[]> {
-    const user = await this.usersRepository.findOne({
-      where: { id: userId },
-      relations: { favorites: { messages: { viewedBy: true }, users: true } },
-      order: { favorites: { messages: { createdAt: 'DESC' } } },
-    });
+  async getUserFavorites(userId: string): Promise<ChatPreviewDto[]> {
+    const chats = await this.chatsRepository
+      .createQueryBuilder('chat')
+      .select([
+        'chat.id AS "chatId"',
+        'chat.createdAt AS "createdAt"',
+        'companion.id AS "companionId"',
+        'companion.username AS "companionUsername"',
+        'companion.avatarUrl AS "companionAvatarUrl"',
+        'companion.online AS "companionOnline"',
+        'companion.lastOnlineAt AS "companionLastOnlineAt"',
+      ])
+      .innerJoin('chat.users', 'user', 'user.id = :userId')
+      .innerJoin('chat.users', 'companion', 'companion.id != :userId')
+      .innerJoin(
+        'user_favorites',
+        'favorite',
+        'favorite.chatId = chat.id AND favorite.userId = :userId',
+      )
+      .addSelect((qb) => {
+        return qb
+          .select('message.content', 'lastMessage')
+          .from(MessageEntity, 'message')
+          .where('message.chatId = chat.id')
+          .orderBy('message.createdAt', 'DESC')
+          .limit(1);
+      }, 'lastMessage')
+      .addSelect((qb) => {
+        return qb
+          .select('MAX(message.createdAt)', 'lastMessageAt')
+          .from(MessageEntity, 'message')
+          .where('message.chatId = chat.id');
+      }, 'lastMessageAt')
+      .addSelect((qb) => {
+        return qb
+          .select('COUNT(message.id)', 'newMessages')
+          .from(MessageEntity, 'message')
+          .leftJoin(
+            'message_viewed_by',
+            'viewedBy',
+            'viewedBy.messageId = message.id AND viewedBy.userId = :userId',
+          )
+          .where('message.chatId = chat.id')
+          .andWhere('message.fromId != :userId');
+      }, 'newMessages')
+      .setParameter('userId', userId)
+      .getRawMany<ChatPreviewDto>();
 
-    if (!user) throw new NotFoundException('User not found');
-
-    return user.favorites.map((chat) => new ChatDto(chat, userId));
+    return chats;
   }
 
   async deleteChat(chatId: string, userId: string): Promise<ChatEntity> {
@@ -105,29 +188,14 @@ export class ChatsService {
   }
 
   async addToFavorites(chatId: string, userId: string) {
-    const user = await this.usersRepository.findOne({
-      where: { id: userId },
-      relations: { favorites: true },
-    });
-    if (!user) throw new NotFoundException('User not found');
-
     const chat = await this.chatsRepository.findOne({ where: { id: chatId } });
     if (!chat) throw new NotFoundException('Chat not found');
-
-    user.favorites.push(chat);
-    await this.usersRepository.save(user);
+    await this.usersService.addToFavorites(userId, chat);
     return new MessageResponse('Added to favorites');
   }
 
   async removeFromFavorites(chatId: string, userId: string) {
-    const user = await this.usersRepository.findOne({
-      where: { id: userId },
-      relations: { favorites: true },
-    });
-    if (!user) throw new NotFoundException('User not found');
-
-    user.favorites = user.favorites.filter((chat) => chat.id !== chatId);
-    await this.usersRepository.save(user);
+    await this.usersService.removeFromFavorites(userId, chatId);
     return new MessageResponse('Removed from favorites');
   }
 }

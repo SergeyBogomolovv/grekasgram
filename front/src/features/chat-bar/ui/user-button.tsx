@@ -10,7 +10,7 @@ export default function UserButton({ user }: { user: User }) {
   const router = useRouter();
 
   const isChatExist = useMemo(
-    () => myChats?.some((chat) => chat.companion.id === user.id),
+    () => myChats?.some((chat) => chat.companionId === user.id),
     [myChats, user.id],
   );
 
@@ -19,9 +19,9 @@ export default function UserButton({ user }: { user: User }) {
       aria-label="Открыть чат с пользователем"
       onClick={() => {
         if (isChatExist) {
-          const chat = myChats?.find((chat) => chat.companion.id === user.id);
+          const chat = myChats?.find((chat) => chat.companionId === user.id);
           if (!chat) return;
-          router.push(`/${chat.id}`);
+          router.push(`/${chat.chatId}`);
         } else {
           mutate(user.id);
         }

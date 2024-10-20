@@ -12,6 +12,7 @@ import { UserDto } from './dto/user.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { FilesService } from 'src/files/files.service';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
+import { ChatEntity } from 'src/chats/entities/chat.entity';
 
 @Injectable()
 export class UsersService {
@@ -53,6 +54,24 @@ export class UsersService {
     await this.setUserToCache(updated);
 
     return new UserDto(updated);
+  }
+
+  async addToFavorites(userId: string, chat: ChatEntity) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: { favorites: true },
+    });
+    user.favorites.push(chat);
+    await this.userRepository.save(user);
+  }
+
+  async removeFromFavorites(userId: string, chatId: string) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: { favorites: true },
+    });
+    user.favorites = user.favorites.filter((c) => c.id !== chatId);
+    await this.userRepository.save(user);
   }
 
   async findOneByIdOrFail(id: string): Promise<UserEntity> {

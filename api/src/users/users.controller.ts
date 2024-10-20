@@ -2,7 +2,7 @@ import {
   Body,
   Controller,
   Get,
-  Post,
+  Put,
   Query,
   UploadedFile,
   UseGuards,
@@ -44,7 +44,7 @@ export class UsersController {
   @ApiCreatedResponse({ type: UserDto })
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('avatar'))
-  @Post('update-profile')
+  @Put('update-profile')
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   updateUsersProfile(
     @HttpUser('userId') userId: string,

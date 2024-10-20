@@ -28,7 +28,7 @@ export default function ChatOptions({ children, chatId, name }: Props) {
   const { mutate: deleteChat } = useDeleteChat();
 
   const isInFavorites = useMemo(
-    () => favoriteChats?.some((chat) => chat.id === chatId),
+    () => favoriteChats?.some((chat) => chat.chatId === chatId),
     [favoriteChats, chatId],
   );
 
