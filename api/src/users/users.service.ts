@@ -124,7 +124,7 @@ export class UsersService {
     const user = await this.findOneById(id);
     if (user) {
       await this.deleteUserFromCache(user);
-      return this.userRepository.remove(user);
+      return this.userRepository.softRemove(user);
     }
     return null;
   }

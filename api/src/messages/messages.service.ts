@@ -70,7 +70,7 @@ export class MessagesService {
       );
     }
 
-    await this.messagesRepository.remove(message);
+    await this.messagesRepository.softRemove(message);
 
     return new MessageResponse('Message deleted successfully');
   }

@@ -188,7 +188,7 @@ export class ChatsService {
       throw new ForbiddenException('You are not a part of this chat');
     }
 
-    return this.chatsRepository.remove(chat);
+    return this.chatsRepository.softRemove(chat);
   }
 
   async addToFavorites(chatId: string, userId: string) {
