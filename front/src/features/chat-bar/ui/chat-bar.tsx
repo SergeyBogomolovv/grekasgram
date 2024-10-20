@@ -10,7 +10,7 @@ export default function Chatbar() {
   const currentTab = useCurrentTab();
 
   return (
-    <section className="flex flex-col md:border-r-2 md:w-[300px] items-center overflow-y-auto">
+    <section className="flex flex-col md:border-r-2 md:w-[300px] items-center overflow-y-auto flex-2">
       <SearchInput currentTab={currentTab} />
       {currentTab === 'chats' && <ChatsList />}
       {currentTab === 'favorites' && <FavoritesList />}

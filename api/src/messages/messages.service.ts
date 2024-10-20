@@ -35,6 +35,7 @@ export class MessagesService {
     const messages = await this.messagesRepository.find({
       where: { chatId },
       relations: { viewedBy: true },
+      order: { createdAt: 'ASC' },
     });
     return messages.map((message) => new MessageDto(message));
   }

@@ -1,6 +1,6 @@
 'use client';
 
-import { Message, useGetMessages } from '@/entities/message';
+import { MessageCard, useGetMessages } from '@/entities/message';
 import { useGetProfile } from '@/entities/user';
 
 interface Props {
@@ -15,7 +15,7 @@ export default function MessagesContainer({ chatId }: Props) {
     <section className="flex-grow flex flex-col gap-4 p-4 overflow-y-scroll">
       {isLoading && <p className="text-center">Загрузка...</p>}
       {data?.map((msg) => (
-        <Message message={msg} key={msg.id} userId={user?.id} />
+        <MessageCard message={msg} key={msg.id} userId={user?.id} />
       ))}
     </section>
   );
