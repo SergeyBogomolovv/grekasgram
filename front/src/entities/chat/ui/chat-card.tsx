@@ -24,7 +24,7 @@ const ChatCard = ({ chat }: { chat: ChatPreview }) => {
         <UserAvatar src={chat.companionAvatarUrl} />
         <div>
           <p className="font-semibold truncate">{chat.companionUsername}</p>
-          <p className="text-sm text-muted-foreground truncate max-w-[200px]">
+          <p className="text-sm text-muted-foreground truncate max-w-[150px]">
             {chat.lastMessage || 'Сообщений пока нет'}
           </p>
         </div>

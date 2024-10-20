@@ -20,8 +20,8 @@ export const chatPreviewSchema = z.object({
   companionAvatarUrl: z.nullable(z.string().url()),
   companionOnline: z.boolean(),
   companionLastOnlineAt: z.string().datetime(),
-  lastMessage: z.string().nullable(),
-  lastMessageAt: z.string().datetime(),
+  lastMessage: z.nullable(z.string()),
+  lastMessageAt: z.nullable(z.string().datetime()),
   newMessages: z
     .string()
     .regex(/^\d+$/)

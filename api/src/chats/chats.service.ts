@@ -89,6 +89,8 @@ export class ChatsService {
           .where('message.chatId = chat.id')
           .andWhere('message.fromId != :userId');
       }, 'newMessages')
+      .orderBy('"lastMessageAt"', 'DESC')
+      .addOrderBy('chat.createdAt', 'DESC')
       .setParameter('userId', userId)
       .getRawMany<ChatPreviewDto>();
 
@@ -166,6 +168,8 @@ export class ChatsService {
           .where('message.chatId = chat.id')
           .andWhere('message.fromId != :userId');
       }, 'newMessages')
+      .orderBy('"lastMessageAt"', 'DESC')
+      .addOrderBy('chat.createdAt', 'DESC')
       .setParameter('userId', userId)
       .getRawMany<ChatPreviewDto>();
 
