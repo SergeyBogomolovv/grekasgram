@@ -14,7 +14,7 @@ export default function MessageForm({ chatId }: { chatId: string }) {
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
+  console.log(imagePreview);
   const form = useForm<MessageFormFields>({
     resolver: zodResolver(messageFormSchema),
     defaultValues: { content: '' },

@@ -13,6 +13,7 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { FilesService } from 'src/files/files.service';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { ChatEntity } from 'src/chats/entities/chat.entity';
+import { PublicUserDto } from './dto/public-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -157,6 +158,11 @@ export class UsersService {
       ...dto,
       avatarUrl,
     });
+  }
+
+  async getUserProfile(id: string): Promise<PublicUserDto> {
+    const user = await this.findOneByIdOrFail(id);
+    return new PublicUserDto(user);
   }
 
   async searchUsers(query: string, userId: string): Promise<UserDto[]> {

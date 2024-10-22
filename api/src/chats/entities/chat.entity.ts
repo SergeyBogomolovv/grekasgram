@@ -18,7 +18,7 @@ export class ChatEntity {
   @ManyToMany(() => UserEntity, (user) => user.chats, { onDelete: 'CASCADE' })
   users: UserEntity[];
 
-  @OneToMany(() => MessageEntity, (message) => message.chat)
+  @OneToMany(() => MessageEntity, (message) => message.chat, { cascade: true })
   messages: MessageEntity[];
 
   @CreateDateColumn()

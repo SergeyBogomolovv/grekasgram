@@ -42,7 +42,7 @@ export class ChatsController {
   })
   @Post('create')
   create(@Body() dto: CreateChatDto, @HttpUser('userId') userId: string) {
-    return this.chatsService.createChat(userId, dto.companionId);
+    return this.chatsService.createChat(userId, dto.companionId, dto.content);
   }
 
   @ApiOperation({ summary: 'Добавление чата в избранное' })

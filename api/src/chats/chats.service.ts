@@ -21,7 +21,7 @@ export class ChatsService {
     private usersService: UsersService,
   ) {}
 
-  async createChat(userId: string, companionId: string) {
+  async createChat(userId: string, companionId: string, content: string) {
     if (userId === companionId) {
       throw new ConflictException('You cannot create chat with yourself');
     }
@@ -42,8 +42,18 @@ export class ChatsService {
       this.usersService.findOneByIdOrFail(userId),
       this.usersService.findOneByIdOrFail(companionId),
     ]);
+
+    const message = new MessageEntity();
+    message.content = content;
+    message.fromId = userId;
+    message.viewedBy = [user];
+    message.from = user;
+
     const chat = await this.chatsRepository.save(
-      this.chatsRepository.create({ users: [user, companion] }),
+      this.chatsRepository.create({
+        users: [user, companion],
+        messages: [message],
+      }),
     );
 
     return { chatId: chat.id };

@@ -6,4 +6,8 @@ export class CreateChatDto {
   @IsString()
   @IsUUID()
   companionId: string;
+
+  @ApiProperty({ example: 'first message content' })
+  @IsString()
+  content: string;
 }
