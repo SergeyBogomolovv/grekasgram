@@ -18,7 +18,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEditMessage } from '../api/use-edit-message';
 import { Form, FormControl, FormField, FormItem } from '@/shared/ui/form';
 import { Button } from '@/shared/ui/button';
-import Image from 'next/image';
+import ModalImage from '@/shared/ui/modal-image';
 
 interface Props {
   message: MessageEntity;
@@ -53,7 +53,7 @@ export default function MessageCard({ message, userId }: Props) {
         disabled={message.fromId !== userId}
       >
         {message.imageUrl && (
-          <Image
+          <ModalImage
             src={message.imageUrl}
             alt="image"
             width={350}

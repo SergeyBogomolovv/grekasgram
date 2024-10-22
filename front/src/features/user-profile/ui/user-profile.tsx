@@ -11,10 +11,10 @@ import {
   SheetDescription,
   SheetTitle,
 } from '@/shared/ui/sheet';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo } from 'react';
 import NewChatModal from './new-chat-modal';
+import ModalImage from '@/shared/ui/modal-image';
 
 interface Props {
   children: React.ReactNode;
@@ -37,7 +37,7 @@ export default function UserProfile({ children, userId }: Props) {
       <SheetContent side="left">
         <SheetHeader>
           <SheetTitle>Информация о {user?.username}</SheetTitle>
-          <Image
+          <ModalImage
             src={user?.avatarUrl || '/user-avatar.png'}
             alt="user avatar"
             className="rounded-lg"

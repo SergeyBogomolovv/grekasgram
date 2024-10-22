@@ -16,8 +16,8 @@ export default function ChatHeader({ chatId }: { chatId: string }) {
         <UserProfile userId={data.companionId}>
           <div className="flex items-center gap-x-2">
             <UserAvatar className="size-12" src={data.companionAvatarUrl} />
-            <div className="flex flex-col">
-              <p className="font-bold self-start">
+            <div className="flex flex-col items-start">
+              <p className="font-bold">
                 {isLoading ? 'Загрузка...' : data.companionUsername}
               </p>
               <p className="text-sm">
