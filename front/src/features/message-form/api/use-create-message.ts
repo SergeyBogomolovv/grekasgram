@@ -1,8 +1,8 @@
 import { $api, queryClient } from '@/shared/api';
 import { useMutation } from '@tanstack/react-query';
-import { messageSchema } from '../model/message.schema';
 import { toast } from 'sonner';
-import { MessageFormFields } from '@/features/chats/model/schema';
+import { messageSchema } from '@/entities/message';
+import { MessageFormFields } from '../model/schema';
 
 export const useCreateMessage = (chatId: string) => {
   return useMutation({

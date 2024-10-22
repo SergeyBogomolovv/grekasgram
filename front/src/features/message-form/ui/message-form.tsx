@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem } from '@/shared/ui/form';
 import { IoSend } from 'react-icons/io5';
 import { Button } from '@/shared/ui/button';
-import { useCreateMessage } from '@/entities/message/api/use-create-message';
+import { useCreateMessage } from '@/features/message-form/api/use-create-message';
 import { useRef, useState } from 'react';
 import { ImAttachment } from 'react-icons/im';
 
