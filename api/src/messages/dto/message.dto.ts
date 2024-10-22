@@ -9,6 +9,7 @@ export class MessageDto {
     this.updatedAt = payload.updatedAt;
     this.fromId = payload.fromId;
     this.chatId = payload.chatId;
+    this.imageUrl = payload.imageUrl;
   }
 
   @ApiProperty({ example: 'uuid of message' })
@@ -16,6 +17,9 @@ export class MessageDto {
 
   @ApiProperty({ example: 'message' })
   content: string;
+
+  @ApiProperty({ example: 'url', nullable: true })
+  imageUrl?: string;
 
   @ApiProperty({ example: 'timestamp' })
   createdAt: Date;

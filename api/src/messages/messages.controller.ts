@@ -6,10 +6,13 @@ import {
   Param,
   Post,
   Put,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import {
+  ApiConsumes,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
@@ -25,6 +28,7 @@ import { CreateMessageDto } from './dto/create-message.dto';
 import { HttpUser } from 'src/auth/decorators/http-user.decorator';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { MessageResponse } from 'src/common/message-response';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('messages')
 @UseGuards(HttpAuthGuard)
@@ -35,12 +39,15 @@ export class MessagesController {
 
   @ApiOperation({ summary: 'Создание сообщения' })
   @ApiCreatedResponse({ type: MessageDto })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('image'))
   @Post('create')
   createMessage(
     @Body() dto: CreateMessageDto,
     @HttpUser('userId') userId: string,
+    @UploadedFile() image: Express.Multer.File,
   ) {
-    return this.messagesService.create(dto, userId);
+    return this.messagesService.create(dto, userId, image);
   }
 
   @ApiOperation({ summary: 'Получение сообщений для чата' })

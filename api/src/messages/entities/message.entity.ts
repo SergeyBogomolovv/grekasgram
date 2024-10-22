@@ -30,6 +30,9 @@ export class MessageEntity {
   @Column()
   fromId: string;
 
+  @Column({ nullable: true })
+  imageUrl?: string;
+
   @ManyToOne(() => ChatEntity, (chat) => chat.messages, { onDelete: 'CASCADE' })
   chat: ChatEntity;
 

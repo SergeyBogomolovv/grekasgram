@@ -45,7 +45,7 @@ export default function RegisterForm() {
         <div className="text-center flex flex-col gap-y-4">
           <h1 className="text-4xl font-bold">Добро пожаловать!</h1>
           <p className="text-sm text-muted-foreground">
-            Рады видеть вас в online chat, пожалуйста, введите данные для
+            Рады видеть вас в grekasgram, пожалуйста, введите данные для
             регистрации
           </p>
         </div>

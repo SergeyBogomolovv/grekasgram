@@ -7,10 +7,11 @@ import { MessageFormFields } from '@/features/chats/model/schema';
 export const useCreateMessage = (chatId: string) => {
   return useMutation({
     mutationFn: async (values: MessageFormFields) => {
-      const { data } = await $api.post('/messages/create', {
-        ...values,
-        chatId,
-      });
+      const formData = new FormData();
+      if (values.image) formData.append('image', values.image);
+      formData.append('content', values.content);
+      formData.append('chatId', chatId);
+      const { data } = await $api.post('/messages/create', formData);
       return messageSchema.parse(data);
     },
     onSuccess: () => {

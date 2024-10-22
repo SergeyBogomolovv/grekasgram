@@ -14,6 +14,7 @@ const mockMessage: MessageEntity = {
   updatedAt: '2021-01-01',
   fromId: '1',
   chatId: '1',
+  imageUrl: null,
 };
 
 describe('MessageCard', () => {

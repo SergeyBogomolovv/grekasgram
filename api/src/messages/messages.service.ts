@@ -10,21 +10,32 @@ import { CreateMessageDto } from './dto/create-message.dto';
 import { MessageDto } from './dto/message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { MessageResponse } from 'src/common/message-response';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class MessagesService {
   constructor(
     @InjectRepository(MessageEntity)
     private messagesRepository: Repository<MessageEntity>,
+    private readonly filesService: FilesService,
   ) {}
 
-  async create(dto: CreateMessageDto, userId: string) {
+  async create(
+    dto: CreateMessageDto,
+    userId: string,
+    image?: Express.Multer.File,
+  ) {
+    let imageUrl: string | null = null;
+    if (image) {
+      imageUrl = await this.filesService.uploadImage(dto.chatId, image);
+    }
     const message = await this.messagesRepository.save(
       this.messagesRepository.create({
         content: dto.content,
         chatId: dto.chatId,
         fromId: userId,
         viewedBy: [{ id: userId }],
+        imageUrl,
       }),
     );
 

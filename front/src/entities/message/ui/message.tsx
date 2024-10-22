@@ -18,6 +18,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEditMessage } from '../api/use-edit-message';
 import { Form, FormControl, FormField, FormItem } from '@/shared/ui/form';
 import { Button } from '@/shared/ui/button';
+import Image from 'next/image';
 
 interface Props {
   message: MessageEntity;
@@ -51,6 +52,15 @@ export default function MessageCard({ message, userId }: Props) {
         })}
         disabled={message.fromId !== userId}
       >
+        {message.imageUrl && (
+          <Image
+            src={message.imageUrl}
+            alt="image"
+            width={350}
+            height={350}
+            className="rounded-lg aspect-auto object-cover"
+          />
+        )}
         {editMode ? (
           <Form {...form}>
             <form
@@ -74,10 +84,11 @@ export default function MessageCard({ message, userId }: Props) {
                 )}
               />
               <div className="flex items-center gap-2 self-end">
-                <Button type="submit" variant="secondary">
+                <Button size="sm" type="submit" variant="secondary">
                   Сохранить
                 </Button>
                 <Button
+                  size="sm"
                   type="button"
                   variant="destructive"
                   onClick={() => {

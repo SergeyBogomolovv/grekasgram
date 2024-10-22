@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function UserButton({ user }: { user: User }) {
-  const { mutate } = useCreateChat();
+  const { mutate, isPending } = useCreateChat();
   const { data: myChats } = useGetMyChats();
   const router = useRouter();
 
@@ -16,6 +16,7 @@ export default function UserButton({ user }: { user: User }) {
 
   return (
     <button
+      disabled={isPending}
       aria-label="Открыть чат с пользователем"
       onClick={() => {
         if (isChatExist) {

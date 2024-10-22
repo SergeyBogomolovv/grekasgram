@@ -3,3 +3,4 @@ export { messageSchema } from './model/message.schema';
 export type { MessageEntity } from './model/message.schema';
 export { useGetMessages } from './api/use-get-messages';
 export { useCreateMessage } from './api/use-create-message';
+export { default as MessageSkeleton } from './ui/message-skeleton';
