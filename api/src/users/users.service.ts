@@ -12,6 +12,8 @@ import { UserDto } from './dto/user.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { FilesService } from 'src/files/files.service';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
+import { ChatEntity } from 'src/chats/entities/chat.entity';
+import { PublicUserDto } from './dto/public-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -23,12 +25,15 @@ export class UsersService {
   ) {}
 
   async create(dto: CreateUserDto): Promise<UserDto> {
-    const isUserNameExists = await this.userRepository.findOne({
-      where: { username: dto.username },
-    });
-    const isEmailExists = await this.userRepository.findOne({
-      where: { email: dto.email },
-    });
+    const isUserNameExists = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.username = :username', { username: dto.username })
+      .getExists();
+
+    const isEmailExists = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.email = :email', { email: dto.email })
+      .getExists();
 
     if (isUserNameExists || isEmailExists) {
       throw new ConflictException('User already exists');
@@ -50,6 +55,24 @@ export class UsersService {
     await this.setUserToCache(updated);
 
     return new UserDto(updated);
+  }
+
+  async addToFavorites(userId: string, chat: ChatEntity) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: { favorites: true },
+    });
+    user.favorites.push(chat);
+    await this.userRepository.save(user);
+  }
+
+  async removeFromFavorites(userId: string, chatId: string) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: { favorites: true },
+    });
+    user.favorites = user.favorites.filter((c) => c.id !== chatId);
+    await this.userRepository.save(user);
   }
 
   async findOneByIdOrFail(id: string): Promise<UserEntity> {
@@ -102,7 +125,7 @@ export class UsersService {
     const user = await this.findOneById(id);
     if (user) {
       await this.deleteUserFromCache(user);
-      return this.userRepository.remove(user);
+      return this.userRepository.softRemove(user);
     }
     return null;
   }
@@ -135,6 +158,11 @@ export class UsersService {
       ...dto,
       avatarUrl,
     });
+  }
+
+  async getUserProfile(id: string): Promise<PublicUserDto> {
+    const user = await this.findOneByIdOrFail(id);
+    return new PublicUserDto(user);
   }
 
   async searchUsers(query: string, userId: string): Promise<UserDto[]> {

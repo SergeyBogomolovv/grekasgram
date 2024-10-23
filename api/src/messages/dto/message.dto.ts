@@ -9,7 +9,7 @@ export class MessageDto {
     this.updatedAt = payload.updatedAt;
     this.fromId = payload.fromId;
     this.chatId = payload.chatId;
-    this.viewedBy = payload.viewedBy.map((user) => user.id);
+    this.imageUrl = payload.imageUrl;
   }
 
   @ApiProperty({ example: 'uuid of message' })
@@ -17,6 +17,9 @@ export class MessageDto {
 
   @ApiProperty({ example: 'message' })
   content: string;
+
+  @ApiProperty({ example: 'url', nullable: true })
+  imageUrl?: string;
 
   @ApiProperty({ example: 'timestamp' })
   createdAt: Date;
@@ -29,7 +32,4 @@ export class MessageDto {
 
   @ApiProperty({ example: 'uuid of chat' })
   chatId: string;
-
-  @ApiProperty({ type: () => [String] })
-  viewedBy: string[];
 }

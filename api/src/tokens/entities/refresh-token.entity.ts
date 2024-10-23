@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'refresh_token' })
 export class RefreshTokenEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

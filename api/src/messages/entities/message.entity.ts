@@ -3,6 +3,7 @@ import { UserEntity } from '../../users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
@@ -16,11 +17,11 @@ export class MessageEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column('text')
   content: string;
 
   @ManyToMany(() => UserEntity)
-  @JoinTable({ name: 'messages_viewed_by' })
+  @JoinTable({ name: 'message_viewed_by' })
   viewedBy: UserEntity[];
 
   @ManyToOne(() => UserEntity, (user) => user.messages)
@@ -29,7 +30,12 @@ export class MessageEntity {
   @Column()
   fromId: string;
 
-  @ManyToOne(() => ChatEntity, (chat) => chat.messages, { onDelete: 'CASCADE' })
+  @Column({ nullable: true })
+  imageUrl?: string;
+
+  @ManyToOne(() => ChatEntity, (chat) => chat.messages, {
+    onDelete: 'CASCADE',
+  })
   chat: ChatEntity;
 
   @Column()
@@ -40,4 +46,7 @@ export class MessageEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

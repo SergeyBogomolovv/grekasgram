@@ -3,7 +3,11 @@ import { ChatCard, useGetMyChats } from '@/entities/chat';
 import { useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
 
-export default function ChatsList() {
+export default function ChatsList({
+  closeChatbar,
+}: {
+  closeChatbar?: () => void;
+}) {
   const { data, isLoading, isError } = useGetMyChats();
   const query = useSearchParams().get('query');
 
@@ -11,7 +15,7 @@ export default function ChatsList() {
     if (!query) {
       return data;
     }
-    return data?.filter((chat) => chat.companion.username.includes(query));
+    return data?.filter((chat) => chat.companionUsername.includes(query));
   }, [data, query]);
 
   return (
@@ -36,7 +40,9 @@ export default function ChatsList() {
           По запросу &quot;{query}&quot; ничего не найдено
         </p>
       )}
-      {filteredChats?.map((chat) => <ChatCard key={chat.id} chat={chat} />)}
+      {filteredChats?.map((chat) => (
+        <ChatCard closeChatbar={closeChatbar} key={chat.chatId} chat={chat} />
+      ))}
     </div>
   );
 }

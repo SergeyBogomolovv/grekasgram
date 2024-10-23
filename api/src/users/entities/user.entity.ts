@@ -4,6 +4,7 @@ import { MessageEntity } from '../../messages/entities/message.entity';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
@@ -25,19 +26,22 @@ export class UserEntity {
   @Column({ nullable: true })
   avatarUrl?: string;
 
-  @Column()
+  @Column('text')
   password: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'text' })
   about?: string;
 
   @CreateDateColumn()
   createdAt: Date;
 
+  @DeleteDateColumn()
+  deletedAt: Date;
+
   @Column({ default: false })
   online: boolean;
 
-  @Column({ default: new Date(), type: 'timestamp' })
+  @Column({ default: () => 'CURRENT_TIMESTAMP', type: 'timestamp' })
   lastOnlineAt: Date;
 
   @Column({ nullable: true, type: 'timestamp' })

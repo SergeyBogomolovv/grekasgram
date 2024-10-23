@@ -16,7 +16,7 @@ export const useUpdateProfile = () =>
       if (username) formData.append('username', username);
       if (about) formData.append('about', about);
       if (avatar) formData.append('avatar', avatar);
-      const { data } = await $api.post('/users/update-profile', formData);
+      const { data } = await $api.put('/users/update-profile', formData);
       return userSchema.parse(data);
     },
     onSuccess(data) {

@@ -17,11 +17,12 @@ describe('useCreateChat', () => {
 
     const { result } = renderHook(() => useCreateChat());
 
-    result.current.mutate('test-id');
+    result.current.mutate({ companionId: 'test-id', content: 'message' });
 
     await waitFor(() => {
       expect($api.post).toHaveBeenCalledWith('/chats/create', {
         companionId: 'test-id',
+        content: 'message',
       });
     });
   });
@@ -31,7 +32,7 @@ describe('useCreateChat', () => {
     vi.mocked($api.post).mockRejectedValue(new Error());
     const { result } = renderHook(() => useCreateChat());
 
-    result.current.mutate('test-id');
+    result.current.mutate({ companionId: 'test-id', content: 'message' });
 
     await waitFor(() =>
       expect(toast.error).toHaveBeenCalledWith(

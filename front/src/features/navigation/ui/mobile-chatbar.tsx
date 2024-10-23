@@ -34,7 +34,7 @@ export default function MobileChatbar() {
           </DrawerDescription>
           <Navbar />
         </DrawerHeader>
-        <Chatbar />
+        <Chatbar closeChatbar={() => setOpen(false)} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="secondary">Закрыть</Button>

@@ -30,7 +30,7 @@ export default function ConfirmDialog({
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="bg-[#ededed] dark:bg-[#0a0a0a]">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           {!!description && (

@@ -13,7 +13,7 @@ describe('useUpdateProfile', () => {
   });
 
   it('should update profile', async () => {
-    vi.mocked($api.post).mockResolvedValue({ data: mockUsers[1] });
+    vi.mocked($api.put).mockResolvedValue({ data: mockUsers[1] });
 
     vi.spyOn(toast, 'success');
     vi.spyOn(queryClient, 'setQueryData');
@@ -32,7 +32,7 @@ describe('useUpdateProfile', () => {
   });
 
   it('should handle error', async () => {
-    vi.mocked($api.post).mockRejectedValue(new Error());
+    vi.mocked($api.put).mockRejectedValue(new Error());
 
     vi.spyOn(toast, 'error');
 

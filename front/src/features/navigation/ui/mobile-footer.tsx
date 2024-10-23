@@ -1,3 +1,4 @@
+'use client';
 import { useGetProfile } from '@/entities/user';
 import ThemeSwitch from '@/shared/ui/theme-switch';
 import UserAvatar from '@/shared/ui/user-avatar';
@@ -8,7 +9,7 @@ import MobileChatbar from './mobile-chatbar';
 export default function MobileFooter() {
   const { data } = useGetProfile();
   return (
-    <nav className="flex p-2 gap-2 items-center justify-around border-t-2">
+    <nav className="flex md:hidden p-2 gap-2 items-center justify-around border-t-2">
       <ThemeSwitch>
         <button
           className="flex flex-col items-center gap-1 md:hidden"

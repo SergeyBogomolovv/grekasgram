@@ -2,7 +2,8 @@ import {
   Body,
   Controller,
   Get,
-  Post,
+  Param,
+  Put,
   Query,
   UploadedFile,
   UseGuards,
@@ -24,8 +25,8 @@ import { UserDto } from './dto/user.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { HttpAuthGuard } from 'src/auth/guards/http-auth.guard';
 import { HttpUser } from 'src/auth/decorators/http-user.decorator';
+import { PublicUserDto } from './dto/public-user.dto';
 
-@UseGuards(HttpAuthGuard)
 @ApiBearerAuth()
 @ApiTags('users')
 @Controller('users')
@@ -34,6 +35,7 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Получение информации о профиле' })
   @ApiOkResponse({ type: UserDto, description: 'Get user profile' })
+  @UseGuards(HttpAuthGuard)
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Get('me')
   getProfile(@HttpUser('userId') userId: string) {
@@ -44,7 +46,8 @@ export class UsersController {
   @ApiCreatedResponse({ type: UserDto })
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('avatar'))
-  @Post('update-profile')
+  @UseGuards(HttpAuthGuard)
+  @Put('update-profile')
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   updateUsersProfile(
     @HttpUser('userId') userId: string,
@@ -58,11 +61,19 @@ export class UsersController {
   @ApiOkResponse({ type: [UserDto] })
   @ApiQuery({ name: 'query', type: String, required: true })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @UseGuards(HttpAuthGuard)
   @Get('search')
   searchUsers(
     @Query('query') query: string,
     @HttpUser('userId') userId: string,
   ) {
     return this.usersService.searchUsers(query, userId);
+  }
+
+  @ApiOperation({ summary: 'Получение профиля конкретного пользователя' })
+  @ApiOkResponse({ type: PublicUserDto })
+  @Get('user-profile/:id')
+  getUserProfile(@Param('id') id: string) {
+    return this.usersService.getUserProfile(id);
   }
 }

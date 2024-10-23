@@ -1,4 +1,5 @@
-import { CurrentNavigationBar } from '@/features/navigation';
+import { Chatbar } from '@/features/chat-bar';
+import { MobileFooter, Sidebar } from '@/features/navigation';
 
 export default function MainLayout({
   children,
@@ -7,7 +8,9 @@ export default function MainLayout({
 }) {
   return (
     <main className="flex h-screen flex-col-reverse md:flex-row">
-      <CurrentNavigationBar />
+      <Sidebar />
+      <Chatbar className="md:flex hidden" />
+      <MobileFooter />
       {children}
     </main>
   );

@@ -20,33 +20,33 @@ import {
 import { ChatsService } from './chats.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { HttpAuthGuard } from 'src/auth/guards/http-auth.guard';
-import { ChatDto } from './dto/chat.dto';
 import { HttpUser } from 'src/auth/decorators/http-user.decorator';
 import { MessageResponse } from 'src/common/message-response';
 import { CreateChatResponse } from './dto/create-chat.response';
+import { ChatPreviewDto } from './dto/chat-preview.dto';
+import { ChatCompanionDto } from './dto/chat-companion.dto';
 
 @ApiTags('chats')
 @ApiBearerAuth()
 @UseGuards(HttpAuthGuard)
+@ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @Controller('chats')
 export class ChatsController {
   constructor(private readonly chatsService: ChatsService) {}
 
   @ApiOperation({ summary: 'Создание чата' })
   @ApiCreatedResponse({ type: CreateChatResponse })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiConflictResponse({
     description:
       'You cannot create chat with yourself and if chat already exists',
   })
   @Post('create')
   create(@Body() dto: CreateChatDto, @HttpUser('userId') userId: string) {
-    return this.chatsService.createChat(userId, dto.companionId);
+    return this.chatsService.createChat(userId, dto.companionId, dto.content);
   }
 
   @ApiOperation({ summary: 'Добавление чата в избранное' })
   @ApiCreatedResponse({ type: MessageResponse })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiNotFoundResponse({ description: 'Chat or user not found' })
   @Post('add-to-favorites/:chatId')
   async addToFavorites(
@@ -57,35 +57,34 @@ export class ChatsController {
   }
 
   @ApiOperation({ summary: 'Получение чатов' })
-  @ApiOkResponse({ type: [ChatDto] })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiOkResponse({ type: [ChatPreviewDto] })
   @Get('my')
-  getUserChats(@HttpUser('userId') userId: string): Promise<ChatDto[]> {
+  getUserChats(@HttpUser('userId') userId: string): Promise<ChatPreviewDto[]> {
     return this.chatsService.getUserChats(userId);
   }
 
   @ApiOperation({ summary: 'Получение избранных чатов' })
-  @ApiOkResponse({ type: [ChatDto] })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiOkResponse({ type: [ChatPreviewDto] })
   @Get('favorites')
-  getUserFavorites(@HttpUser('userId') userId: string): Promise<ChatDto[]> {
+  getUserFavorites(
+    @HttpUser('userId') userId: string,
+  ): Promise<ChatPreviewDto[]> {
     return this.chatsService.getUserFavorites(userId);
   }
 
-  @ApiOperation({ summary: 'Получение чата по id' })
-  @ApiOkResponse({ type: ChatDto })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @Get('chat/:id')
+  @ApiOperation({ summary: 'Получение информации о собеседнике чата' })
+  @ApiOkResponse({ type: ChatCompanionDto })
+  @ApiNotFoundResponse({ description: 'Chat not found' })
+  @Get('companion/:chatId')
   getChatById(
     @HttpUser('userId') userId: string,
-    @Param('id') chatId: string,
-  ): Promise<ChatDto> {
-    return this.chatsService.getChatById(chatId, userId);
+    @Param('chatId') chatId: string,
+  ): Promise<ChatCompanionDto> {
+    return this.chatsService.getChatCompanion(chatId, userId);
   }
 
   @ApiOperation({ summary: 'Удаление чата' })
   @ApiOkResponse({ type: MessageResponse })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Delete('delete/:id')
   async deleteChat(
     @Param('id') chatId: string,
@@ -97,7 +96,6 @@ export class ChatsController {
 
   @ApiOperation({ summary: 'Удаление чата из избранного' })
   @ApiOkResponse({ type: MessageResponse })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @Delete('remove-from-favorites/:id')
   async removChatFromFavorites(
     @Param('id') chatId: string,

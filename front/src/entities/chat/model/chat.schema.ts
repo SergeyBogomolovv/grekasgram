@@ -1,12 +1,31 @@
-import { userSchema } from '@/entities/user';
 import { z } from 'zod';
 
-export const chatSchema = z.object({
-  id: z.string().uuid(),
-  companion: userSchema,
-  lastMessage: z.optional(z.string()),
-  newMessages: z.optional(z.number()),
-  lastActivity: z.string(),
+export const chatCompanionSchema = z.object({
+  chatId: z.string().uuid(),
+  createdAt: z.string().datetime(),
+  companionId: z.string().uuid(),
+  companionUsername: z.string(),
+  companionAvatarUrl: z.nullable(z.string().url()),
+  companionOnline: z.boolean(),
+  companionLastOnlineAt: z.string().datetime(),
 });
 
-export type Chat = z.infer<typeof chatSchema>;
+export type ChatCompanion = z.infer<typeof chatCompanionSchema>;
+
+export const chatPreviewSchema = z.object({
+  chatId: z.string().uuid(),
+  createdAt: z.string().datetime(),
+  companionId: z.string().uuid(),
+  companionUsername: z.string(),
+  companionAvatarUrl: z.nullable(z.string().url()),
+  companionOnline: z.boolean(),
+  companionLastOnlineAt: z.string().datetime(),
+  lastMessage: z.nullable(z.string()),
+  lastMessageAt: z.nullable(z.string().datetime()),
+  newMessages: z
+    .string()
+    .regex(/^\d+$/)
+    .transform((val) => parseInt(val, 10)),
+});
+
+export type ChatPreview = z.infer<typeof chatPreviewSchema>;

@@ -18,6 +18,7 @@ import { AuthModule } from './auth/auth.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TokensModule } from './tokens/tokens.module';
 import { RefreshTokenEntity } from './tokens/entities/refresh-token.entity';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -83,6 +84,7 @@ import { RefreshTokenEntity } from './tokens/entities/refresh-token.entity';
     MessagesModule,
     AuthModule,
     TokensModule,
+    EventsModule,
   ],
 })
 export class AppModule {}
