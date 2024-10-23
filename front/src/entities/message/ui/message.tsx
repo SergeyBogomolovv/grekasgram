@@ -46,10 +46,9 @@ export default function MessageCard({ message, userId }: Props) {
     <ContextMenu>
       <ContextMenuTrigger
         data-testid="message-trigger"
-        className={cn('flex flex-col gap-1 md:max-w-[90%]', {
+        className={cn('flex flex-col md:max-w-[90%]', {
           'self-start': !isMe,
           'self-end': isMe,
-          'gap-0': message.imageUrl,
         })}
         disabled={message.fromId !== userId}
       >
@@ -120,7 +119,7 @@ export default function MessageCard({ message, userId }: Props) {
           </div>
         )}
         <span
-          className={cn('text-xs text-muted-foreground ml-1', {
+          className={cn('text-xs text-muted-foreground ml-1 mt-1', {
             'self-end': isMe,
           })}
         >

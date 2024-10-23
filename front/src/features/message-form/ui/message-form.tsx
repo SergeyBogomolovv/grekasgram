@@ -61,6 +61,7 @@ export default function MessageForm({ chatId }: { chatId: string }) {
         className="p-4 border-t-2 flex gap-2"
       >
         <input
+          data-testid="image-input"
           type="file"
           accept="image/*"
           ref={fileInputRef}
