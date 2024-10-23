@@ -4,7 +4,7 @@ import Navbar from './navbar';
 
 export default function Sidebar() {
   return (
-    <aside className="flex flex-col p-2 gap-2 items-center justify-between border-r-2">
+    <aside className="md:flex flex-col p-2 gap-2 items-center justify-between border-r-2 hidden">
       <Navbar />
       <div className="flex flex-col gap-2">
         <ThemeSwitch />

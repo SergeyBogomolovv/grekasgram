@@ -1,16 +1,16 @@
-import { CurrentNavigationBar } from '@/features/navigation';
-// import { headers } from 'next/headers';
+import { Chatbar } from '@/features/chat-bar';
+import { MobileFooter, Sidebar } from '@/features/navigation';
 
 export default function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // const isMobile = /mobile/i.test(headers().get('user-agent') || '');
-
   return (
     <main className="flex h-screen flex-col-reverse md:flex-row">
-      <CurrentNavigationBar />
+      <Sidebar />
+      <Chatbar className="md:flex hidden" />
+      <MobileFooter />
       {children}
     </main>
   );

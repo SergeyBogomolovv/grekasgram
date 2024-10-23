@@ -6,12 +6,19 @@ import { useParams, useSearchParams } from 'next/navigation';
 import UserAvatar from '@/shared/ui/user-avatar';
 import { ChatPreview } from '../model/chat.schema';
 
-const ChatCard = ({ chat }: { chat: ChatPreview }) => {
+const ChatCard = ({
+  chat,
+  closeChatbar,
+}: {
+  chat: ChatPreview;
+  closeChatbar?: () => void;
+}) => {
   const params = useParams<{ id: string }>();
   const searchParams = useSearchParams();
 
   return (
     <Link
+      onClick={closeChatbar}
       href={{ pathname: `/${chat.chatId}`, query: searchParams.toString() }}
       className={cn(
         'flex justify-between px-6 py-3 cursor-pointer hover:bg-primary/5 transition-all gap-4',
