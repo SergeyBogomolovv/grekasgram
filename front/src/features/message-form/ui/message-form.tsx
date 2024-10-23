@@ -8,13 +8,16 @@ import { Button } from '@/shared/ui/button';
 import { useCreateMessage } from '@/features/message-form/api/use-create-message';
 import { useRef, useState } from 'react';
 import { ImAttachment } from 'react-icons/im';
+import ModalForm from './modal-form';
 
 export default function MessageForm({ chatId }: { chatId: string }) {
   const { mutate } = useCreateMessage(chatId);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  console.log(imagePreview);
   const form = useForm<MessageFormFields>({
     resolver: zodResolver(messageFormSchema),
     defaultValues: { content: '' },
@@ -28,6 +31,7 @@ export default function MessageForm({ chatId }: { chatId: string }) {
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      if (!isModalOpen) setIsModalOpen(true);
       const imageUrl = URL.createObjectURL(file);
       setImagePreview(imageUrl);
       form.setValue('image', file);
@@ -43,6 +47,15 @@ export default function MessageForm({ chatId }: { chatId: string }) {
 
   return (
     <Form {...form}>
+      <ModalForm
+        setImagePreview={setImagePreview}
+        setIsModalOpen={setIsModalOpen}
+        imagePreview={imagePreview}
+        isModalOpen={isModalOpen}
+        form={form}
+        mutate={mutate}
+        fileInputRef={fileInputRef}
+      />
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="p-4 border-t-2 flex gap-2"

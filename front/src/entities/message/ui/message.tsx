@@ -49,6 +49,7 @@ export default function MessageCard({ message, userId }: Props) {
         className={cn('flex flex-col gap-1 md:max-w-[90%]', {
           'self-start': !isMe,
           'self-end': isMe,
+          'gap-0': message.imageUrl,
         })}
         disabled={message.fromId !== userId}
       >
@@ -58,13 +59,16 @@ export default function MessageCard({ message, userId }: Props) {
             alt="image"
             width={350}
             height={350}
-            className="rounded-lg aspect-auto object-cover"
+            className="rounded-t-lg aspect-auto object-cover"
           />
         )}
         {editMode ? (
           <Form {...form}>
             <form
-              className="p-3 rounded-2xl bg-primary text-primary-foreground break-words"
+              className={cn(
+                'p-3 rounded-b-2xl bg-primary text-primary-foreground break-words',
+                { 'rounded-t-2xl': !message.imageUrl },
+              )}
               onSubmit={form.handleSubmit(onSubmit)}
             >
               <FormField
@@ -75,7 +79,7 @@ export default function MessageCard({ message, userId }: Props) {
                     <FormControl>
                       <textarea
                         className="text-foreground bg-transparent focus:outline-none border-none focus:ring-0 resize-none
-                        leading-normal w-full"
+                        leading-normal w-full dark"
                         placeholder="Введите сообщение"
                         {...field}
                       />
@@ -104,10 +108,11 @@ export default function MessageCard({ message, userId }: Props) {
         ) : (
           <div
             className={cn(
-              'p-3 rounded-2xl bg-primary text-primary-foreground break-words whitespace-pre-wrap',
+              'p-3 rounded-b-2xl bg-primary text-primary-foreground break-words whitespace-pre-wrap',
               {
                 'bg-muted text-foreground': !isMe,
                 'bg-primary text-primary-foreground': isMe,
+                'rounded-t-2xl': !message.imageUrl,
               },
             )}
           >
