@@ -3,9 +3,9 @@ import { vi, describe, it, expect, afterEach } from 'vitest';
 import MessageCard from '../ui/message';
 import { MessageEntity } from '../model/message.schema';
 import userEvent from '@testing-library/user-event';
-import { $api } from '@/shared/api';
+import { socket } from '@/shared/api';
 
-vi.mock('@/shared/api');
+vi.spyOn(socket, 'emit');
 vi.stubGlobal(
   'IntersectionObserver',
   vi.fn(() => ({ observe: vi.fn(), unobserve: vi.fn() })),
@@ -44,7 +44,6 @@ describe('MessageCard', () => {
   });
 
   it('should call delete message', async () => {
-    vi.mocked($api.delete).mockResolvedValue({ data: { message: 'ok' } });
     const { getByTestId, getByText } = render(
       <MessageCard message={mockMessage} userId="1" />,
     );
@@ -58,11 +57,10 @@ describe('MessageCard', () => {
 
     await user.click(getByText('Удалить'));
 
-    expect($api.delete).toHaveBeenCalledWith('/messages/delete/1');
+    expect(socket.emit).toHaveBeenCalledWith('delete_message', mockMessage.id);
   });
 
   it('should edit message', async () => {
-    vi.mocked($api.put).mockResolvedValue({ data: { message: 'ok' } });
     const { getByTestId, getByText, getByPlaceholderText } = render(
       <MessageCard message={mockMessage} userId="1" />,
     );
@@ -80,8 +78,9 @@ describe('MessageCard', () => {
 
     await user.click(getByText('Сохранить'));
 
-    expect($api.put).toHaveBeenCalledWith('/messages/edit/1', {
+    expect(socket.emit).toHaveBeenCalledWith('edit_message', {
       content: 'test new content',
+      messageId: mockMessage.id,
     });
   });
 
@@ -103,8 +102,6 @@ describe('MessageCard', () => {
 
     await user.click(getByText('Отмена'));
 
-    expect($api.put).not.toHaveBeenCalledWith('/messages/edit/1', {
-      content: 'test new content',
-    });
+    expect(socket.emit).not.toHaveBeenCalled();
   });
 });
