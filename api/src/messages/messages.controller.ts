@@ -55,8 +55,11 @@ export class MessagesController {
   @ApiOkResponse({ type: [MessageDto] })
   @ApiParam({ name: 'chatId', type: String })
   @Get(':chatId')
-  getChatMessages(@Param('chatId') chatId: string): Promise<MessageDto[]> {
-    return this.messagesService.getChatMessages(chatId);
+  getChatMessages(
+    @Param('chatId') chatId: string,
+    @HttpUser('userId') userId: string,
+  ): Promise<MessageDto[]> {
+    return this.messagesService.getChatMessages(chatId, userId);
   }
 
   @ApiOperation({ summary: 'Изменение сообщения' })

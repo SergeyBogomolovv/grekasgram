@@ -43,25 +43,26 @@ export class MessagesService {
       }),
     );
 
-    const messageDto = new MessageDto(message);
+    const messageDto = new MessageDto(message, userId);
 
     this.eventsGateway.notifyMessage(message.chatId, messageDto);
 
     return messageDto;
   }
 
-  async getChatMessages(chatId: string) {
+  async getChatMessages(chatId: string, userId: string) {
     const messages = await this.messagesRepository.find({
       where: { chatId },
       relations: { viewedBy: true },
       order: { createdAt: 'ASC' },
     });
-    return messages.map((message) => new MessageDto(message));
+    return messages.map((message) => new MessageDto(message, userId));
   }
 
   async editMessage(messageId: string, dto: UpdateMessageDto, userId: string) {
     const message = await this.messagesRepository.findOne({
       where: { id: messageId },
+      relations: { viewedBy: true },
     });
 
     if (!message) throw new NotFoundException('Message not found');
@@ -72,6 +73,10 @@ export class MessagesService {
 
     message.content = dto.content;
     await this.messagesRepository.save(message);
+
+    const messageDto = new MessageDto(message, userId);
+
+    this.eventsGateway.notifyMessage(message.chatId, messageDto);
 
     return new MessageResponse('Message edited successfully');
   }
@@ -97,6 +102,7 @@ export class MessagesService {
   async viewMessage(messageId: string, userId: string) {
     const message = await this.messagesRepository.findOne({
       where: { id: messageId },
+      relations: { viewedBy: true },
     });
 
     if (!message) throw new NotFoundException('Message not found');
@@ -108,6 +114,6 @@ export class MessagesService {
       await this.messagesRepository.save(message);
     }
 
-    return message;
+    return new MessageDto(message, userId);
   }
 }

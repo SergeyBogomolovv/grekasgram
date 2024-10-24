@@ -97,7 +97,8 @@ export class ChatsService {
             'viewedBy.messageId = message.id AND viewedBy.userId = :userId',
           )
           .where('message.chatId = chat.id')
-          .andWhere('message.fromId != :userId');
+          .andWhere('message.fromId != :userId')
+          .andWhere('viewedBy.userId IS NULL');
       }, 'newMessages')
       .orderBy('"lastMessageAt"', 'DESC', 'NULLS LAST')
       .addOrderBy('chat.createdAt', 'DESC')
@@ -176,7 +177,8 @@ export class ChatsService {
             'viewedBy.messageId = message.id AND viewedBy.userId = :userId',
           )
           .where('message.chatId = chat.id')
-          .andWhere('message.fromId != :userId');
+          .andWhere('message.fromId != :userId')
+          .andWhere('viewedBy.userId IS NULL');
       }, 'newMessages')
       .orderBy('"lastMessageAt"', 'DESC', 'NULLS LAST')
       .addOrderBy('chat.createdAt', 'DESC')

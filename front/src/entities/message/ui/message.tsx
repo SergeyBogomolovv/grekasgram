@@ -8,7 +8,7 @@ import {
 import { MessageEntity } from '../model/message.schema';
 import { cn, formatDate } from '@/shared/lib/utils';
 import { useDeleteMessage } from '../api/use-delete-message';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   EditMessageFields,
@@ -19,6 +19,8 @@ import { useEditMessage } from '../api/use-edit-message';
 import { Form, FormControl, FormField, FormItem } from '@/shared/ui/form';
 import { Button } from '@/shared/ui/button';
 import ModalImage from '@/shared/ui/modal-image';
+import { useSetViewed } from '../api/use-set-viewed';
+import { useInView } from '@/shared/lib/hooks';
 
 interface Props {
   message: MessageEntity;
@@ -27,8 +29,19 @@ interface Props {
 
 export default function MessageCard({ message, userId }: Props) {
   const isMe = message.fromId === userId;
+  const { mutate: setViewed } = useSetViewed();
   const { mutate: deleteMessage } = useDeleteMessage(message.id);
   const { mutate: editMessage } = useEditMessage(message.id);
+
+  const { ref, inView } = useInView({
+    threshold: 0.1,
+  });
+
+  useEffect(() => {
+    if (inView && !message.isRead) {
+      setViewed(message.id);
+    }
+  }, [inView, message.isRead, message.id, setViewed]);
 
   const [editMode, setEditMode] = useState(false);
 
@@ -45,6 +58,7 @@ export default function MessageCard({ message, userId }: Props) {
   return (
     <ContextMenu>
       <ContextMenuTrigger
+        ref={ref}
         data-testid="message-trigger"
         className={cn('flex flex-col md:max-w-[90%]', {
           'self-start': !isMe,
