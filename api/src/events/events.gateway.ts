@@ -81,4 +81,13 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     );
     this.wss.to(message.chatId).emit('removeMessage', message);
   }
+
+  @SubscribeMessage('view_message')
+  async viewMessage(client: Socket, messageId: string) {
+    const message = await this.eventsService.viewMessage(
+      messageId,
+      client.data.userId,
+    );
+    this.wss.to(message.chatId).emit('viewMessage', message);
+  }
 }

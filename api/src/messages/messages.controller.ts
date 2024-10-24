@@ -1,8 +1,6 @@
-import { Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import {
-  ApiForbiddenResponse,
-  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -29,18 +27,5 @@ export class MessagesController {
     @HttpUser('userId') userId: string,
   ): Promise<MessageDto[]> {
     return this.messagesService.getChatMessages(chatId, userId);
-  }
-
-  @ApiOperation({ summary: 'Пометка сообщения как прочитанное' })
-  @ApiOkResponse({ type: MessageDto })
-  @ApiParam({ name: 'messageId', type: String })
-  @ApiForbiddenResponse({ description: 'not allowed' })
-  @ApiNotFoundResponse({ description: 'Message not found' })
-  @Patch('view/:messageId')
-  viewMessage(
-    @Param('messageId') messageId: string,
-    @HttpUser('userId') userId: string,
-  ) {
-    return this.messagesService.viewMessage(messageId, userId);
   }
 }

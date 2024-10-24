@@ -1,14 +1,10 @@
-import { $api, queryClient } from '@/shared/api';
-import { useMutation } from '@tanstack/react-query';
+'use client';
+import { useSocket } from '@/config/providers';
 
-export const useSetViewed = () => {
-  return useMutation({
-    mutationFn: async (id: string) => {
-      await $api.patch(`/messages/view/${id}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['my-chats'] });
-      queryClient.invalidateQueries({ queryKey: ['favorite-chats'] });
-    },
-  });
+export const useSetViewed = (messageId: string) => {
+  const socket = useSocket();
+
+  return () => {
+    socket.emit('view_message', messageId);
+  };
 };

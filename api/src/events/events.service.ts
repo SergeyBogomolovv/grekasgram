@@ -47,4 +47,8 @@ export class EventsService {
   deleteMessage(messageId: string, userId: string) {
     return this.messagesService.deleteMessage(messageId, userId);
   }
+
+  viewMessage(messageId: string, userId: string) {
+    return this.messagesService.viewMessage(messageId, userId);
+  }
 }
