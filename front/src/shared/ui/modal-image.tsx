@@ -1,24 +1,38 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-} from '@/shared/ui/dialog';
+'use client';
 import Image, { ImageProps } from 'next/image';
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { useState } from 'react';
+import { cn } from '../lib/utils';
 
 export default function ModalImage({ src, alt, ...props }: ImageProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleOpen = () => setIsOpen(true);
+  const handleClose = () => setIsOpen(false);
+
   return (
-    <Dialog>
-      <DialogTrigger>
-        <Image src={src} alt={alt} {...props} />
-      </DialogTrigger>
-      <DialogContent className="p-0 m-0 border-0 bg-transparent w-fit">
-        <VisuallyHidden>
-          <DialogTitle>Картинка</DialogTitle>
-        </VisuallyHidden>
-        <Image src={src} alt={alt} {...props} width={1000} height={1000} />
-      </DialogContent>
-    </Dialog>
+    <>
+      <Image
+        src={src}
+        alt={alt}
+        onClick={handleOpen}
+        {...props}
+        className={cn('cursor-pointer', props.className)}
+      />
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 cursor-pointer"
+          onClick={handleClose}
+        >
+          <Image
+            onClick={(e) => e.stopPropagation()}
+            src={src}
+            alt={alt}
+            width={800}
+            height={600}
+            className="object-contain max-w-[90%] max-h-[90%] relative rounded-lg cursor-default"
+          />
+        </div>
+      )}
+    </>
   );
 }

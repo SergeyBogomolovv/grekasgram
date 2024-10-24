@@ -1,17 +1,19 @@
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
+  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
 import { EventsService } from './events.service';
 import { Socket } from 'socket.io';
 import { TokensService } from 'src/tokens/tokens.service';
-import { MessageDto } from 'src/messages/dto/message.dto';
 import { Logger } from '@nestjs/common';
+import { CreateMessageDto } from 'src/messages/dto/create-message.dto';
+import { UpdateMessageDto } from 'src/messages/dto/update-message.dto';
 
 @WebSocketGateway({
-  cors: { origin: 'http://localhost:3000' },
+  cors: { origin: '*' },
 })
 export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(EventsGateway.name);
@@ -34,6 +36,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       );
 
       client.join(chatIds);
+      client.join(userId);
 
       await this.eventsService.setOnline(client.data.userId);
 
@@ -53,9 +56,59 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.debug(`User ${client.data.userId} disconnected`);
   }
 
-  async notifyMessage(chatId: string, message: MessageDto) {
-    this.wss.to(chatId).emit('receiveMessage', message);
+  async notifyChatCreated(userId: string) {
+    this.wss.to(userId).emit('chatCreated');
+  }
 
-    this.logger.debug(`Message ${message.content} sent to ${chatId}`);
+  @SubscribeMessage('send_message')
+  async sendMessage(client: Socket, dto: CreateMessageDto) {
+    const message = await this.eventsService.sendMessage(
+      dto,
+      client.data.userId,
+    );
+    this.wss.to(message.chatId).emit('receiveMessage', message);
+
+    this.logger.debug(
+      `Message ${message.content} sent to chat ${message.chatId}`,
+    );
+  }
+
+  @SubscribeMessage('edit_message')
+  async editMessage(client: Socket, dto: UpdateMessageDto) {
+    const message = await this.eventsService.updateMessage(
+      dto,
+      client.data.userId,
+    );
+    this.wss.to(message.chatId).emit('updateMessage', message);
+
+    this.logger.debug(
+      `Message ${message.content} updated to chat ${message.chatId}`,
+    );
+  }
+
+  @SubscribeMessage('delete_message')
+  async deleteMessage(client: Socket, messageId: string) {
+    const message = await this.eventsService.deleteMessage(
+      messageId,
+      client.data.userId,
+    );
+    this.wss.to(message.chatId).emit('removeMessage', message);
+
+    this.logger.debug(
+      `Message ${message.content} deleted from chat ${message.chatId}`,
+    );
+  }
+
+  @SubscribeMessage('view_message')
+  async viewMessage(client: Socket, messageId: string) {
+    const message = await this.eventsService.viewMessage(
+      messageId,
+      client.data.userId,
+    );
+    this.wss.to(message.chatId).emit('viewMessage', message);
+
+    this.logger.debug(
+      `Message ${message.content} viewed by ${client.data.userId}`,
+    );
   }
 }

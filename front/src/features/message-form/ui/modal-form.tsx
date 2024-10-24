@@ -18,7 +18,7 @@ interface Props {
   imagePreview: string | null;
   isModalOpen: boolean;
   setIsModalOpen: Dispatch<SetStateAction<boolean>>;
-  mutate: (data: MessageFormFields) => void;
+  sendMessage: (data: MessageFormFields) => void;
   fileInputRef: MutableRefObject<HTMLInputElement | null>;
   setImagePreview: Dispatch<SetStateAction<string | null>>;
 }
@@ -28,12 +28,12 @@ export default function ModalForm({
   imagePreview,
   isModalOpen,
   setIsModalOpen,
-  mutate,
   fileInputRef,
   setImagePreview,
+  sendMessage,
 }: Props) {
   const onSubmit = (data: MessageFormFields) => {
-    mutate(data);
+    sendMessage(data);
     form.reset();
     setIsModalOpen(false);
   };

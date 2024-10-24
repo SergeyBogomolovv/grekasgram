@@ -5,13 +5,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem } from '@/shared/ui/form';
 import { IoSend } from 'react-icons/io5';
 import { Button } from '@/shared/ui/button';
-import { useCreateMessage } from '@/features/message-form/api/use-create-message';
 import { useRef, useState } from 'react';
 import { ImAttachment } from 'react-icons/im';
+import { useSendMessage } from '../api/use-send-message';
 import ModalForm from './modal-form';
 
 export default function MessageForm({ chatId }: { chatId: string }) {
-  const { mutate } = useCreateMessage(chatId);
+  const sendMessage = useSendMessage(chatId);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -24,7 +24,7 @@ export default function MessageForm({ chatId }: { chatId: string }) {
   });
 
   const onSubmit = (data: MessageFormFields) => {
-    mutate(data);
+    sendMessage(data);
     form.reset();
   };
 
@@ -48,12 +48,12 @@ export default function MessageForm({ chatId }: { chatId: string }) {
   return (
     <Form {...form}>
       <ModalForm
+        sendMessage={sendMessage}
         setImagePreview={setImagePreview}
         setIsModalOpen={setIsModalOpen}
         imagePreview={imagePreview}
         isModalOpen={isModalOpen}
         form={form}
-        mutate={mutate}
         fileInputRef={fileInputRef}
       />
       <form

@@ -2,12 +2,8 @@
 import { useEffect } from 'react';
 
 import { useConfirmEmail } from '../api/use-confirm-email';
-import { useSearchParams } from 'next/navigation';
 
-export default function ConfirmEmail() {
-  const params = useSearchParams();
-  const token = params.get('token');
-
+export default function ConfirmEmail({ token }: { token?: string }) {
   const { mutate, isSuccess, isPending, isError } = useConfirmEmail();
 
   useEffect(() => {

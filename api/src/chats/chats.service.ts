@@ -12,6 +12,7 @@ import { ChatCompanionDto } from './dto/chat-companion.dto';
 import { MessageResponse } from 'src/common/message-response';
 import { MessageEntity } from 'src/messages/entities/message.entity';
 import { ChatPreviewDto } from './dto/chat-preview.dto';
+import { EventsGateway } from 'src/events/events.gateway';
 
 @Injectable()
 export class ChatsService {
@@ -19,6 +20,7 @@ export class ChatsService {
     @InjectRepository(ChatEntity)
     private chatsRepository: Repository<ChatEntity>,
     private usersService: UsersService,
+    private eventsGateway: EventsGateway,
   ) {}
 
   async createChat(userId: string, companionId: string, content: string) {
@@ -55,6 +57,8 @@ export class ChatsService {
         messages: [message],
       }),
     );
+
+    this.eventsGateway.notifyChatCreated(companionId);
 
     return { chatId: chat.id };
   }
