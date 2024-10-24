@@ -11,6 +11,7 @@ import { MessageDto } from './dto/message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { MessageResponse } from 'src/common/message-response';
 import { FilesService } from 'src/files/files.service';
+import { EventsGateway } from 'src/events/events.gateway';
 
 @Injectable()
 export class MessagesService {
@@ -18,6 +19,7 @@ export class MessagesService {
     @InjectRepository(MessageEntity)
     private messagesRepository: Repository<MessageEntity>,
     private readonly filesService: FilesService,
+    private readonly eventsGateway: EventsGateway,
   ) {}
 
   async create(
@@ -39,7 +41,11 @@ export class MessagesService {
       }),
     );
 
-    return new MessageDto(message);
+    const messageDto = new MessageDto(message);
+
+    this.eventsGateway.notifyMessage(dto.chatId, messageDto);
+
+    return messageDto;
   }
 
   async getChatMessages(chatId: string) {
