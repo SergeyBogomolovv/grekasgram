@@ -1,5 +1,6 @@
 'use client';
 
+import { MessageEntity } from '@/entities/message';
 import { queryClient, socket } from '@/shared/api';
 import { createContext, useContext, useEffect } from 'react';
 import { Socket } from 'socket.io-client';
@@ -14,7 +15,7 @@ export default function SocketProvider({
   useEffect(() => {
     socket.connect();
 
-    socket.on('receiveMessage', (message) => {
+    socket.on('receiveMessage', (message: MessageEntity) => {
       queryClient.invalidateQueries({ queryKey: ['messages', message.chatId] });
       queryClient.invalidateQueries({ queryKey: ['my-chats'] });
       queryClient.invalidateQueries({ queryKey: ['my-favorites'] });
