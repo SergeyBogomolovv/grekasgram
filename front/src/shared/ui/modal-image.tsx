@@ -14,6 +14,8 @@ export default function ModalImage({ src, alt, ...props }: ImageProps) {
       <Image
         src={src}
         alt={alt}
+        blurDataURL="/blur.png"
+        placeholder="blur"
         onClick={handleOpen}
         {...props}
         className={cn('cursor-pointer', props.className)}
@@ -27,6 +29,8 @@ export default function ModalImage({ src, alt, ...props }: ImageProps) {
             onClick={(e) => e.stopPropagation()}
             src={src}
             alt={alt}
+            blurDataURL="/blur.png"
+            placeholder="blur"
             width={800}
             height={600}
             className="object-contain max-w-[90%] max-h-[90%] relative rounded-lg cursor-default"
