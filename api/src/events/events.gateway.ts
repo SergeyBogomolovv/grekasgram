@@ -13,7 +13,7 @@ import { CreateMessageDto } from 'src/messages/dto/create-message.dto';
 import { UpdateMessageDto } from 'src/messages/dto/update-message.dto';
 
 @WebSocketGateway({
-  cors: { origin: process.env.CORS_ORIGIN },
+  cors: { origin: '*' },
 })
 export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(EventsGateway.name);
@@ -36,6 +36,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       );
 
       client.join(chatIds);
+      client.join(userId);
 
       await this.eventsService.setOnline(client.data.userId);
 
@@ -53,6 +54,10 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.wss.to(chatIds).emit('userOffline', { userId: client.data.userId });
 
     this.logger.debug(`User ${client.data.userId} disconnected`);
+  }
+
+  async notifyChatCreated(userId: string) {
+    this.wss.to(userId).emit('chatCreated');
   }
 
   @SubscribeMessage('send_message')

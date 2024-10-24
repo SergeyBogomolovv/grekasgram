@@ -12,43 +12,46 @@ export default function SocketProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const invalidateMessageEvent = (chatId: string) => {
+    queryClient.invalidateQueries({ queryKey: ['messages', chatId] });
+    queryClient.invalidateQueries({ queryKey: ['my-chats'] });
+    queryClient.invalidateQueries({ queryKey: ['my-favorites'] });
+  };
+
+  const invalidateUserStatusEvent = () => {
+    queryClient.invalidateQueries({ queryKey: ['chat'] });
+    queryClient.invalidateQueries({ queryKey: ['user-profile'] });
+  };
+
   useEffect(() => {
     socket.connect();
 
-    socket.on('receiveMessage', (message: MessageEntity) => {
-      queryClient.invalidateQueries({ queryKey: ['messages', message.chatId] });
+    socket.on('chatCreated', () => {
       queryClient.invalidateQueries({ queryKey: ['my-chats'] });
-      queryClient.invalidateQueries({ queryKey: ['my-favorites'] });
+    });
+
+    socket.on('receiveMessage', (message: MessageEntity) => {
+      invalidateMessageEvent(message.chatId);
     });
 
     socket.on('viewMessage', (message: MessageEntity) => {
-      queryClient.invalidateQueries({ queryKey: ['messages', message.chatId] });
-      queryClient.invalidateQueries({ queryKey: ['my-chats'] });
-      queryClient.invalidateQueries({ queryKey: ['my-favorites'] });
+      invalidateMessageEvent(message.chatId);
     });
 
     socket.on('updateMessage', (message: MessageEntity) => {
-      queryClient.invalidateQueries({ queryKey: ['messages', message.chatId] });
-      queryClient.invalidateQueries({ queryKey: ['my-chats'] });
-      queryClient.invalidateQueries({ queryKey: ['my-favorites'] });
+      invalidateMessageEvent(message.chatId);
     });
 
     socket.on('removeMessage', (message: MessageEntity) => {
-      queryClient.invalidateQueries({ queryKey: ['messages', message.chatId] });
-      queryClient.invalidateQueries({ queryKey: ['my-chats'] });
-      queryClient.invalidateQueries({ queryKey: ['my-favorites'] });
+      invalidateMessageEvent(message.chatId);
     });
 
     socket.on('userOnline', () => {
-      queryClient.invalidateQueries({ queryKey: ['my-chats'] });
-      queryClient.invalidateQueries({ queryKey: ['my-favorites'] });
-      queryClient.invalidateQueries({ queryKey: ['user-profile'] });
+      invalidateUserStatusEvent();
     });
 
     socket.on('userOffline', () => {
-      queryClient.invalidateQueries({ queryKey: ['my-chats'] });
-      queryClient.invalidateQueries({ queryKey: ['my-favorites'] });
-      queryClient.invalidateQueries({ queryKey: ['user-profile'] });
+      invalidateUserStatusEvent();
     });
 
     return () => {
