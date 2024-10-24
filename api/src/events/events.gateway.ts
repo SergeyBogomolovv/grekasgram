@@ -62,6 +62,10 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.data.userId,
     );
     this.wss.to(message.chatId).emit('receiveMessage', message);
+
+    this.logger.debug(
+      `Message ${message.content} sent to chat ${message.chatId}`,
+    );
   }
 
   @SubscribeMessage('edit_message')
@@ -71,6 +75,10 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.data.userId,
     );
     this.wss.to(message.chatId).emit('updateMessage', message);
+
+    this.logger.debug(
+      `Message ${message.content} updated to chat ${message.chatId}`,
+    );
   }
 
   @SubscribeMessage('delete_message')
@@ -80,6 +88,10 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.data.userId,
     );
     this.wss.to(message.chatId).emit('removeMessage', message);
+
+    this.logger.debug(
+      `Message ${message.content} deleted from chat ${message.chatId}`,
+    );
   }
 
   @SubscribeMessage('view_message')
@@ -89,5 +101,9 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.data.userId,
     );
     this.wss.to(message.chatId).emit('viewMessage', message);
+
+    this.logger.debug(
+      `Message ${message.content} viewed by ${client.data.userId}`,
+    );
   }
 }
