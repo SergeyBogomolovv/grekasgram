@@ -14,6 +14,7 @@ const mockMessage: MessageEntity = {
   chatId: '1',
   fromId: '1',
   imageUrl: null,
+  isRead: false,
 };
 
 vi.mock('@/shared/api');

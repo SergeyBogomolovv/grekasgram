@@ -13,5 +13,5 @@ export class CreateMessageDto {
   @ApiProperty({ type: 'string', format: 'binary', nullable: true })
   @IsOptional()
   @IsMimeType()
-  image?: any;
+  image?: Express.Multer.File;
 }

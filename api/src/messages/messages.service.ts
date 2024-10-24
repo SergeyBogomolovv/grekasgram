@@ -9,9 +9,7 @@ import { MessageEntity } from './entities/message.entity';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { MessageDto } from './dto/message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
-import { MessageResponse } from 'src/common/message-response';
 import { FilesService } from 'src/files/files.service';
-import { EventsGateway } from 'src/events/events.gateway';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -20,18 +18,13 @@ export class MessagesService {
     @InjectRepository(MessageEntity)
     private messagesRepository: Repository<MessageEntity>,
     private readonly filesService: FilesService,
-    private readonly eventsGateway: EventsGateway,
     private readonly usersService: UsersService,
   ) {}
 
-  async create(
-    dto: CreateMessageDto,
-    userId: string,
-    image?: Express.Multer.File,
-  ) {
+  async create(dto: CreateMessageDto, userId: string) {
     let imageUrl: string | null = null;
-    if (image) {
-      imageUrl = await this.filesService.uploadImage(dto.chatId, image);
+    if (dto.image) {
+      imageUrl = await this.filesService.uploadImage(dto.chatId, dto.image);
     }
     const message = await this.messagesRepository.save(
       this.messagesRepository.create({
@@ -45,8 +38,6 @@ export class MessagesService {
 
     const messageDto = new MessageDto(message, userId);
 
-    this.eventsGateway.notifyMessage(message.chatId, messageDto);
-
     return messageDto;
   }
 
@@ -59,9 +50,9 @@ export class MessagesService {
     return messages.map((message) => new MessageDto(message, userId));
   }
 
-  async editMessage(messageId: string, dto: UpdateMessageDto, userId: string) {
+  async editMessage(dto: UpdateMessageDto, userId: string) {
     const message = await this.messagesRepository.findOne({
-      where: { id: messageId },
+      where: { id: dto.messageId },
       relations: { viewedBy: true },
     });
 
@@ -74,16 +65,13 @@ export class MessagesService {
     message.content = dto.content;
     await this.messagesRepository.save(message);
 
-    const messageDto = new MessageDto(message, userId);
-
-    this.eventsGateway.notifyMessage(message.chatId, messageDto);
-
-    return new MessageResponse('Message edited successfully');
+    return new MessageDto(message);
   }
 
   async deleteMessage(messageId: string, userId: string) {
     const message = await this.messagesRepository.findOne({
       where: { id: messageId },
+      relations: { viewedBy: true },
     });
 
     if (!message) throw new NotFoundException('Message not found');
@@ -96,7 +84,7 @@ export class MessagesService {
 
     await this.messagesRepository.softRemove(message);
 
-    return new MessageResponse('Message deleted successfully');
+    return new MessageDto(message);
   }
 
   async viewMessage(messageId: string, userId: string) {

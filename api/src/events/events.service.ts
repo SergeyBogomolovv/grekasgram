@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateMessageDto } from 'src/messages/dto/create-message.dto';
+import { UpdateMessageDto } from 'src/messages/dto/update-message.dto';
+import { MessagesService } from 'src/messages/messages.service';
 import { UserEntity } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 
@@ -8,6 +11,7 @@ export class EventsService {
   constructor(
     @InjectRepository(UserEntity)
     private usersRepository: Repository<UserEntity>,
+    private messagesService: MessagesService,
   ) {}
 
   async getUserChatIds(userId: string) {
@@ -30,5 +34,17 @@ export class EventsService {
     user.online = false;
     user.lastOnlineAt = new Date();
     await this.usersRepository.save(user);
+  }
+
+  sendMessage(dto: CreateMessageDto, userId: string) {
+    return this.messagesService.create(dto, userId);
+  }
+
+  updateMessage(dto: UpdateMessageDto, userId: string) {
+    return this.messagesService.editMessage(dto, userId);
+  }
+
+  deleteMessage(messageId: string, userId: string) {
+    return this.messagesService.deleteMessage(messageId, userId);
   }
 }

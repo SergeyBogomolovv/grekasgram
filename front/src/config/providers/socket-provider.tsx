@@ -21,6 +21,18 @@ export default function SocketProvider({
       queryClient.invalidateQueries({ queryKey: ['my-favorites'] });
     });
 
+    socket.on('updateMessage', (message: MessageEntity) => {
+      queryClient.invalidateQueries({ queryKey: ['messages', message.chatId] });
+      queryClient.invalidateQueries({ queryKey: ['my-chats'] });
+      queryClient.invalidateQueries({ queryKey: ['my-favorites'] });
+    });
+
+    socket.on('removeMessage', (message: MessageEntity) => {
+      queryClient.invalidateQueries({ queryKey: ['messages', message.chatId] });
+      queryClient.invalidateQueries({ queryKey: ['my-chats'] });
+      queryClient.invalidateQueries({ queryKey: ['my-favorites'] });
+    });
+
     socket.on('userOnline', () => {
       queryClient.invalidateQueries({ queryKey: ['my-chats'] });
       queryClient.invalidateQueries({ queryKey: ['my-favorites'] });

@@ -30,8 +30,8 @@ interface Props {
 export default function MessageCard({ message, userId }: Props) {
   const isMe = message.fromId === userId;
   const { mutate: setViewed } = useSetViewed();
-  const { mutate: deleteMessage } = useDeleteMessage(message.id);
-  const { mutate: editMessage } = useEditMessage(message.id);
+  const deleteMessage = useDeleteMessage(message.id);
+  const editMessage = useEditMessage(message.id);
 
   const { ref, inView } = useInView({
     threshold: 0.1,
@@ -51,7 +51,7 @@ export default function MessageCard({ message, userId }: Props) {
   });
 
   const onSubmit = (values: EditMessageFields) => {
-    editMessage(values);
+    editMessage(values.content);
     setEditMode(false);
   };
 
