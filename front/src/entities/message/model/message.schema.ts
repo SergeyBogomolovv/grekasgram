@@ -8,6 +8,7 @@ export const messageSchema = z.object({
   fromId: z.string().uuid(),
   chatId: z.string().uuid(),
   imageUrl: z.nullable(z.string()),
+  isRead: z.nullable(z.boolean()),
 });
 
 export type MessageEntity = z.infer<typeof messageSchema>;

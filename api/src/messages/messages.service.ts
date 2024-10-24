@@ -11,6 +11,8 @@ import { MessageDto } from './dto/message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { MessageResponse } from 'src/common/message-response';
 import { FilesService } from 'src/files/files.service';
+import { EventsGateway } from 'src/events/events.gateway';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class MessagesService {
@@ -18,6 +20,8 @@ export class MessagesService {
     @InjectRepository(MessageEntity)
     private messagesRepository: Repository<MessageEntity>,
     private readonly filesService: FilesService,
+    private readonly eventsGateway: EventsGateway,
+    private readonly usersService: UsersService,
   ) {}
 
   async create(
@@ -39,21 +43,26 @@ export class MessagesService {
       }),
     );
 
-    return new MessageDto(message);
+    const messageDto = new MessageDto(message, userId);
+
+    this.eventsGateway.notifyMessage(message.chatId, messageDto);
+
+    return messageDto;
   }
 
-  async getChatMessages(chatId: string) {
+  async getChatMessages(chatId: string, userId: string) {
     const messages = await this.messagesRepository.find({
       where: { chatId },
       relations: { viewedBy: true },
       order: { createdAt: 'ASC' },
     });
-    return messages.map((message) => new MessageDto(message));
+    return messages.map((message) => new MessageDto(message, userId));
   }
 
   async editMessage(messageId: string, dto: UpdateMessageDto, userId: string) {
     const message = await this.messagesRepository.findOne({
       where: { id: messageId },
+      relations: { viewedBy: true },
     });
 
     if (!message) throw new NotFoundException('Message not found');
@@ -64,6 +73,10 @@ export class MessagesService {
 
     message.content = dto.content;
     await this.messagesRepository.save(message);
+
+    const messageDto = new MessageDto(message, userId);
+
+    this.eventsGateway.notifyMessage(message.chatId, messageDto);
 
     return new MessageResponse('Message edited successfully');
   }
@@ -84,5 +97,23 @@ export class MessagesService {
     await this.messagesRepository.softRemove(message);
 
     return new MessageResponse('Message deleted successfully');
+  }
+
+  async viewMessage(messageId: string, userId: string) {
+    const message = await this.messagesRepository.findOne({
+      where: { id: messageId },
+      relations: { viewedBy: true },
+    });
+
+    if (!message) throw new NotFoundException('Message not found');
+
+    const user = await this.usersService.findOneByIdOrFail(userId);
+
+    if (!message.viewedBy.some((user) => user.id === userId)) {
+      message.viewedBy.push(user);
+      await this.messagesRepository.save(message);
+    }
+
+    return new MessageDto(message, userId);
   }
 }

@@ -6,6 +6,10 @@ import userEvent from '@testing-library/user-event';
 import { $api } from '@/shared/api';
 
 vi.mock('@/shared/api');
+vi.stubGlobal(
+  'IntersectionObserver',
+  vi.fn(() => ({ observe: vi.fn(), unobserve: vi.fn() })),
+);
 
 const mockMessage: MessageEntity = {
   id: '1',
@@ -15,6 +19,7 @@ const mockMessage: MessageEntity = {
   fromId: '1',
   chatId: '1',
   imageUrl: null,
+  isRead: false,
 };
 
 describe('MessageCard', () => {

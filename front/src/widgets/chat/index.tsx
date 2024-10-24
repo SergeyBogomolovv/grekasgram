@@ -17,7 +17,10 @@ export default function Chat({ chatId }: { chatId: string }) {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    console.log(messagesContainerRef.current?.scrollHeight);
+    messagesContainerRef.current?.scrollTo(
+      0,
+      messagesContainerRef.current.scrollHeight,
+    );
   }, [data]);
 
   return (

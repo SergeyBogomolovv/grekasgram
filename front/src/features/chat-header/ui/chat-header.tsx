@@ -2,7 +2,7 @@
 import { ChatOptions, useGetChatCompanion } from '@/entities/chat';
 import { UserSkeleton } from '@/entities/user';
 import { UserProfile } from '@/features/user-profile';
-import { formatDate } from '@/shared/lib/utils';
+import { cn, formatDate } from '@/shared/lib/utils';
 import { Button } from '@/shared/ui/button';
 import UserAvatar from '@/shared/ui/user-avatar';
 import { SlOptions } from 'react-icons/sl';
@@ -20,10 +20,16 @@ export default function ChatHeader({ chatId }: { chatId: string }) {
               <p className="font-bold">
                 {isLoading ? 'Загрузка...' : data.companionUsername}
               </p>
-              <p className="text-sm">
-                {isLoading
-                  ? 'Загрузка...'
-                  : `Был(а) в сети: ${formatDate(data.companionLastOnlineAt || new Date().toISOString())}`}
+              <p
+                className={cn('text-sm', {
+                  'text-primary': data.companionOnline,
+                })}
+              >
+                {data.companionOnline
+                  ? 'В сети'
+                  : isLoading
+                    ? 'Загрузка...'
+                    : `Был(а) в сети: ${formatDate(data.companionLastOnlineAt || new Date().toISOString())}`}
               </p>
             </div>
           </div>

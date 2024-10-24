@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Put,
   UploadedFile,
@@ -54,8 +55,11 @@ export class MessagesController {
   @ApiOkResponse({ type: [MessageDto] })
   @ApiParam({ name: 'chatId', type: String })
   @Get(':chatId')
-  getChatMessages(@Param('chatId') chatId: string): Promise<MessageDto[]> {
-    return this.messagesService.getChatMessages(chatId);
+  getChatMessages(
+    @Param('chatId') chatId: string,
+    @HttpUser('userId') userId: string,
+  ): Promise<MessageDto[]> {
+    return this.messagesService.getChatMessages(chatId, userId);
   }
 
   @ApiOperation({ summary: 'Изменение сообщения' })
@@ -70,6 +74,19 @@ export class MessagesController {
     @HttpUser('userId') userId: string,
   ) {
     return this.messagesService.editMessage(messageId, dto, userId);
+  }
+
+  @ApiOperation({ summary: 'Пометка сообщения как прочитанное' })
+  @ApiOkResponse({ type: MessageDto })
+  @ApiParam({ name: 'messageId', type: String })
+  @ApiForbiddenResponse({ description: 'not allowed' })
+  @ApiNotFoundResponse({ description: 'Message not found' })
+  @Patch('view/:messageId')
+  viewMessage(
+    @Param('messageId') messageId: string,
+    @HttpUser('userId') userId: string,
+  ) {
+    return this.messagesService.viewMessage(messageId, userId);
   }
 
   @ApiOperation({ summary: 'Удаление сообщения' })
