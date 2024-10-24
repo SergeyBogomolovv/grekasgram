@@ -12,6 +12,7 @@ import { UpdateMessageDto } from './dto/update-message.dto';
 import { MessageResponse } from 'src/common/message-response';
 import { FilesService } from 'src/files/files.service';
 import { EventsGateway } from 'src/events/events.gateway';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class MessagesService {
@@ -20,6 +21,7 @@ export class MessagesService {
     private messagesRepository: Repository<MessageEntity>,
     private readonly filesService: FilesService,
     private readonly eventsGateway: EventsGateway,
+    private readonly usersService: UsersService,
   ) {}
 
   async create(
@@ -43,7 +45,7 @@ export class MessagesService {
 
     const messageDto = new MessageDto(message);
 
-    this.eventsGateway.notifyMessage(dto.chatId, messageDto);
+    this.eventsGateway.notifyMessage(message.chatId, messageDto);
 
     return messageDto;
   }
@@ -90,5 +92,22 @@ export class MessagesService {
     await this.messagesRepository.softRemove(message);
 
     return new MessageResponse('Message deleted successfully');
+  }
+
+  async viewMessage(messageId: string, userId: string) {
+    const message = await this.messagesRepository.findOne({
+      where: { id: messageId },
+    });
+
+    if (!message) throw new NotFoundException('Message not found');
+
+    const user = await this.usersService.findOneByIdOrFail(userId);
+
+    if (!message.viewedBy.some((user) => user.id === userId)) {
+      message.viewedBy.push(user);
+      await this.messagesRepository.save(message);
+    }
+
+    return message;
   }
 }
