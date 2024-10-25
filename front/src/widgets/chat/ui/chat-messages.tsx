@@ -1,11 +1,8 @@
 'use client';
-import {
-  MessageCard,
-  MessageSkeleton,
-  useGetMessages,
-} from '@/entities/message';
+import { MessageCard, MessageSkeleton } from '@/entities/message';
 import { useGetProfile } from '@/entities/user';
 import { useEffect, useRef } from 'react';
+import { useGetMessages } from '../api/use-get-messages';
 
 export default function ChatMessages({ chatId }: { chatId: string }) {
   const { data, isLoading } = useGetMessages(chatId);
@@ -13,12 +10,11 @@ export default function ChatMessages({ chatId }: { chatId: string }) {
 
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
-  //TODO: update
   useEffect(() => {
-    messagesContainerRef.current?.scrollTo(
-      0,
-      messagesContainerRef.current.scrollHeight,
-    );
+    messagesContainerRef.current?.scrollTo({
+      top: messagesContainerRef.current.scrollHeight,
+      behavior: 'smooth',
+    });
   }, [data]);
 
   return (

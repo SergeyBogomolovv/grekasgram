@@ -7,6 +7,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'online-chat.storage.yandexcloud.net',
       },
+      {
+        protocol: 'https',
+        hostname: 'grekasgram.storage.yandexcloud.net',
+      },
     ],
   },
 };

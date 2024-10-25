@@ -7,22 +7,28 @@ import { Socket } from 'socket.io-client';
 
 const SocketContext = createContext<Socket>(socket);
 
+const invalidateUserStatusEvent = () => {
+  queryClient.invalidateQueries({ queryKey: ['chat'] });
+  queryClient.invalidateQueries({ queryKey: ['user-profile'] });
+};
+
+const pushMessage = (message: MessageEntity) => {
+  const prev = queryClient.getQueryData<MessageEntity[]>([
+    'messages',
+    message.chatId,
+  ]);
+
+  queryClient.setQueryData(
+    ['messages', message.chatId],
+    prev ? [...prev, message] : [message],
+  );
+};
+
 export default function SocketProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const invalidateMessageEvent = (chatId: string) => {
-    queryClient.invalidateQueries({ queryKey: ['messages', chatId] });
-    queryClient.invalidateQueries({ queryKey: ['my-chats'] });
-    queryClient.invalidateQueries({ queryKey: ['my-favorites'] });
-  };
-
-  const invalidateUserStatusEvent = () => {
-    queryClient.invalidateQueries({ queryKey: ['chat'] });
-    queryClient.invalidateQueries({ queryKey: ['user-profile'] });
-  };
-
   useEffect(() => {
     socket.connect();
 
@@ -31,19 +37,23 @@ export default function SocketProvider({
     });
 
     socket.on('receiveMessage', (message: MessageEntity) => {
-      invalidateMessageEvent(message.chatId);
+      pushMessage(message);
+      queryClient.invalidateQueries({ queryKey: ['my-chats'] });
+      queryClient.invalidateQueries({ queryKey: ['my-favorites'] });
     });
 
     socket.on('viewMessage', (message: MessageEntity) => {
-      invalidateMessageEvent(message.chatId);
+      queryClient.invalidateQueries({ queryKey: ['messages', message.chatId] });
+      queryClient.invalidateQueries({ queryKey: ['my-chats'] });
+      queryClient.invalidateQueries({ queryKey: ['my-favorites'] });
     });
 
     socket.on('updateMessage', (message: MessageEntity) => {
-      invalidateMessageEvent(message.chatId);
+      queryClient.invalidateQueries({ queryKey: ['messages', message.chatId] });
     });
 
     socket.on('removeMessage', (message: MessageEntity) => {
-      invalidateMessageEvent(message.chatId);
+      queryClient.invalidateQueries({ queryKey: ['messages', message.chatId] });
     });
 
     socket.on('userOnline', () => {

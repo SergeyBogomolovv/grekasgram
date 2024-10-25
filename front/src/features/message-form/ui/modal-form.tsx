@@ -38,6 +38,13 @@ export default function ModalForm({
     setIsModalOpen(false);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      form.handleSubmit(onSubmit)();
+    }
+  };
+
   return (
     <Dialog
       onOpenChange={() => {
@@ -78,6 +85,8 @@ export default function ModalForm({
                 <FormItem className="w-full">
                   <FormControl>
                     <textarea
+                      autoFocus
+                      onKeyDown={handleKeyDown}
                       data-testid="modal-message-input"
                       className="text-foreground bg-transparent focus:outline-none border-2 border-input focus:ring-0 resize-none
                         leading-normal w-full px-3 py-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 rounded-md"

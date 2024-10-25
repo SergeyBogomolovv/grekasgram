@@ -1,6 +1,6 @@
 import { $api } from '@/shared/api';
 import { useQuery } from '@tanstack/react-query';
-import { messageSchema } from '../model/message.schema';
+import { messageSchema } from '../../../entities/message/model/message.schema';
 import { z } from 'zod';
 
 export const useGetMessages = (chatId: string) => {
