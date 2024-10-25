@@ -1,6 +1,6 @@
 import { LoginForm } from '@/features/auth';
 import Image from 'next/image';
-import ChatImage from '@/assets/chat.svg';
+import ChatImage from '@public/chat.svg';
 
 export default function LoginPage() {
   return (
@@ -9,7 +9,7 @@ export default function LoginPage() {
         <LoginForm />
       </section>
       <section className="hidden bg-muted lg:flex items-center justify-center p-10">
-        <Image src={ChatImage} alt="chat image" />
+        <Image src={ChatImage} alt="chat image" priority />
       </section>
     </main>
   );
