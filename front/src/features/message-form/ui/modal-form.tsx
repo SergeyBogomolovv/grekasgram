@@ -21,6 +21,7 @@ interface Props {
   sendMessage: (data: MessageFormFields) => void;
   fileInputRef: MutableRefObject<HTMLInputElement | null>;
   setImagePreview: Dispatch<SetStateAction<string | null>>;
+  isPending: boolean;
 }
 
 export default function ModalForm({
@@ -31,6 +32,7 @@ export default function ModalForm({
   fileInputRef,
   setImagePreview,
   sendMessage,
+  isPending,
 }: Props) {
   const onSubmit = (data: MessageFormFields) => {
     sendMessage(data);
@@ -102,6 +104,7 @@ export default function ModalForm({
               type="submit"
               className="aspect-square size-11 rounded-xl"
               size="icon"
+              disabled={isPending}
             >
               <IoSend className="size-6" />
             </Button>

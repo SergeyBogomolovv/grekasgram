@@ -11,7 +11,7 @@ import ModalForm from './modal-form';
 import { useCreateMessage } from '../api/use-create-message';
 
 export default function MessageForm({ chatId }: { chatId: string }) {
-  const { mutate } = useCreateMessage(chatId);
+  const { mutate, isPending } = useCreateMessage(chatId);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -48,6 +48,7 @@ export default function MessageForm({ chatId }: { chatId: string }) {
   return (
     <Form {...form}>
       <ModalForm
+        isPending={isPending}
         sendMessage={mutate}
         setImagePreview={setImagePreview}
         setIsModalOpen={setIsModalOpen}
@@ -103,6 +104,7 @@ export default function MessageForm({ chatId }: { chatId: string }) {
           type="submit"
           className="aspect-square size-11 rounded-xl"
           size="icon"
+          disabled={isPending}
         >
           <IoSend className="size-6" />
         </Button>
