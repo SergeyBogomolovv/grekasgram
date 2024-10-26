@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { EventsGateway } from './events.gateway';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -6,7 +6,10 @@ import { UserEntity } from 'src/users/entities/user.entity';
 import { MessagesModule } from 'src/messages/messages.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity]), MessagesModule],
+  imports: [
+    TypeOrmModule.forFeature([UserEntity]),
+    forwardRef(() => MessagesModule),
+  ],
   providers: [EventsGateway, EventsService],
   exports: [EventsGateway],
 })

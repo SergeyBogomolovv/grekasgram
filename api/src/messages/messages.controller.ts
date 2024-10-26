@@ -1,6 +1,18 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import {
+  ApiConsumes,
+  ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -11,6 +23,8 @@ import {
 import { HttpAuthGuard } from 'src/auth/guards/http-auth.guard';
 import { MessageDto } from './dto/message.dto';
 import { HttpUser } from 'src/auth/decorators/http-user.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CreateMessageDto } from './dto/create-message.dto';
 
 @ApiTags('messages')
 @UseGuards(HttpAuthGuard)
@@ -18,6 +32,19 @@ import { HttpUser } from 'src/auth/decorators/http-user.decorator';
 @Controller('messages')
 export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
+
+  @ApiOperation({ summary: 'Создание сообщения' })
+  @ApiCreatedResponse({ type: MessageDto })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('image'))
+  @Post('create')
+  createMessage(
+    @Body() dto: CreateMessageDto,
+    @HttpUser('userId') userId: string,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
+    return this.messagesService.create(dto, userId, image);
+  }
 
   @ApiOperation({ summary: 'Получение сообщений для чата' })
   @ApiOkResponse({ type: [MessageDto] })
