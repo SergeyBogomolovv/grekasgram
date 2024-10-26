@@ -41,7 +41,10 @@ API_URL=url бэкенда(для ssr)
 NEXT_PUBLIC_WS_URL=url ws бэкенда
 ```
 
-- Генерируем сертификаты ```docker run --rm -v /etc/letsencrypt:/etc/letsencrypt -v /var/lib/letsencrypt:/var/lib/letsencrypt certbot/certbot certonly --standalone -d grekasgram.ru --email change-email@gmail.com --agree-tos --no-eff-email```
+- Генерируем сертификаты
+  ```
+  docker run --rm -v /etc/letsencrypt:/etc/letsencrypt -v /var/lib/letsencrypt:/var/lib/letsencrypt certbot/certbot certonly --standalone -d grekasgram.ru --email change-email@gmail.com --agree-tos --no-eff-email
+  ```
 - Останавливаем docker compose down
 - Запускаем все приложение ```docker compose up -d```
   
