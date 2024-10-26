@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import { MessageEntity } from './entities/message.entity';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { MessageDto } from './dto/message.dto';
@@ -41,11 +41,17 @@ export class MessagesService {
     return messageDto;
   }
 
-  async getChatMessages(chatId: string, userId: string) {
+  async getChatMessages(
+    chatId: string,
+    userId: string,
+    cursor: Date = new Date(),
+    count: number = 20,
+  ) {
     const messages = await this.messagesRepository.find({
-      where: { chatId },
+      where: { chatId, createdAt: LessThan(cursor) },
       relations: { viewedBy: true },
-      order: { createdAt: 'ASC' },
+      order: { createdAt: 'DESC' },
+      take: count,
     });
     return messages.map((message) => new MessageDto(message, userId));
   }

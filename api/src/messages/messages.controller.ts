@@ -1,9 +1,10 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -21,11 +22,15 @@ export class MessagesController {
   @ApiOperation({ summary: 'Получение сообщений для чата' })
   @ApiOkResponse({ type: [MessageDto] })
   @ApiParam({ name: 'chatId', type: String })
+  @ApiQuery({ name: 'cursor', type: Date })
+  @ApiQuery({ name: 'count', type: Number })
   @Get(':chatId')
   getChatMessages(
     @Param('chatId') chatId: string,
     @HttpUser('userId') userId: string,
+    @Query('cursor') cursor: Date,
+    @Query('count') count: number,
   ): Promise<MessageDto[]> {
-    return this.messagesService.getChatMessages(chatId, userId);
+    return this.messagesService.getChatMessages(chatId, userId, cursor, count);
   }
 }
