@@ -15,6 +15,8 @@ import Link from 'next/link';
 import { useMemo } from 'react';
 import NewChatModal from './new-chat-modal';
 import ModalImage from '@/shared/ui/modal-image';
+import InformationBlock from '@/shared/ui/information-block';
+import { formatDate } from '@/shared/lib/utils';
 
 interface Props {
   children: React.ReactNode;
@@ -36,11 +38,11 @@ export default function UserProfile({ children, userId }: Props) {
       <SheetTrigger className="w-full">{children}</SheetTrigger>
       <SheetContent side="left">
         <SheetHeader>
-          <SheetTitle>Информация о {user?.username}</SheetTitle>
+          <SheetTitle>Информация о пользователе</SheetTitle>
           <ModalImage
             src={user?.avatarUrl || '/user-avatar.png'}
             alt="user avatar"
-            className="rounded-lg"
+            className="rounded-lg aspect-square object-cover"
             width={500}
             height={500}
           />
@@ -48,6 +50,17 @@ export default function UserProfile({ children, userId }: Props) {
             {user?.about ||
               'Пользователь не оставил дополнительной информации о себе'}
           </SheetDescription>
+          <InformationBlock label="Имя:" content={user?.username} />
+          <InformationBlock label="ID:" content={user?.id} />
+          <InformationBlock
+            label="Статус:"
+            content={
+              user?.online
+                ? 'В сети'
+                : `Заходил(а) ${formatDate(user?.lastOnlineAt || new Date().toISOString())}`
+            }
+          />
+
           {existingChat && (
             <DialogClose asChild>
               <Button asChild>

@@ -1,6 +1,6 @@
 import { RegisterForm } from '@/features/auth';
 import Image from 'next/image';
-import BeginChatImage from '@/assets/begin-chat.svg';
+import BeginChatImage from '@public/begin-chat.svg';
 
 export default function RegisterPage() {
   return (
@@ -9,7 +9,7 @@ export default function RegisterPage() {
         <RegisterForm />
       </section>
       <section className="hidden bg-muted lg:flex items-center justify-center p-10">
-        <Image src={BeginChatImage} alt="chat image" />
+        <Image src={BeginChatImage} alt="chat image" priority />
       </section>
     </main>
   );

@@ -1,4 +1,4 @@
-import MainImage from '@/assets/main.svg';
+import MainImage from '@public/main.svg';
 import { Button } from '@/shared/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -13,7 +13,12 @@ export default function Home() {
       <p className="text-muted-foreground text-lg font-mono">
         Выберите чат, или найдите собеседника через поиск пользователей.
       </p>
-      <Image src={MainImage} alt="begin chatting image" className="my-4" />
+      <Image
+        src={MainImage}
+        alt="begin chatting image"
+        className="my-4"
+        priority
+      />
       <p className="text-muted-foreground font-mono">
         Вы можете изменить свой профиль, чтобы выделяться среди других
         пользователей.

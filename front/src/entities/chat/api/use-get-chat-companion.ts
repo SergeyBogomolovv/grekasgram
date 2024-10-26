@@ -8,7 +8,7 @@ export const useGetChatCompanion = (chatId: string) => {
   const router = useRouter();
 
   return useQuery({
-    queryKey: ['chat', chatId],
+    queryKey: ['chat-companion', chatId],
     queryFn: async () => {
       try {
         const { data } = await $api.get(`/chats/companion/${chatId}`);

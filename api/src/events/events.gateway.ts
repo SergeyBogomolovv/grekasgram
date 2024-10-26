@@ -9,8 +9,8 @@ import { EventsService } from './events.service';
 import { Socket } from 'socket.io';
 import { TokensService } from 'src/tokens/tokens.service';
 import { Logger } from '@nestjs/common';
-import { CreateMessageDto } from 'src/messages/dto/create-message.dto';
 import { UpdateMessageDto } from 'src/messages/dto/update-message.dto';
+import { MessageDto } from 'src/messages/dto/message.dto';
 
 @WebSocketGateway({
   cors: { origin: '*' },
@@ -60,12 +60,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.wss.to(userId).emit('chatCreated');
   }
 
-  @SubscribeMessage('send_message')
-  async sendMessage(client: Socket, dto: CreateMessageDto) {
-    const message = await this.eventsService.sendMessage(
-      dto,
-      client.data.userId,
-    );
+  notifyMessageSent(message: MessageDto) {
     this.wss.to(message.chatId).emit('receiveMessage', message);
 
     this.logger.debug(

@@ -68,6 +68,7 @@ export default function MessageCard({ message, userId }: Props) {
       >
         {message.imageUrl && (
           <ModalImage
+            priority
             src={message.imageUrl}
             alt="image"
             width={350}

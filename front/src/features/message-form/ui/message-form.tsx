@@ -7,11 +7,11 @@ import { IoSend } from 'react-icons/io5';
 import { Button } from '@/shared/ui/button';
 import { useRef, useState } from 'react';
 import { ImAttachment } from 'react-icons/im';
-import { useSendMessage } from '../api/use-send-message';
 import ModalForm from './modal-form';
+import { useCreateMessage } from '../api/use-create-message';
 
 export default function MessageForm({ chatId }: { chatId: string }) {
-  const sendMessage = useSendMessage(chatId);
+  const { mutate, isPending } = useCreateMessage(chatId);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -24,7 +24,7 @@ export default function MessageForm({ chatId }: { chatId: string }) {
   });
 
   const onSubmit = (data: MessageFormFields) => {
-    sendMessage(data);
+    mutate(data);
     form.reset();
   };
 
@@ -48,7 +48,8 @@ export default function MessageForm({ chatId }: { chatId: string }) {
   return (
     <Form {...form}>
       <ModalForm
-        sendMessage={sendMessage}
+        isPending={isPending}
+        sendMessage={mutate}
         setImagePreview={setImagePreview}
         setIsModalOpen={setIsModalOpen}
         imagePreview={imagePreview}
@@ -103,6 +104,7 @@ export default function MessageForm({ chatId }: { chatId: string }) {
           type="submit"
           className="aspect-square size-11 rounded-xl"
           size="icon"
+          disabled={isPending}
         >
           <IoSend className="size-6" />
         </Button>

@@ -21,6 +21,7 @@ interface Props {
   sendMessage: (data: MessageFormFields) => void;
   fileInputRef: MutableRefObject<HTMLInputElement | null>;
   setImagePreview: Dispatch<SetStateAction<string | null>>;
+  isPending: boolean;
 }
 
 export default function ModalForm({
@@ -31,11 +32,19 @@ export default function ModalForm({
   fileInputRef,
   setImagePreview,
   sendMessage,
+  isPending,
 }: Props) {
   const onSubmit = (data: MessageFormFields) => {
     sendMessage(data);
     form.reset();
     setIsModalOpen(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      form.handleSubmit(onSubmit)();
+    }
   };
 
   return (
@@ -78,6 +87,8 @@ export default function ModalForm({
                 <FormItem className="w-full">
                   <FormControl>
                     <textarea
+                      autoFocus
+                      onKeyDown={handleKeyDown}
                       data-testid="modal-message-input"
                       className="text-foreground bg-transparent focus:outline-none border-2 border-input focus:ring-0 resize-none
                         leading-normal w-full px-3 py-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 rounded-md"
@@ -93,6 +104,7 @@ export default function ModalForm({
               type="submit"
               className="aspect-square size-11 rounded-xl"
               size="icon"
+              disabled={isPending}
             >
               <IoSend className="size-6" />
             </Button>

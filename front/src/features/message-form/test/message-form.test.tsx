@@ -1,10 +1,22 @@
-import { socket } from '@/shared/api';
+import { $api } from '@/shared/api';
 import { render } from '@test/utils';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import MessageForm from '../ui/message-form';
 import userEvent from '@testing-library/user-event';
+import { MessageEntity } from '@/entities/message';
 
-vi.spyOn(socket, 'emit');
+vi.mock('@/shared/api');
+
+const mockMessage: MessageEntity = {
+  id: '1',
+  content: 'test',
+  createdAt: '2022-01-01T00:00:00.000Z',
+  updatedAt: '2022-01-01T00:00:00.000Z',
+  chatId: '1',
+  fromId: '1',
+  imageUrl: null,
+  isRead: false,
+};
 
 describe('MessageForm', () => {
   beforeEach(() => {
@@ -13,6 +25,8 @@ describe('MessageForm', () => {
   });
 
   it('should send message without image', async () => {
+    vi.mocked($api.post).mockResolvedValue({ data: mockMessage });
+
     const { getByPlaceholderText, getByRole } = render(
       <MessageForm chatId="1" />,
     );
@@ -22,13 +36,15 @@ describe('MessageForm', () => {
     await user.type(getByPlaceholderText('Введите сообщение'), 'test');
     await user.click(getByRole('button', { name: 'Отправить сообщение' }));
 
-    expect(socket.emit).toHaveBeenCalledWith('send_message', {
-      content: 'test',
-      chatId: '1',
-    });
+    expect($api.post).toHaveBeenCalledWith(
+      '/messages/create',
+      expect.any(FormData),
+    );
   });
 
   it('should send message with image', async () => {
+    vi.mocked($api.post).mockResolvedValue({ data: mockMessage });
+
     const { getByRole, getByTestId } = render(<MessageForm chatId="1" />);
 
     const user = userEvent.setup();
@@ -48,10 +64,9 @@ describe('MessageForm', () => {
 
     await user.click(getByRole('button', { name: 'Отправить сообщение' }));
 
-    expect(socket.emit).toHaveBeenCalledWith('send_message', {
-      content: 'test',
-      chatId: '1',
-      image: file,
-    });
+    expect($api.post).toHaveBeenCalledWith(
+      '/messages/create',
+      expect.any(FormData),
+    );
   });
 });
