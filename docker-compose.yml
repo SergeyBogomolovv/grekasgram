@@ -78,29 +78,14 @@ services:
       - api
     ports:
       - "80:80"
-      - "443:443"
-    volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
-      - /var/lib/letsencrypt:/var/lib/letsencrypt
-      - certbot-www:/var/www/certbot 
     networks:
       - internal
       - external
     restart: unless-stopped
-
-  certbot:
-    image: certbot/certbot
-    volumes:
-      - ./nginx/certbot/conf:/etc/letsencrypt
-      - ./nginx/certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h; done;'"
-    networks:
-      - external
-
+    
 volumes:
   postgres_data:
   redis_data:
-  certbot-www:
 
 networks:
   internal:
