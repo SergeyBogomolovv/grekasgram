@@ -78,6 +78,10 @@ services:
       - api
     ports:
       - "80:80"
+      - "443:443"  
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt 
+      - ./certbot/www:/var/www/certbot 
     networks:
       - internal
       - external
@@ -86,9 +90,8 @@ services:
   certbot:
     image: certbot/certbot
     volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h & wait $${!}; done;'"
+      - ./certbot/conf:/etc/letsencrypt 
+      - ./certbot/www:/var/www/certbot 
     networks:
       - external
 
