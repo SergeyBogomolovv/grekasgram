@@ -36,7 +36,7 @@ export default function UserProfile({ children, userId }: Props) {
   return (
     <Sheet>
       <SheetTrigger className="w-full">{children}</SheetTrigger>
-      <SheetContent side="left">
+      <SheetContent side="left" className="overflow-y-scroll">
         <SheetHeader>
           <SheetTitle>Информация о пользователе</SheetTitle>
           <ModalImage

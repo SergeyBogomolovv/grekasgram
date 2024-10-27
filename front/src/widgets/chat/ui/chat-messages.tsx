@@ -10,7 +10,7 @@ import { useGetMessages } from '../api/use-get-messages';
 import { useSocket } from '@/config/providers';
 
 export default function ChatMessages({ chatId }: { chatId: string }) {
-  const { data, fetchNextPage, hasNextPage, isFetching } =
+  const { data, fetchNextPage, hasNextPage, isLoading, isFetching } =
     useGetMessages(chatId);
   const [currentData, setCurrentData] = useState<MessageEntity[]>([]);
 
@@ -97,7 +97,7 @@ export default function ChatMessages({ chatId }: { chatId: string }) {
       ref={messagesContainerRef}
       className="flex-grow flex gap-4 p-4 overflow-y-scroll scrollbar:hidden flex-col"
     >
-      {isFetching && (
+      {isLoading && (
         <>
           <MessageSkeleton className="w-[300px] self-end" />
           <MessageSkeleton className="w-[250px]" />
