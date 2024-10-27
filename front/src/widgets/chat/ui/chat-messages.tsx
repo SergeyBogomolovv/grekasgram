@@ -29,7 +29,9 @@ export default function ChatMessages({ chatId }: { chatId: string }) {
 
   useEffect(() => {
     socket.on('receiveMessage', (message: MessageEntity) => {
-      setCurrentData((prev) => [...prev, message]);
+      if (message.chatId === chatId) {
+        setCurrentData((prev) => [...prev, message]);
+      }
     });
 
     socket.on('updateMessage', (message: MessageEntity) => {
@@ -54,7 +56,7 @@ export default function ChatMessages({ chatId }: { chatId: string }) {
       socket.off('removeMessage');
       socket.off('viewMessage');
     };
-  }, [socket]);
+  }, [socket, chatId]);
 
   useLayoutEffect(() => {
     if (messagesContainerRef.current && isUserAtBottom) {
