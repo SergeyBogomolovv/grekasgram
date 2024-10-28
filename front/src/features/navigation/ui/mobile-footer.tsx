@@ -9,7 +9,7 @@ import MobileChatbar from './mobile-chatbar';
 export default function MobileFooter() {
   const { data } = useGetProfile();
   return (
-    <nav className="flex md:hidden p-2 gap-2 items-center justify-around border-t-2">
+    <nav className="flex md:hidden p-2 gap-2 items-center justify-around border-t-2 sticky bottom-0 bg-background">
       <ThemeSwitch>
         <button
           className="flex flex-col items-center gap-1 md:hidden"
