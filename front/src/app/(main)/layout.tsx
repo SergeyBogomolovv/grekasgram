@@ -9,7 +9,7 @@ export default function MainLayout({
 }) {
   return (
     <SocketProvider>
-      <main className="flex h-screen flex-col-reverse md:flex-row">
+      <main className="flex min-h-[100svh] flex-col-reverse md:flex-row">
         <Sidebar />
         <Chatbar className="md:flex hidden" />
         <MobileFooter />

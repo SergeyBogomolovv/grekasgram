@@ -92,7 +92,7 @@ export default function NewChatModal({ children, user }: Props) {
                 </FormItem>
               )}
             />
-            <DialogFooter>
+            <DialogFooter className="gap-2">
               <DialogClose asChild>
                 <Button disabled={isPending} type="button" variant="secondary">
                   Отмена

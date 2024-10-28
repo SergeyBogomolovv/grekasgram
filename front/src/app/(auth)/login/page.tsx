@@ -4,7 +4,7 @@ import ChatImage from '@public/chat.svg';
 
 export default function LoginPage() {
   return (
-    <main className="min-h-screen w-full lg:grid lg:grid-cols-2 flex flex-col justify-center">
+    <main className="min-h-[100svh] w-full lg:grid lg:grid-cols-2 flex flex-col justify-center">
       <section className="flex items-center justify-center py-12">
         <LoginForm />
       </section>

@@ -20,7 +20,7 @@ export class EventsService {
       relations: { chats: true },
     });
 
-    return user.chats.map((chat) => chat.id);
+    return user?.chats?.map((chat) => chat.id);
   }
 
   async setOnline(userId: string) {

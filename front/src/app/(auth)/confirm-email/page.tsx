@@ -6,7 +6,7 @@ export default function ConfirmEmailPage({
   searchParams: { token?: string };
 }) {
   return (
-    <main className="flex flex-col items-center justify-center gap-y-6 min-h-screen">
+    <main className="flex flex-col items-center justify-center gap-y-6 min-h-[100svh]">
       <ConfirmEmail token={searchParams.token} />
       <div className="animate-pulse flex items-center gap-2 duration-250">
         <div className="dark:bg-white bg-black rounded-full size-6" />

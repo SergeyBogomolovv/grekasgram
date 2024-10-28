@@ -6,7 +6,7 @@ import { FaUserCircle } from 'react-icons/fa';
 
 export default function Home() {
   return (
-    <section className="flex-1 flex flex-col items-center justify-center gap-4 w-[90%] mx-auto text-center">
+    <section className="flex-1 flex flex-col items-center justify-center gap-4 my-4 w-[90%] mx-auto text-center">
       <h1 className="lg:text-5xl text-4xl font-bold">
         Начинайте общаться прямо сейчас
       </h1>
